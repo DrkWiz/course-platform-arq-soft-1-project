@@ -1,9 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"backend/router"
 
-<<<<<<< HEAD
-func main(){
-  fmt.Println("Hello world!")
+	"github.com/gin-gonic/gin"
+)
 
+func main() {
+	engine := gin.New()
+	router.MapUrls(engine)
+	engine.Run(":8080")
 }
