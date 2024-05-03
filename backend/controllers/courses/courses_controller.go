@@ -9,7 +9,7 @@ import (
 )
 
 func CreateCourse(c *gin.Context) {
-	var createCourseRequest coursesDomain.CreateCourseRequest
+	var createCourseRequest coursesDomain.CourseRequest
 	c.BindJSON(&createCourseRequest)
 	response := coursesService.CreateCourse(createCourseRequest)
 	c.JSON(http.StatusOK, response)
