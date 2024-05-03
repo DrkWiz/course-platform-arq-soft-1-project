@@ -6,5 +6,5 @@ func CreateCourse(request coursesDomain.CourseCreateRequest) coursesDomain.Creat
 
 	//create in db
 
-	return coursesDomain.CreateCourseResponse{1, request.Name, request.Description, request.Price, request.ClassAmount, request.StartDate, request.EndDate}
+	return coursesDomain.CreateCourseResponse{ID: 1, Name: request.Name, Description: request.Description, Price: request.Price, ClassAmount: request.ClassAmount, StartDate: request.StartDate, EndDate: request.EndDate}
 }
