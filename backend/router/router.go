@@ -1,11 +1,11 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"backend/controllers/users"
+
+	"github.com/gin-gonic/gin"
+)
 
 func MapUrls(engine *gin.Engine) {
-	engine.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	engine.POST("/users/login", users.Login)
 }
