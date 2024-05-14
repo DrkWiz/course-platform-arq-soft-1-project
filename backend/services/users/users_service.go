@@ -1,10 +1,13 @@
 package users
 
 import (
+	usersClient "backend/clients/users"
 	usersDomain "backend/domain/users"
 	"backend/dto"
 	usersModel "backend/model/users"
 	e "backend/utils/errors"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type usersService struct{}
@@ -21,14 +24,12 @@ func init() {
 	UsersService = &usersService{}
 }
 
-func (s *UsersService) GetStudentById(id int) (dto.StudentMinDto, e.ApiError) {
+func (s *usersService) GetStudentById(id int) (dto.StudentMinDto, e.ApiError) {
 
-	var student usersModel.User = GetStudentById(id)
+	log.Print("GetStudentById: ", id)
+
+	var student usersModel.User = usersClient.GetUserById(id)
 	var studentMinDto dto.StudentMinDto
-
-	if student.Id_user == 0 {
-		return studentMinDto, e.NewNotFoundApiError("student not found")
-	}
 
 	studentMinDto.IdStudent = student.Id_user
 	studentMinDto.Username = student.Username

@@ -12,8 +12,8 @@ var Db *gorm.DB
 func GetUserById(id int) userModel.User {
 	var user userModel.User
 
-	Db.Where("id = ?", id).First(&user)
-	log.Debug("User: ", user)
+	Db.Where("Id_users = ?", id).First(&user)
+	log.Print("User: ", user)
 
 	return user
 }
