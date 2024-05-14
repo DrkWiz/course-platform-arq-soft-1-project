@@ -16,3 +16,11 @@ func Login(c *gin.Context) {
 	response := usersService.Login(loginRequest)
 	c.JSON(http.StatusOK, response)
 }
+
+// Get Student by ID
+
+func GetStudentById(c *gin.Context) {
+	id := c.Param("id")
+	response := usersService.GetStudentById(c.GetInt(id))
+	c.JSON(http.StatusOK, response)
+}
