@@ -31,7 +31,7 @@ func (s *usersService) GetStudentById(id int) (dto.StudentMinDto, e.ApiError) {
 	var student usersModel.User = usersClient.GetUserById(id)
 	var studentMinDto dto.StudentMinDto
 
-	studentMinDto.IdStudent = student.Id_user
+	studentMinDto.IdStudent = student.IdUser
 	studentMinDto.Username = student.Username
 	studentMinDto.Email = student.Email
 
@@ -41,5 +41,5 @@ func (s *usersService) GetStudentById(id int) (dto.StudentMinDto, e.ApiError) {
 // GetStudentById method is not working yet because it is not implemented in the database yet
 
 func GetStudentById(id int) usersModel.User {
-	return usersModel.User{Id_user: id}
+	return usersModel.User{IdUser: id}
 }
