@@ -1,7 +1,6 @@
 package users
 
 import (
-	usersDomain "backend/domain/users"
 	usersService "backend/services/users"
 	"net/http"
 	"strconv"
@@ -10,15 +9,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 )
-
-func Login(c *gin.Context) {
-	//validate with db
-
-	var loginRequest usersDomain.LoginRequest
-	c.BindJSON(&loginRequest)
-	response := usersService.Login(loginRequest)
-	c.JSON(http.StatusOK, response)
-}
 
 // Get Student by ID
 

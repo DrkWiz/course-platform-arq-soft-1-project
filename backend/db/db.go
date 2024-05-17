@@ -2,13 +2,12 @@ package db
 
 import (
 	courseClient "backend/clients/course"
-	professorClient "backend/clients/professor"
-	studentClient "backend/clients/student"
+
 	userClient "backend/clients/users"
 
+	categoryModel "backend/model/category"
 	courseModel "backend/model/courses"
-	professorModel "backend/model/professor"
-	studentModel "backend/model/student"
+
 	userModel "backend/model/users"
 
 	"github.com/jinzhu/gorm"
@@ -23,9 +22,9 @@ var (
 
 func init() {
 	// DB Connections Paramters
-	DBName := "softarch"  //Nombre de la base de datos local de ustedes
+	DBName := "test_db"   //Nombre de la base de datos local de ustedes
 	DBUser := "root"      //usuario de la base de datos, habitualmente root
-	DBPass := "pass"      //password del root en la instalacion
+	DBPass := "Nano01234" //password del root en la instalacion
 	DBHost := "127.0.0.1" //host de la base de datos. hbitualmente 127.0.0.1
 	// ------------------------
 
@@ -39,8 +38,7 @@ func init() {
 	}
 
 	// We need to add all CLients that we build
-	studentClient.Db = db
-	professorClient.Db = db
+
 	courseClient.Db = db
 	userClient.Db = db
 
@@ -49,9 +47,10 @@ func init() {
 func StartDbEngine() {
 	// We need to migrate all classes model.
 	db.AutoMigrate(&userModel.User{})
-	db.AutoMigrate(&studentModel.Student{})
-	db.AutoMigrate(&professorModel.Professor{})
+	db.AutoMigrate(&categoryModel.Category{})
 	db.AutoMigrate(&courseModel.Course{})
+	db.AutoMigrate(&courseModel.CourseCategory{})
+	db.AutoMigrate(&courseModel.UserCourses{})
 
 	log.Info("Finishing Migration Database Tables")
 }

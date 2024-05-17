@@ -2,7 +2,7 @@ package users
 
 import (
 	usersClient "backend/clients/users"
-	usersDomain "backend/domain/users"
+
 	"backend/dto"
 	usersModel "backend/model/users"
 	e "backend/utils/errors"
@@ -36,13 +36,6 @@ func (s *usersService) GetStudentById(id int) (dto.StudentMinDto, e.ApiError) {
 	studentMinDto.Email = student.Email
 
 	return studentMinDto, nil
-}
-
-func Login(request usersDomain.LoginRequest) usersDomain.LoginResponse {
-
-	//validate with db
-
-	return usersDomain.LoginResponse{Token: "nicotroll123"}
 }
 
 // GetStudentById method is not working yet because it is not implemented in the database yet
