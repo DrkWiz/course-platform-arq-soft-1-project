@@ -12,8 +12,17 @@ var Db *gorm.DB
 func GetCourseById(id int) courseModel.Course {
 	var course courseModel.Course
 
-	Db.Where("id = ?", id).First(&course)
+	Db.Where("id_course = ?", id).First(&course)
 	log.Debug("Course: ", course)
 
 	return course
+}
+
+func CreateCourse(course courseModel.Course) error {
+	err := Db.Create(&course)
+	if err != nil {
+		return err.Error
+	}
+	return nil
+
 }

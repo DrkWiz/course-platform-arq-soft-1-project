@@ -2,7 +2,7 @@ package model
 
 // Domain Classes - "Course" entity
 type Course struct {
-	Id_course    int     `gorm:"PRIMARY_KEY;AUTO_INCREMENT;column:id_course"` // Primary key
+	IdCourse     int     `gorm:"PRIMARY_KEY;AUTO_INCREMENT;column:id_course"` // Primary key
 	Name         string  `gorm:"type:VARCHAR(350);not null"`
 	Description  string  `gorm:"type:VARCHAR(350);not null"`
 	Price        float64 `gorm:"type:float;not null"`
