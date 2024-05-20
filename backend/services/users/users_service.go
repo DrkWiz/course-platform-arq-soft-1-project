@@ -47,19 +47,29 @@ func HashPassword(password string) (string, error) {
 
 //Create user
 
-func CreateUser(user dto.UserCreateDto) error {
-	//TODO: IMPLEMENT PASSWORD HASHING
+func CreateUser(user dto.UserCreateDto) e.ApiError {
+
+	// Check if username or email already exists
+	if usersClient.CheckUsername(user.Username) {
+		err := e.NewBadRequestApiError("Username already exists")
+		return err
+	}
+	if usersClient.CheckEmail(user.Email) {
+		err := e.NewBadRequestApiError("Email is already used")
+		return err
+	}
+
 	hashPassword, err := HashPassword(user.Password)
 
 	if err != nil {
-		return err
+		return e.NewInternalServerApiError("Error hashing password", err)
 	}
 
 	userToCreate := usersModel.User{Name: user.Name, Username: user.Username, Email: user.Email, Password: hashPassword}
 
-	err = usersClient.CreateUser(userToCreate)
-	if err != nil {
-		return err
+	err1 := usersClient.CreateUser(userToCreate)
+	if err1 != nil {
+		return err1
 	}
 	return nil
 }
