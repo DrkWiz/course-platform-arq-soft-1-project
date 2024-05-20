@@ -1,9 +1,9 @@
 package dto
 
-type StudentMinDto struct {
-	IdStudent int    `json:"id"`
-	Username  string `json:"username"`
-	Email     string `json:"email"`
+type UserMinDto struct {
+	IdUser   int    `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
 }
 
-type StudentsMinDto []StudentMinDto
+type UsersMinDto []UserMinDto

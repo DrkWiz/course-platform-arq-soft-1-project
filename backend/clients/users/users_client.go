@@ -18,6 +18,11 @@ func GetUserById(id int) userModel.User {
 	return user
 }
 
-func CreateUser(user userModel.User) {
-	Db.Create(&user)
+func CreateUser(user userModel.User) error {
+	err := Db.Create(&user)
+	if err != nil {
+		return err.Error
+	}
+	return nil
+
 }

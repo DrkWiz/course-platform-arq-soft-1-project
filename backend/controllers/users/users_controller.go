@@ -1,6 +1,7 @@
 package users
 
 import (
+	"backend/dto"
 	usersService "backend/services/users"
 	"net/http"
 	"strconv"
@@ -12,7 +13,7 @@ import (
 
 // Get Student by ID
 
-func GetStudentById(c *gin.Context) {
+func GetUserById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -20,9 +21,9 @@ func GetStudentById(c *gin.Context) {
 		return
 	}
 
-	log.Print("GetStudentById: ", id)
+	log.Print("GetUserById: ", id)
 
-	response, err1 := usersService.UsersService.GetStudentById(id)
+	response, err1 := usersService.UsersService.GetUserById(id)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
@@ -30,4 +31,17 @@ func GetStudentById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+//Create new user
+
+func CreateUser(c *gin.Context) {
+	var user dto.UserCreateDto
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	usersService.CreateUser(user)
+	c.JSON(http.StatusOK, "User created")
 }

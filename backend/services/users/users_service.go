@@ -13,7 +13,7 @@ import (
 type usersService struct{}
 
 type usersServiceInterface interface {
-	GetUserById(id int) (dto.StudentMinDto, e.ApiError)
+	GetUserById(id int) (dto.UserMinDto, e.ApiError)
 }
 
 var (
@@ -24,22 +24,30 @@ func init() {
 	UsersService = &usersService{}
 }
 
-func (s *usersService) GetUserById(id int) (dto.StudentMinDto, e.ApiError) {
+func (s *usersService) GetUserById(id int) (dto.UserMinDto, e.ApiError) {
 
 	log.Print("GetUserById: ", id)
 
-	var student usersModel.User = usersClient.GetUserById(id)
-	var studentMinDto dto.StudentMinDto
+	var user usersModel.User = usersClient.GetUserById(id)
+	var UserMinDto dto.UserMinDto
 
-	studentMinDto.IdStudent = student.IdUser
-	studentMinDto.Username = student.Username
-	studentMinDto.Email = student.Email
+	UserMinDto.IdUser = user.IdUser
+	UserMinDto.Username = user.Username
+	UserMinDto.Email = user.Email
 
-	return studentMinDto, nil
+	return UserMinDto, nil
 }
 
-// GetUseById method is not working yet because it is not implemented in the database yet
+//Create user
 
-func GetUserById(id int) usersModel.User {
-	return usersModel.User{IdUser: id}
+func CreateUser(user dto.UserCreateDto) error {
+	//TODO: IMPLEMENT PASSWORD HASHING
+	hashPassword := user.Password
+	userToCreate := usersModel.User{Name: user.Name, Username: user.Username, Email: user.Email, Password: hashPassword}
+
+	err := usersClient.CreateUser(userToCreate)
+	if err != nil {
+		return err
+	}
+	return nil
 }

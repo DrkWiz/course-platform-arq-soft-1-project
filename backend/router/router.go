@@ -8,6 +8,6 @@ import (
 
 func MapUrls(engine *gin.Engine) {
 
-	engine.GET("/students/:id", users.GetStudentById)
-
+	engine.GET("/users/:id", users.GetUserById)
+	engine.POST("/users", users.CreateUser)
 }
