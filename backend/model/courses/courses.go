@@ -2,14 +2,14 @@ package model
 
 // Domain Classes - "Course" entity
 type Course struct {
-	Id_course    int     `gorm:"primaryKey" autoIncrement:"true"`
-	Name         string  `gorm:"type:varchar(350);not null"`
-	Description  string  `gorm:"type:varchar(350);not null"`
+	Id_course    int     `gorm:"PRIMARY_KEY;AUTO_INCREMENT;column:id_course"` // Primary key
+	Name         string  `gorm:"type:VARCHAR(350);not null"`
+	Description  string  `gorm:"type:VARCHAR(350);not null"`
 	Price        float64 `gorm:"type:float;not null"`
-	Picture_path string  `gorm:"type:varchar(350);not null"`
-	Start_date   string  `gorm:"type:varchar(350);not null"`
-	End_date     string  `gorm:"type:varchar(350);"`
-	Id_user      int     `gorm:"foreignKey:Id_user"`
+	Picture_path string  `gorm:"type:VARCHAR(350);not null"`
+	Start_date   string  `gorm:"type:VARCHAR(350);not null"`
+	End_date     string  `gorm:"type:VARCHAR(350) "`
+	Id_user      int     `gorm:"type:int;not null"`
 }
 
 type Courses []Course
