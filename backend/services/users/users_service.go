@@ -13,7 +13,7 @@ import (
 type usersService struct{}
 
 type usersServiceInterface interface {
-	GetStudentById(id int) (dto.StudentMinDto, e.ApiError)
+	GetUserById(id int) (dto.StudentMinDto, e.ApiError)
 }
 
 var (
@@ -24,22 +24,22 @@ func init() {
 	UsersService = &usersService{}
 }
 
-func (s *usersService) GetStudentById(id int) (dto.StudentMinDto, e.ApiError) {
+func (s *usersService) GetUserById(id int) (dto.StudentMinDto, e.ApiError) {
 
-	log.Print("GetStudentById: ", id)
+	log.Print("GetUserById: ", id)
 
 	var student usersModel.User = usersClient.GetUserById(id)
 	var studentMinDto dto.StudentMinDto
 
-	studentMinDto.IdStudent = student.Id_user
+	studentMinDto.IdStudent = student.IdUser
 	studentMinDto.Username = student.Username
 	studentMinDto.Email = student.Email
 
 	return studentMinDto, nil
 }
 
-// GetStudentById method is not working yet because it is not implemented in the database yet
+// GetUseById method is not working yet because it is not implemented in the database yet
 
-func GetStudentById(id int) usersModel.User {
-	return usersModel.User{Id_user: id}
+func GetUserById(id int) usersModel.User {
+	return usersModel.User{IdUser: id}
 }

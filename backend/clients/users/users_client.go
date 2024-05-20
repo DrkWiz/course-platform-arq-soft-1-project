@@ -17,3 +17,7 @@ func GetUserById(id int) userModel.User {
 
 	return user
 }
+
+func CreateUser(user userModel.User) {
+	Db.Create(&user)
+}
