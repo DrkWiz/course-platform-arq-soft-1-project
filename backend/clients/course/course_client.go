@@ -35,6 +35,14 @@ func UpdateCourse(course courseModel.Course) e.ApiError {
 	if err != nil {
 		return e.NewInternalServerApiError("Error updating course", err)
 	}
+	return nil
+}
 
+func DeleteCourse(id int) error {
+	// Ensure the correct usage of the Update method
+	err := Db.Model(&courseModel.Course{}).Where("id_course = ?", id).Update("is_active", "0").Error
+	if err != nil {
+		return err
+	}
 	return nil
 }

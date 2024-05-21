@@ -69,4 +69,25 @@ func UpdateCourse(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Course updated")
+
+}
+
+//Soft delete course
+
+func DeleteCourse(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	err1 := coursesService.DeleteCourse(id)
+
+	if err1 != nil {
+		c.JSON(http.StatusTeapot, err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, "Course deleted")
 }
