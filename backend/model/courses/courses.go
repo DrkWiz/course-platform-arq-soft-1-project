@@ -10,6 +10,7 @@ type Course struct {
 	Start_date   string  `gorm:"type:VARCHAR(350);not null"`
 	End_date     string  `gorm:"type:VARCHAR(350) "`
 	Id_user      int     `gorm:"type:int;not null"`
+	IsActive     bool    `gorm:"type:bool;default:true"`
 }
 
 type Courses []Course

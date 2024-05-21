@@ -3,6 +3,8 @@ package course
 import (
 	courseModel "backend/model/courses"
 
+	e "backend/utils/errors"
+
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )
@@ -25,4 +27,14 @@ func CreateCourse(course courseModel.Course) error {
 	}
 	return nil
 
+}
+
+func UpdateCourse(course courseModel.Course) e.ApiError {
+	err := Db.Save(&course).Error
+
+	if err != nil {
+		return e.NewInternalServerApiError("Error updating course", err)
+	}
+
+	return nil
 }

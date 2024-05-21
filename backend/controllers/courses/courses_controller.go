@@ -44,3 +44,29 @@ func CreateCourse(c *gin.Context) {
 	coursesService.CreateCourse(course)
 	c.JSON(http.StatusOK, "Course created")
 }
+
+// Update course
+
+func UpdateCourse(c *gin.Context) {
+	var course dto.CourseUpdateDto
+	if err := c.ShouldBindJSON(&course); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Bad ID")
+		return
+	}
+
+	err1 := coursesService.UpdateCourse(id, course)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, "Course updated")
+}

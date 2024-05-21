@@ -14,4 +14,5 @@ func MapUrls(engine *gin.Engine) {
 
 	engine.GET("/courses/:id", courses.GetCourseById)
 	engine.POST("/courses", courses.CreateCourse)
+	engine.PUT("/courses/:id", courses.UpdateCourse)
 }

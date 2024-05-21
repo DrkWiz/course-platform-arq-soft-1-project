@@ -58,3 +58,17 @@ func CreateCourse(course dto.CourseCreateDto) error {
 	return nil
 
 }
+
+// Update a course.
+
+func UpdateCourse(id int, course dto.CourseUpdateDto) e.ApiError {
+	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, Picture_path: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user, IsActive: true}
+
+	err := courseClient.UpdateCourse(courseToUpdate)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
