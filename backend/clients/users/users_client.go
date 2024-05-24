@@ -39,3 +39,9 @@ func CheckEmail(email string) bool {
 	Db.Where("email = ?", email).First(&user)
 	return user.Username != ""
 }
+
+func GetUserByUsername(username string) userModel.User {
+	var user userModel.User
+	Db.Where("username = ?", username).First(&user)
+	return user
+}

@@ -2,10 +2,13 @@ package users
 
 import (
 	usersClient "backend/clients/users"
+	"time"
 
 	"backend/dto"
 	usersModel "backend/model/users"
 	e "backend/utils/errors"
+
+	jwt "github.com/golang-jwt/jwt/v4"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
@@ -72,4 +75,85 @@ func CreateUser(user dto.UserCreateDto) e.ApiError {
 		return err1
 	}
 	return nil
+}
+
+// Login user
+
+func Login(user dto.UserLoginDto) (string, e.ApiError) {
+	userToLogin := usersClient.GetUserByUsername(user.Username)
+
+	if userToLogin.IdUser == 0 {
+		return "", e.NewBadRequestApiError("Invalid username")
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(userToLogin.Password), []byte(user.Password))
+
+	if err != nil {
+		return "", e.NewBadRequestApiError("Invalid password")
+	}
+
+	token, err1 := createToken(userToLogin.IdUser)
+
+	if err1 != nil {
+		return "", err1
+	}
+
+	return token, nil
+}
+
+// create token
+func createToken(id int) (string, e.ApiError) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  id,
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte("fremico"))
+
+	if err != nil {
+		return "", e.NewInternalServerApiError("Error creating token", err)
+	}
+
+	return tokenString, nil
+}
+
+func validateToken(tokenString string) (int, e.ApiError) {
+
+	log.Print("Token: ", tokenString)
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte("fremico"), nil
+	})
+
+	if err != nil {
+		return 0, e.NewBadRequestApiError("Invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	log.Print("Claims: ", claims)
+
+	if !ok {
+		return 0, e.NewBadRequestApiError("Invalid token")
+	}
+
+	id := int(claims["id"].(float64))
+
+	return id, nil
+}
+
+func GetUsersByToken(token string) (dto.UserMinDto, e.ApiError) {
+	id, err := validateToken(token)
+
+	if err != nil {
+		return dto.UserMinDto{}, err
+	}
+
+	user, err1 := UsersService.GetUserById(id)
+
+	if err1 != nil {
+		return dto.UserMinDto{}, err1
+	}
+
+	return user, nil
 }
