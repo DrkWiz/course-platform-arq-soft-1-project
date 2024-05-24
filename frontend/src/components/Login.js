@@ -9,12 +9,13 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const response = await fetch("http://localhost:5000/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+      method: "POST", // Método POST para enviar datos al servidor de forma segura (no se ven en la URL) 
+      headers: { // Cabeceras para indicar que se envía un JSON y no un formulario normal (application/json) 
+        "Content-Type": "application/json", // Tipo de contenido que se envía en el cuerpo de la petición 
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password }), // Convertir los datos a un JSON 
     });
 
     if (response.ok) {
@@ -24,6 +25,27 @@ function Login() {
       alert("Login incorrecto");
     }
   };
+
+
+  /* const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = { username, password };
+    console.log(JSON.stringify(data)); // Imprimir el JSON en la consola
+  
+    const response = await fetch("http://localhost:5000/user/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      alert("Login exitoso");
+      navigate('/app'); // Redirigir al menú de inicio
+    } else {
+      alert("Login incorrecto");
+    }
+  }; */
 
   return (
     <div className="Login">
