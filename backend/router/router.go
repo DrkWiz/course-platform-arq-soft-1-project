@@ -1,6 +1,7 @@
 package router
 
 import (
+	"backend/controllers/category"
 	"backend/controllers/courses"
 	"backend/controllers/users"
 
@@ -8,7 +9,19 @@ import (
 )
 
 func MapUrls(engine *gin.Engine) {
-	engine.POST("/users/login", users.Login)
 
-	engine.POST("/courses/create", courses.CreateCourse)
+	engine.GET("/users/:id", users.GetUserById)
+	engine.POST("/users", users.CreateUser)
+	//engine.PUT("/users/:id", users.UpdateUser)
+
+	engine.GET("/courses/:id", courses.GetCourseById)
+	engine.POST("/courses", courses.CreateCourse)
+	engine.PUT("/courses/update/:id", courses.UpdateCourse)
+
+	engine.PUT("/courses/delete/:id", courses.DeleteCourse)
+	//engine.PUT("/courses/:id", courses.UpdateCourse)
+
+	engine.GET("/category/:id", category.GetCategoryById)
+	engine.POST("/category", category.CreateCategory)
+
 }

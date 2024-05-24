@@ -1,18 +1,53 @@
 package users
 
 import (
-	usersDomain "backend/domain/users"
+	"backend/dto"
 	usersService "backend/services/users"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+
+	log "github.com/sirupsen/logrus"
 )
 
-func Login(c *gin.Context) {
-	//validate with db
+// Get Student by ID
 
-	var loginRequest usersDomain.LoginRequest
-	c.BindJSON(&loginRequest)
-	response := usersService.Login(loginRequest)
+func GetUserById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	log.Print("GetUserById: ", id)
+
+	response, err1 := usersService.UsersService.GetUserById(id)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
 	c.JSON(http.StatusOK, response)
+}
+
+//Create new user
+
+func CreateUser(c *gin.Context) {
+	var user dto.UserCreateDto
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err1 := usersService.CreateUser(user)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, "User created")
 }

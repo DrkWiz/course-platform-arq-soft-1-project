@@ -1,10 +1,85 @@
 package courses
 
-import coursesDomain "backend/domain/courses"
+import (
+	courseClient "backend/clients/course"
 
-func CreateCourse(request coursesDomain.CourseCreateRequest) coursesDomain.CreateCourseResponse {
+	"backend/dto"
 
-	//create in db
+	courseModel "backend/model/courses"
 
-	return coursesDomain.CreateCourseResponse{ID: 1, Name: request.Name, Description: request.Description, Price: request.Price, ClassAmount: request.ClassAmount, StartDate: request.StartDate, EndDate: request.EndDate}
+	e "backend/utils/errors"
+
+	log "github.com/sirupsen/logrus"
+)
+
+type coursesService struct{}
+
+type coursesServiceInterface interface {
+	GetCourseById(id int) (dto.CourseMinDto, e.ApiError)
+}
+
+var (
+	CoursesService coursesServiceInterface
+)
+
+func init() {
+	CoursesService = &coursesService{}
+}
+
+func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
+
+	log.Print("GetCourseById: ", id)
+
+	var course courseModel.Course = courseClient.GetCourseById(id)
+	var CourseMinDto dto.CourseMinDto
+
+	CourseMinDto.IdCourse = course.IdCourse
+	CourseMinDto.Name = course.Name
+	CourseMinDto.Description = course.Description
+	CourseMinDto.Price = course.Price
+	CourseMinDto.Picture_path = course.Picture_path
+	CourseMinDto.Start_date = course.Start_date
+	CourseMinDto.End_date = course.End_date
+
+	return CourseMinDto, nil
+}
+
+//Create course
+
+func CreateCourse(course dto.CourseCreateDto) error {
+
+	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, Picture_path: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user}
+
+	err := courseClient.CreateCourse(courseToCreate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+// Update a course.
+
+func UpdateCourse(id int, course dto.CourseUpdateDto) e.ApiError {
+	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, Picture_path: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user, IsActive: true}
+
+	err := courseClient.UpdateCourse(courseToUpdate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Soft delete course
+
+func DeleteCourse(id int) error {
+
+	err := courseClient.DeleteCourse(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
