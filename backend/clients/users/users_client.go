@@ -2,6 +2,7 @@ package users
 
 import (
 	userModel "backend/model/users"
+	userCoursesModel "backend/model/users/user_courses"
 
 	e "backend/utils/errors"
 
@@ -44,4 +45,12 @@ func GetUserByUsername(username string) userModel.User {
 	var user userModel.User
 	Db.Where("username = ?", username).First(&user)
 	return user
+}
+
+//UserCourses
+
+func GetUserCourses(id int) []userCoursesModel.UserCourses {
+	var usercourses []userCoursesModel.UserCourses
+	Db.Where("id_user = ?", id).Find(&usercourses)
+	return usercourses
 }

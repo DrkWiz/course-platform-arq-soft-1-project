@@ -83,3 +83,25 @@ func GetUsersByToken(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+// UserCourses
+
+func GetUserCourses(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	log.Print("GetUserCourses: ", id)
+
+	response, err1 := usersService.GetUserCourses(id)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}

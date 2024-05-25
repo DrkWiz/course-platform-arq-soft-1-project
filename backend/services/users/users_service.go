@@ -157,3 +157,26 @@ func GetUsersByToken(token string) (dto.UserMinDto, e.ApiError) {
 
 	return user, nil
 }
+
+// usercourses
+func GetUserCourses(id int) (dto.UserCoursesMinDto, e.ApiError) {
+	usercourses := usersClient.GetUserCourses(id)
+
+	var userCoursesMinDto dto.UserCoursesMinDto
+
+	for _, usercourse := range usercourses {
+		var userCourseMinDto dto.UserCourseMinDto
+
+		// Mapping fields from UserCourses to UserCourseMinDto
+		userCourseMinDto.IdUser = usercourse.IdUser
+		userCourseMinDto.IdCourse = usercourse.IdCourse
+		// Converting float64 to int for Rating if needed
+		userCourseMinDto.Rating = int(usercourse.Rating)
+		userCourseMinDto.Comment = usercourse.Comment
+
+		// Appending the mapped dto to the slice
+		userCoursesMinDto = append(userCoursesMinDto, userCourseMinDto)
+	}
+
+	return userCoursesMinDto, nil
+}
