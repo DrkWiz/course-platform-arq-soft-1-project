@@ -186,3 +186,29 @@ func GetUserCourses(id int) (dto.UserCoursesMinDto, e.ApiError) {
 
 	return userCoursesMinDto, nil
 }
+
+// Inscribir usuario a curso
+
+func AddUserCourse(id int, token string) e.ApiError {
+	idCourse := id
+	idUser, err := validateToken(token)
+
+	if err != nil {
+		return err
+	}
+
+	// Check if user is already enrolled in the course
+	if usersClient.CheckUserCourse(idUser, idCourse) {
+		err := e.NewBadRequestApiError("User is already enrolled in this course")
+		return err
+	}
+
+	userCourse := usersModel.UserCourses{IdUser: idUser, IdCourse: idCourse, Rating: 0, Comment: ""}
+	err1 := usersClient.AddUserCourse(userCourse)
+
+	if err1 != nil {
+		return err
+	}
+
+	return nil
+}

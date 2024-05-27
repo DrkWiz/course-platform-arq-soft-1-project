@@ -23,6 +23,7 @@ func MapUrls(engine *gin.Engine) {
 	//engine.PUT("/courses/:id", courses.UpdateCourse)
 
 	engine.GET("/users/courses/:id", users.GetUserCourses)
+	engine.POST("/users/courses/:id", users.AddUserCourse)
 
 	engine.GET("/category/:id", category.GetCategoryById)
 	engine.POST("/category", category.CreateCategory)

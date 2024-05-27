@@ -5,6 +5,7 @@ import (
 	usersService "backend/services/users"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -104,4 +105,32 @@ func GetUserCourses(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// Inscribir a un usuario a un curso
+
+func AddUserCourse(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	if strings.Split(token, " ")[0] != "Bearer" {
+		c.JSON(http.StatusForbidden, "Forbidden")
+		return
+	}
+
+	token = strings.Split(token, " ")[1]
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	err1 := usersService.AddUserCourse(id, token)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusCreated, "User added to course")
 }

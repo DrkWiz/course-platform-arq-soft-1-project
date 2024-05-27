@@ -2,7 +2,6 @@ package users
 
 import (
 	userModel "backend/model/users"
-	userCoursesModel "backend/model/users/user_courses"
 
 	e "backend/utils/errors"
 
@@ -41,6 +40,12 @@ func CheckEmail(email string) bool {
 	return user.Username != ""
 }
 
+func CheckUserCourse(idUser int, idCourse int) bool {
+	var userCourse userModel.UserCourses
+	Db.Where("id_user = ? AND id_course = ?", idUser, idCourse).First(&userCourse)
+	return userCourse.IdUser != 0
+}
+
 func GetUserByUsername(username string) userModel.User {
 	var user userModel.User
 	Db.Where("username = ?", username).First(&user)
@@ -49,8 +54,18 @@ func GetUserByUsername(username string) userModel.User {
 
 //UserCourses
 
-func GetUserCourses(id int) []userCoursesModel.UserCourses {
-	var usercourses []userCoursesModel.UserCourses
+func GetUserCourses(id int) []userModel.UserCourses {
+	var usercourses []userModel.UserCourses
 	Db.Where("id_user = ?", id).Find(&usercourses)
 	return usercourses
+}
+
+// Agregar un user-course
+
+func AddUserCourse(userCourse userModel.UserCourses) e.ApiError {
+	err := Db.Create(&userCourse).Error
+	if err != nil {
+		return e.NewInternalServerApiError("Error creating user-course", err)
+	}
+	return nil
 }

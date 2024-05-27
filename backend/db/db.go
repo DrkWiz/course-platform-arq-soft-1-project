@@ -9,7 +9,6 @@ import (
 	courseModel "backend/model/courses"
 
 	userModel "backend/model/users"
-	userCourseModel "backend/model/users/user_courses"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -23,10 +22,10 @@ var (
 
 func init() {
 	// DB Connections Paramters
-	DBName := "test_db"   //Nombre de la base de datos local de ustedes
-	DBUser := "root"      //usuario de la base de datos, habitualmente root
-	DBPass := "pass"      //password del root en la instalacion
-	DBHost := "127.0.0.1" //host de la base de datos. hbitualmente 127.0.0.1
+	DBName := "test_db"         //Nombre de la base de datos local de ustedes
+	DBUser := "root"            //usuario de la base de datos, habitualmente root
+	DBPass := "amoamifamilia99" //password del root en la instalacion
+	DBHost := "127.0.0.1"       //host de la base de datos. hbitualmente 127.0.0.1
 	// ------------------------
 
 	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3306)/"+DBName+"?charset=utf8&parseTime=True")
@@ -51,7 +50,7 @@ func StartDbEngine() {
 	db.AutoMigrate(&categoryModel.Category{})
 	db.AutoMigrate(&courseModel.Course{})
 	db.AutoMigrate(&courseModel.CourseCategory{})
-	db.AutoMigrate(&userCourseModel.UserCourses{})
+	db.AutoMigrate(&userModel.UserCourses{})
 
 	log.Info("Finishing Migration Database Tables")
 }
