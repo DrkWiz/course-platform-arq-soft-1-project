@@ -5,6 +5,7 @@ type UserCourseMinDto struct {
 	IdCourse int    `json:"id_course"`
 	Rating   int    `json:"rating"`
 	Comment  string `json:"comment"`
+	IsActive bool   `json:"is_active"`
 }
 
 type UserCoursesMinDto []UserCourseMinDto

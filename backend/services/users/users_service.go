@@ -1,6 +1,7 @@
 package users
 
 import (
+	courseClient "backend/clients/course"
 	usersClient "backend/clients/users"
 	"time"
 
@@ -137,6 +138,10 @@ func validateToken(tokenString string) (int, e.ApiError) {
 		return 0, e.NewBadRequestApiError("Invalid token")
 	}
 
+	if claims["exp"].(float64) < float64(time.Now().Unix()) {
+		return 0, e.NewBadRequestApiError("Token expired")
+	}
+
 	id := int(claims["id"].(float64))
 
 	return id, nil
@@ -174,6 +179,7 @@ func GetUserCourses(id int) (dto.UserCoursesMinDto, e.ApiError) {
 		userCourseMinDto.Rating = int(usercourse.Rating)
 		userCourseMinDto.Comment = usercourse.Comment
 
+		userCourseMinDto.IsActive = courseClient.GetCourseById(usercourse.IdCourse).IsActive
 		// Appending the mapped dto to the slice
 		userCoursesMinDto = append(userCoursesMinDto, userCourseMinDto)
 	}
