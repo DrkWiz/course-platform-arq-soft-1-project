@@ -1,8 +1,8 @@
 package db
 
 import (
+	categoryClient "backend/clients/category"
 	courseClient "backend/clients/course"
-
 	userClient "backend/clients/users"
 
 	categoryModel "backend/model/category"
@@ -41,6 +41,7 @@ func init() {
 
 	courseClient.Db = db
 	userClient.Db = db
+	categoryClient.Db = db
 
 }
 

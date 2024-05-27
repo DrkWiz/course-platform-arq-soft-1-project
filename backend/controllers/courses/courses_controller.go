@@ -41,11 +41,17 @@ func CreateCourse(c *gin.Context) {
 		return
 	}
 
-	coursesService.CreateCourse(course)
+	err := coursesService.CreateCourse(course)
+
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
 	c.JSON(http.StatusOK, "Course created")
 }
 
-// Update course
+// Update course.
+// TODO: Verificar token
 
 func UpdateCourse(c *gin.Context) {
 	var course dto.CourseUpdateDto
@@ -73,6 +79,7 @@ func UpdateCourse(c *gin.Context) {
 }
 
 //Soft delete course
+// TODO: Verificar token
 
 func DeleteCourse(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))

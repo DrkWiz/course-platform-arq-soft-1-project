@@ -38,7 +38,13 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
-	categoryService.CreateCategory(category)
+	log.Println("Category: ", category)
+
+	err := categoryService.CreateCategory(category)
+
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
 	c.JSON(http.StatusOK, "Category created")
-	//lpm!
 }

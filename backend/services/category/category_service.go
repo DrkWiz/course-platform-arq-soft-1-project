@@ -39,9 +39,11 @@ func (s *categoryService) GetCategoryById(id int) (dto.CategoryMinDto, e.ApiErro
 	return CategoryMinDto, nil
 }
 
-func CreateCategory(category dto.CategoryCreateDto) error {
+func CreateCategory(category dto.CategoryCreateDto) e.ApiError {
 
 	categoryToCreate := categoryModel.Category{Name: category.Name}
+
+	log.Println("Category to create: ", categoryToCreate)
 
 	err := categoryClient.CreateCategory(categoryToCreate)
 
