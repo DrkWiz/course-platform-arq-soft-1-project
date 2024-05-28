@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Para redirigir
-import "./SignIn.css";
+import "./SignUp.css";
 
-function SignIn() {
+function SignUp() {
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -99,4 +99,4 @@ function SignIn() {
     );
     }
 
-export default SignIn; // Exportar el componente SignIn para poder usarlo en otros archivos
+export default SignUp; // Exportar el componente SignIn para poder usarlo en otros archivos
