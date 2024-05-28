@@ -24,7 +24,7 @@ const Hero = () => {
         <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-[3.875rem] md:mb-20 lg:mb-[6.25rem]">
          
 <h1 className="h1 mb-6">
-Explore the Posibilities of FREMICOurse learning
+Explore the Posibilities  of &nbsp;FREMICOurse&nbsp; learning
 <span className="inline-block relative">FREMICOurse <img src={curve}className="absolute top-full left-0 w-full xl:-mt-2" width={624} height={28} alt="Curve"/>
 </span>
 
@@ -62,7 +62,7 @@ Explore the Posibilities of FREMICOurse learning
                 <ScrollParallax isAbsolutelyPositioned>
                   <Notification
                     className="hidden absolute -right-[5.5rem] bottom-[11rem] w-[18rem] xl:flex"
-                    title="Code generation"
+                    title="AI Course"
                   />
                 </ScrollParallax>
               </div>
