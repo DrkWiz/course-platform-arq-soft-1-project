@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Para redirigir
+import HeadBar from './HeadBar';
 import "./login.css";
+import logo from "../logo.svg";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -26,6 +28,21 @@ function Login() {
     }
   };
 
+  const handleLogoClick = () => {
+    navigate('/')
+  };
+
+  const buttons = [
+    { 
+      label: 'Botón 1', 
+      onClick: () => {
+        navigate('/signup'); // Navegar a SignUp
+      } 
+    },
+    { label: 'Botón 2', onClick: () => {} },
+    // agregar botones según sea necesario
+  ];
+
 
   /* const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,6 +66,7 @@ function Login() {
 
   return (
     <div className="Login">
+      <HeadBar logo={logo} buttons={buttons} onLogoClick={handleLogoClick} />
       <form onSubmit={handleSubmit}>
         <input
           type="text"
