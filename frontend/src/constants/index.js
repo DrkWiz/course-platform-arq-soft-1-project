@@ -40,12 +40,12 @@ import {
     {
       id: "0",
       title: "Features",
-      url: "#features",
+      url: "/#features",
     },
     {
       id: "1",
       title: "Pricing",
-      url: "#pricing",
+      url: "/#pricing",
     },
    
     {
@@ -57,7 +57,7 @@ import {
     {
       id: "5",
       title: "Sign in",
-      url: "#login",
+      url: "/login",
       onlyMobile: true,
     },
   ];
