@@ -14,6 +14,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowHeaders = []string{"Origin", "Content-Type"}
+	config.AllowCredentials = true
 	engine.Use(cors.New(config))
 	router.MapUrls(engine)
 	engine.Run(":8080")
