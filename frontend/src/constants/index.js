@@ -61,6 +61,38 @@ import {
       onlyMobile: true,
     },
   ];
+
+  export const loggedInNavigation = [
+    {
+        id: "0",
+        title: "Home",
+        url: "/mainmenu",
+        },
+
+    {
+        id: "1",
+        title: "My Courses",
+        url: "/mycourses",
+        },
+
+    {
+        id: "2",
+        title: "My Profile",
+        url: "/profile",
+        },
+    {
+        id: "3",
+        title: "Log out",
+        url: "/",
+    },
+
+  ];
+
+  export const loggedInActions = [
+    { id: '1', url: '/dashboard', title: 'Dashboard' },
+    { id: '2', url: '/profile', title: 'Profile' },
+    { id: '3', url: '/settings', title: 'Settings' },
+  ];
   
   export const heroIcons = [homeSmile, file02, searchMd, plusSquare];
   

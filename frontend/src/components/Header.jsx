@@ -1,7 +1,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { brainwave } from "../assets";
-import { navigation } from "../constants";
+import { navigation, loggedInNavigation } from "../constants";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
@@ -10,6 +10,7 @@ import { useState } from "react";
 const Header = () => {
   const location = useLocation();
   const [openNavigation, setOpenNavigation] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Add login state
 
   const toggleNavigation = () => {
     if (openNavigation) {
@@ -26,6 +27,20 @@ const Header = () => {
 
     enablePageScroll();
     setOpenNavigation(false);
+  };
+
+  const handleLogout = () => {
+    // Implement logout functionality
+      // Clear authentication tokens
+      localStorage.removeItem("authToken"); // or sessionStorage.removeItem("authToken");
+    
+      // Update login state
+      setIsLoggedIn(false);
+  
+      // Redirect to login page
+      history.push("/login");
+    setIsLoggedIn(false);
+    // Additional logout logic here
   };
 
   return (
@@ -45,7 +60,7 @@ const Header = () => {
           } fixed top-[5rem] left-0 right-0 bottom-0 bg-n-8 lg:static lg:flex lg:mx-auto lg:bg-transparent`}
         >
           <div className="relative z-2 flex flex-col items-center justify-center m-auto lg:flex-row">
-            {navigation.map((item) => (
+            {(isLoggedIn ? loggedInNavigation : navigation).map((item) => (
               <a
                 key={item.id}
                 href={item.url}
@@ -66,18 +81,27 @@ const Header = () => {
           <HamburgerMenu />
         </nav>
 
-        <Link to="/register" className="hidden lg:flex">
-        <a
-          className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block"
-        >
-          New account
-        </a>
-        </Link>
-        <Link to="/login" className="hidden lg:flex">
-          <Button>
-            Sign in
-          </Button>
-        </Link>
+        {isLoggedIn ? (
+          <>
+            <a
+              onClick={handleLogout}
+              className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
+            >
+              Log out
+            </a>
+          </>
+        ) : (
+          <>
+            <Link to="/register" className="hidden lg:flex">
+              <a className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
+                New account
+              </a>
+            </Link>
+            <Link to="/login" className="hidden lg:flex">
+              <Button>Sign in</Button>
+            </Link>
+          </>
+        )}
 
         <Button
           className="ml-auto lg:hidden"
