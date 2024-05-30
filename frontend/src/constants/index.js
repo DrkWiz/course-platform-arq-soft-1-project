@@ -51,7 +51,7 @@ import {
     {
       id: "4",
       title: "New account",
-      url: "#signup",
+      url: "/register",
       onlyMobile: true,
     },
     {

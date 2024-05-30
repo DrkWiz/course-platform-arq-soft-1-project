@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Pricing from './components/Pricing';
 import Login from './components/Login';
+import Register from './components/Register';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           </>
         } />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
       <Footer />
       <ButtonGradient />
