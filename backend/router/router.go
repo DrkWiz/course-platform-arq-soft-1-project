@@ -4,28 +4,28 @@ import (
 	"backend/controllers/category"
 	"backend/controllers/courses"
 	"backend/controllers/users"
+	"backend/services/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func MapUrls(engine *gin.Engine) {
-
-	engine.GET("/users/:id", users.GetUserById)
+	// Public routes
 	engine.POST("/users", users.CreateUser)
 	engine.POST("/users/login", users.Login)
-	engine.GET("/users/token/:token", users.GetUsersByToken)
-	//engine.PUT("/users/:id", users.UpdateUser)
-
 	engine.GET("/courses/:id", courses.GetCourseById)
-	engine.POST("/courses", courses.CreateCourse)
-	engine.PUT("/courses/update/:id", courses.UpdateCourse)
-	engine.PUT("/courses/delete/:id", courses.DeleteCourse)
-	//engine.PUT("/courses/:id", courses.UpdateCourse)
-
-	engine.GET("/users/courses/:id", users.GetUserCourses)
-	engine.POST("/users/courses/:id", users.AddUserCourse)
-
 	engine.GET("/category/:id", category.GetCategoryById)
-	engine.POST("/category", category.CreateCategory)
 
+	// Protected routes
+	protected := engine.Group("/")
+	protected.Use(middleware.AuthMiddleware())
+
+	protected.GET("/users/me", users.GetUsersByToken)
+	protected.GET("/users/:id", users.GetUserById)
+	protected.GET("/users/courses/:id", users.GetUserCourses)
+	protected.POST("/users/courses/:id", users.AddUserCourse)
+	protected.POST("/courses", courses.CreateCourse)
+	protected.PUT("/courses/update/:id", courses.UpdateCourse)
+	protected.PUT("/courses/delete/:id", courses.DeleteCourse)
+	protected.POST("/category", category.CreateCategory)
 }

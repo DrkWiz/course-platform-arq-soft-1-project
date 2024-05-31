@@ -11,10 +11,15 @@ import (
 func main() {
 	db.StartDbEngine()
 	engine := gin.New()
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowHeaders = []string{"Origin", "Content-Type"}
-	config.AllowCredentials = true
+
+	// Update CORS configuration
+	config := cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Include Authorization here
+		AllowCredentials: true,
+	}
+
 	engine.Use(cors.New(config))
 	router.MapUrls(engine)
 	engine.Run(":8080")

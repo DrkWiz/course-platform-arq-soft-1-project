@@ -118,8 +118,7 @@ func createToken(id int) (string, e.ApiError) {
 	return tokenString, nil
 }
 
-func validateToken(tokenString string) (int, e.ApiError) {
-
+func ValidateToken(tokenString string) (int, e.ApiError) {
 	log.Print("Token: ", tokenString)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -134,11 +133,11 @@ func validateToken(tokenString string) (int, e.ApiError) {
 
 	log.Print("Claims: ", claims)
 
-	if !ok {
+	if !ok || !token.Valid {
 		return 0, e.NewBadRequestApiError("Invalid token")
 	}
 
-	if claims["exp"].(float64) < float64(time.Now().Unix()) {
+	if float64(time.Now().Unix()) > claims["exp"].(float64) {
 		return 0, e.NewBadRequestApiError("Token expired")
 	}
 
@@ -148,7 +147,7 @@ func validateToken(tokenString string) (int, e.ApiError) {
 }
 
 func GetUsersByToken(token string) (dto.UserMinDto, e.ApiError) {
-	id, err := validateToken(token)
+	id, err := ValidateToken(token)
 
 	if err != nil {
 		return dto.UserMinDto{}, err
@@ -191,7 +190,7 @@ func GetUserCourses(id int) (dto.UserCoursesMinDto, e.ApiError) {
 
 func AddUserCourse(id int, token string) e.ApiError {
 	idCourse := id
-	idUser, err := validateToken(token)
+	idUser, err := ValidateToken(token)
 
 	if err != nil {
 		return err
