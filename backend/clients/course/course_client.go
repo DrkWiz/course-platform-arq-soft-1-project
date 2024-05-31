@@ -50,6 +50,6 @@ func DeleteCourse(id int) error {
 
 func GetCategoriesByCourseId(id int) categoryModel.Categories {
 	var categories []categoryModel.Category
-	Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_category WHERE id_course = ?)", id).Scan(&categories)
+	Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories)
 	return categories
 }
