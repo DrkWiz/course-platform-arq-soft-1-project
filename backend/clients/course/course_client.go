@@ -1,6 +1,7 @@
 package course
 
 import (
+	categoryModel "backend/model/category"
 	courseModel "backend/model/courses"
 
 	e "backend/utils/errors"
@@ -45,4 +46,10 @@ func DeleteCourse(id int) error {
 		return err
 	}
 	return nil
+}
+
+func GetCategoriesByCourseId(id int) categoryModel.Categories {
+	var categories []categoryModel.Category
+	Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories)
+	return categories
 }

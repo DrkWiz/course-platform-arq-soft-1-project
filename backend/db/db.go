@@ -22,10 +22,18 @@ var (
 
 func init() {
 	// DB Connections Paramters
+<<<<<<< HEAD
 	DBName := "test_db"   //Nombre de la base de datos local de ustedes
 	DBUser := "root"      //usuario de la base de datos, habitualmente root
 	DBPass := "yolo1234"  //password del root en la instalacion
 	DBHost := "localhost" //host de la base de datos. hbitualmente 127.0.0.1
+=======
+	DBName := "test_db"         //Nombre de la base de datos local de ustedes
+	DBUser := "root"            //usuario de la base de datos, habitualmente root
+	DBPass := "ñasldfoaidjfsad" //password del root en la instalacion
+	DBHost := "127.0.0.1"       //host de la base de datos. hbitualmente 127.0.0.1
+	// ------------------------
+>>>>>>> b66057961739bdf0fc1b5524db6c8e44c9242ebd
 
 	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3306)/"+DBName+"?charset=utf8&parseTime=True")
 

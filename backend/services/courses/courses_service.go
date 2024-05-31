@@ -37,7 +37,7 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 	CourseMinDto.Name = course.Name
 	CourseMinDto.Description = course.Description
 	CourseMinDto.Price = course.Price
-	CourseMinDto.Picture_path = course.Picture_path
+	CourseMinDto.Picture_path = course.PicturePath
 	CourseMinDto.Start_date = course.Start_date
 	CourseMinDto.End_date = course.End_date
 
@@ -48,7 +48,7 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 
 func CreateCourse(course dto.CourseCreateDto) error {
 
-	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, Picture_path: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user}
+	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user}
 
 	err := courseClient.CreateCourse(courseToCreate)
 	if err != nil {
@@ -62,7 +62,7 @@ func CreateCourse(course dto.CourseCreateDto) error {
 // Update a course.
 
 func UpdateCourse(id int, course dto.CourseUpdateDto) e.ApiError {
-	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, Picture_path: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user, IsActive: true}
+	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user, IsActive: true}
 
 	err := courseClient.UpdateCourse(courseToUpdate)
 	if err != nil {
