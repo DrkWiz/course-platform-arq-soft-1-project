@@ -25,6 +25,7 @@ const Profile = ({setIsLoggedIn}) => {
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
                     setUser(data);
                 } else {
                     console.error("Failed to fetch user data");
@@ -55,7 +56,8 @@ const Profile = ({setIsLoggedIn}) => {
         <p> {user.name}</p>
         <p>{user.username}!</p>
         <p>{user.email}</p>
-        {user.is_admin ? <p>Admin</p> : <p>Normal User</p>}
+        
+        {user.is_admin ?  <p>Admin</p> : <p>Normal User</p>}
       
   </div>
     </div>
