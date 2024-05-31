@@ -172,3 +172,55 @@ func GetUserCoursesByToken(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func GetIsAdmin(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
+	response, err := usersService.GetIsAdmin(token)
+
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// Remove user from usercourse
+
+func UnsubscribeUserCourse(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	if strings.Split(token, " ")[0] != "Bearer" {
+		c.JSON(http.StatusForbidden, "Forbidden")
+		return
+	}
+
+	token = strings.Split(token, " ")[1]
+	courseId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	err1 := usersService.UnsubscribeUserCourse(courseId, token)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusCreated, "User removed from course")
+}

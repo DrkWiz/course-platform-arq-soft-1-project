@@ -38,7 +38,9 @@ func (s *usersService) GetUserById(id int) (dto.UserMinDto, e.ApiError) {
 
 	UserMinDto.IdUser = user.IdUser
 	UserMinDto.Username = user.Username
+	UserMinDto.Name = user.Name
 	UserMinDto.Email = user.Email
+	UserMinDto.IsAdmin = user.IsAdmin
 
 	return UserMinDto, nil
 }
@@ -215,29 +217,32 @@ func AddUserCourse(id int, token string) e.ApiError {
 // Falta manejo de errores.
 
 func GetUserCoursesByToken(token string) (dto.UsersCoursesTokenDto, e.ApiError) {
-	id, err := ValidateToken(token)
+	id, err := ValidateToken(token) // Valida el token y devuelve id.
 
 	if err != nil {
 		return nil, err
 	}
 
-	userCourses := usersClient.GetUserCourses(id)
+	userCourses := usersClient.GetUserCourses(id) // Devuelve array de tabla user_courses.
 	userCoursesDto := dto.UsersCoursesTokenDto{}
 
-	for _, userCourse := range userCourses {
+	for _, userCourse := range userCourses { // Recorre el array de user_courses.
 		var userCourseDto dto.UserCourseTokenDto
 
 		userCourseDto.IdUser = userCourse.IdUser
 		userCourseDto.IdCourse = userCourse.IdCourse
-		userCourseDto.Price = courseClient.GetCourseById(userCourse.IdCourse).Price
-		userCourseDto.Name = courseClient.GetCourseById(userCourse.IdCourse).Name
-		userCourseDto.Description = courseClient.GetCourseById(userCourse.IdCourse).Description
-		userCourseDto.PicturePath = courseClient.GetCourseById(userCourse.IdCourse).PicturePath
-		userCourseDto.IsActive = courseClient.GetCourseById(userCourse.IdCourse).IsActive
+
+		tempCourse := courseClient.GetCourseById(userCourse.IdCourse) // Obtiene el curso de la db
+
+		userCourseDto.Price = tempCourse.Price
+		userCourseDto.Name = tempCourse.Name
+		userCourseDto.Description = tempCourse.Description
+		userCourseDto.PicturePath = tempCourse.PicturePath
+		userCourseDto.IsActive = tempCourse.IsActive
 
 		var categoriesDto dto.CategoriesTokenDto
 
-		for _, category := range courseClient.GetCategoriesByCourseId(userCourse.IdCourse) {
+		for _, category := range courseClient.GetCategoriesByCourseId(userCourse.IdCourse) { // Recorre las categorías de cada curso
 			var categoryDto dto.CategoryTokenDto
 
 			categoryDto.IdCategory = category.IdCategory
@@ -248,8 +253,38 @@ func GetUserCoursesByToken(token string) (dto.UsersCoursesTokenDto, e.ApiError) 
 
 		userCourseDto.Categories = categoriesDto
 
-		userCoursesDto = append(userCoursesDto, userCourseDto)
+		userCoursesDto = append(userCoursesDto, userCourseDto) // Se agrega al dto array para returnear
 	}
 
 	return userCoursesDto, nil
+}
+
+func GetIsAdmin(token string) (bool, e.ApiError) {
+	id, err := ValidateToken(token)
+
+	if err != nil {
+		return false, err
+	}
+
+	user := usersClient.GetUserById(id)
+
+	return user.IsAdmin, nil
+}
+
+// Remove user from usercourse
+
+func UnsubscribeUserCourse(courseId int, token string) e.ApiError {
+	idUser, err := ValidateToken(token)
+
+	if err != nil {
+		return err
+	}
+
+	err1 := usersClient.RemoveUserCourse(idUser, courseId)
+
+	if err1 != nil {
+		return err1
+	}
+
+	return nil
 }

@@ -10,6 +10,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import MyCourses from "./components/MyCourses";
 import MainMenu from './components/MainMenu';
+import Profile from './components/Profile';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/mycourses" element={<MyCourses />} />
         <Route path="/mainmenu" element={<MainMenu />} />
+        <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
       </Routes>
       <Footer />
       <ButtonGradient />

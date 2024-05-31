@@ -53,3 +53,18 @@ func GetCategoriesByCourseId(id int) categoryModel.Categories {
 	Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories)
 	return categories
 }
+
+func GetCourses() courseModel.Courses {
+	var courses []courseModel.Course
+	Db.Find(&courses)
+	return courses
+}
+
+func GetOwner(courseId int) (int, e.ApiError) {
+	var course courseModel.Course
+	err := Db.Where("id_course = ?", courseId).First(&course).Error
+	if err != nil {
+		return 0, e.NewNotFoundApiError("Course not found")
+	}
+	return course.Id_user, nil
+}
