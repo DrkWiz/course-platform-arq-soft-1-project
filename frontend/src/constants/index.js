@@ -214,3 +214,10 @@ import {
       url: "#",
     },
   ];
+
+  export const profile = {
+    backgroundUrl: "./src/assets/benefits/card-1.svg",
+
+    title: "Profile",
+
+  };

@@ -9,6 +9,7 @@ import Pricing from './components/Pricing';
 import Login from './components/Login';
 import Register from './components/Register';
 import MainMenu from './components/MainMenu';
+import Profile from './components/Profile';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,6 +42,7 @@ const App = () => {
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/mainmenu" element={<MainMenu />} />
+        <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
       </Routes>
       <Footer />
       <ButtonGradient />
