@@ -13,7 +13,7 @@ class MyCourses extends React.Component {
   componentDidMount() {
     const token = Cookies.get('token'); // Obtiene el token de la cookie
 
-    fetch('http://localhost:8080/coursesUser', {
+    fetch('http://localhost:8080/users/courses/:id', {
       headers: {
         'Authorization': `Bearer ${token}` // Envia el token en el header de la solicitud
       }
