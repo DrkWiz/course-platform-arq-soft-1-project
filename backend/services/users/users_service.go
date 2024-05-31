@@ -38,7 +38,9 @@ func (s *usersService) GetUserById(id int) (dto.UserMinDto, e.ApiError) {
 
 	UserMinDto.IdUser = user.IdUser
 	UserMinDto.Username = user.Username
+	UserMinDto.Name = user.Name
 	UserMinDto.Email = user.Email
+	UserMinDto.IsAdmin = user.IsAdmin
 
 	return UserMinDto, nil
 }
