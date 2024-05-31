@@ -2,8 +2,8 @@ package courses
 
 import (
 	courseClient "backend/clients/course"
-
 	"backend/dto"
+	usersService "backend/services/users"
 
 	courseModel "backend/model/courses"
 
@@ -101,4 +101,22 @@ func GetCourses() (dto.CoursesMaxDto, e.ApiError) {
 	}
 
 	return CoursesMaxDto, nil
+}
+
+// Check if token is the owner of the course
+
+func CheckOwner(token string, courseId int) (bool, e.ApiError) {
+	idToCheck, err := usersService.ValidateToken(token)
+
+	if err != nil {
+		return false, err
+	}
+
+	ownerId, err := courseClient.GetOwner(courseId)
+
+	if err != nil {
+		return false, err
+	}
+
+	return ownerId == idToCheck, nil
 }

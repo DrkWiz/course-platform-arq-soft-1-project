@@ -5,6 +5,9 @@ import (
 	coursesService "backend/services/courses"
 	"net/http"
 	"strconv"
+	"strings"
+
+	e "backend/utils/errors"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -96,6 +99,39 @@ func DeleteCourse(c *gin.Context) {
 
 func GetCourses(c *gin.Context) {
 	response, err1 := coursesService.GetCourses()
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// Check if the token is the owner of the course
+
+func CheckOwner(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
+	courseId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	response, err1 := coursesService.CheckOwner(token, courseId)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)

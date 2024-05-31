@@ -59,3 +59,12 @@ func GetCourses() courseModel.Courses {
 	Db.Find(&courses)
 	return courses
 }
+
+func GetOwner(courseId int) (int, e.ApiError) {
+	var course courseModel.Course
+	err := Db.Where("id_course = ?", courseId).First(&course).Error
+	if err != nil {
+		return 0, e.NewNotFoundApiError("Course not found")
+	}
+	return course.Id_user, nil
+}

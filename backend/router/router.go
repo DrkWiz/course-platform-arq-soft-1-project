@@ -28,6 +28,7 @@ func MapUrls(engine *gin.Engine) {
 	protected.GET("/users/courses/", users.GetUserCoursesByToken)
 	protected.POST("/users/courses/:id", users.AddUserCourse)
 	protected.POST("/courses", courses.CreateCourse)
+	protected.POST("/courses/:id/owner", courses.CheckOwner)
 	protected.PUT("/courses/update/:id", courses.UpdateCourse)
 	protected.PUT("/courses/delete/:id", courses.DeleteCourse)
 	protected.POST("/category", category.CreateCategory)
