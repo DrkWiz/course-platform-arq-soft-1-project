@@ -196,3 +196,31 @@ func GetIsAdmin(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+// Remove user from usercourse
+
+func UnsubscribeUserCourse(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	if strings.Split(token, " ")[0] != "Bearer" {
+		c.JSON(http.StatusForbidden, "Forbidden")
+		return
+	}
+
+	token = strings.Split(token, " ")[1]
+	courseId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	err1 := usersService.UnsubscribeUserCourse(courseId, token)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusCreated, "User removed from course")
+}

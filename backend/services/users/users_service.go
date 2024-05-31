@@ -270,3 +270,21 @@ func GetIsAdmin(token string) (bool, e.ApiError) {
 
 	return user.IsAdmin, nil
 }
+
+// Remove user from usercourse
+
+func UnsubscribeUserCourse(courseId int, token string) e.ApiError {
+	idUser, err := ValidateToken(token)
+
+	if err != nil {
+		return err
+	}
+
+	err1 := usersClient.RemoveUserCourse(idUser, courseId)
+
+	if err1 != nil {
+		return err1
+	}
+
+	return nil
+}
