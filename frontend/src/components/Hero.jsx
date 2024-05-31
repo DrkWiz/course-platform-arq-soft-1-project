@@ -62,7 +62,7 @@ Explore the Posibilities  of &nbsp;FREMICOurse&nbsp; learning
                 <ScrollParallax isAbsolutelyPositioned>
                   <Notification
                     className="hidden absolute -right-[5.5rem] bottom-[11rem] w-[18rem] xl:flex"
-                    title="AI Course"
+                    title="Course"
                   />
                 </ScrollParallax>
               </div>
