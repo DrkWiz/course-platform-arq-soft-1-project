@@ -9,6 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	e "backend/utils/errors"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -74,12 +76,23 @@ func Login(c *gin.Context) {
 }
 
 func GetUsersByToken(c *gin.Context) {
-	token := c.Param("token")
+	authHeader := c.GetHeader("Authorization")
 
-	response, err1 := usersService.GetUsersByToken(token)
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
 
-	if err1 != nil {
-		c.JSON(err1.Status(), err1)
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
+	response, err := usersService.GetUsersByToken(token)
+
+	if err != nil {
+		c.JSON(err.Status(), err)
 		return
 	}
 
