@@ -1,38 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import CourseUserBlock from './CourseUserBlock';
 import Cookies from 'js-cookie';
-import CourseBlock from './CourseBlock'; // Asegúrate de importar el componente CourseBlock
 
-class MyCourses extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      courses: [],
-    };
-  }
+const MyCourses = () => {
+    const [courses, setCourses] = useState([]);
 
-  componentDidMount() {
-    const token = Cookies.get('token'); // Obtiene el token de la cookie
+    useEffect(() => {
+        const token = Cookies.get('token');
 
-    fetch('http://localhost:8080/users/courses/:id', {
-      headers: {
-        'Authorization': `Bearer ${token}` // Envia el token en el header de la solicitud
-      }
-    })
-      .then(response => response.json())
-      .then(data => this.setState({ courses: data }));
-  }
+        fetch('http://localhost:8080/users/courses', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            setCourses(data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }, []);
 
-  render() {
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {this.state.courses.map((course) => (
-          <div key={course.id} style={{ flex: '0 0 50%' }}>
-            <CourseBlock course={course} />
-          </div>
-        ))}
-      </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+            {courses.map((course) => (
+                <CourseUserBlock
+                    key={course.id_course}
+                    name={course.name}
+                    pathphoto={course.picture_path}
+                    descripcion={course.description}
+                    categorys={course.categories.map(category => category.name)}
+                />
+            ))}
+        </div>
     );
-  }
-}
+};
 
 export default MyCourses;
