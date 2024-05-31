@@ -211,3 +211,45 @@ func AddUserCourse(id int, token string) e.ApiError {
 
 	return nil
 }
+
+// Falta manejo de errores.
+
+func GetUserCoursesByToken(token string) (dto.UsersCoursesTokenDto, e.ApiError) {
+	id, err := ValidateToken(token)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userCourses := usersClient.GetUserCourses(id)
+	userCoursesDto := dto.UsersCoursesTokenDto{}
+
+	for _, userCourse := range userCourses {
+		var userCourseDto dto.UserCourseTokenDto
+
+		userCourseDto.IdUser = userCourse.IdUser
+		userCourseDto.IdCourse = userCourse.IdCourse
+		userCourseDto.Price = courseClient.GetCourseById(userCourse.IdCourse).Price
+		userCourseDto.Name = courseClient.GetCourseById(userCourse.IdCourse).Name
+		userCourseDto.Description = courseClient.GetCourseById(userCourse.IdCourse).Description
+		userCourseDto.PicturePath = courseClient.GetCourseById(userCourse.IdCourse).PicturePath
+		userCourseDto.IsActive = courseClient.GetCourseById(userCourse.IdCourse).IsActive
+
+		var categoriesDto dto.CategoriesTokenDto
+
+		for _, category := range courseClient.GetCategoriesByCourseId(userCourse.IdCourse) {
+			var categoryDto dto.CategoryTokenDto
+
+			categoryDto.IdCategory = category.IdCategory
+			categoryDto.Name = category.Name
+
+			categoriesDto = append(categoriesDto, categoryDto)
+		}
+
+		userCourseDto.Categories = categoriesDto
+
+		userCoursesDto = append(userCoursesDto, userCourseDto)
+	}
+
+	return userCoursesDto, nil
+}
