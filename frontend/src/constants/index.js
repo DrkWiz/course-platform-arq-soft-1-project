@@ -80,12 +80,7 @@ import {
         title: "My Profile",
         url: "/profile",
         },
-    {
-        id: "3",
-        title: "Log out",
-        url: "/",
-    },
-
+    
   ];
 
   export const loggedInActions = [

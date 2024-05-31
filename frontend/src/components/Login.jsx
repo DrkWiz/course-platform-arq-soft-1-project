@@ -1,11 +1,26 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
 
-const Login = () => {
+const Login = ({setIsLoggedIn, isLoggedIn}) => {
+
+
+  if (isLoggedIn) {
+    return (
+      <Section className="-mt-[5.25rem]" customPaddings>
+        <div className="flex justify-center items-center h-screen">
+          <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
+            <div className="text-white text-2xl font-semibold">You are already logged in.</div>
+          </div>
+        </div>
+      </Section>
+    );
+  }
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,13 +34,14 @@ const Login = () => {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      console.log("Login successful", data);
-      // Handle successful login, e.g., store the token, redirect user, etc.
+      const token = await response.json();
+      console.log("Login successful", token); 
+      localStorage.setItem("token", token);
+      navigate("/mainmenu");
+      setIsLoggedIn(true);  
     } else {
       const errorData = await response.json();
       console.error("Login failed", errorData);
-      // Handle login failure, e.g., show an error message
     }
   };
 
@@ -35,7 +51,7 @@ const Login = () => {
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
           <form className="space-y-4 font-semibold" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="username" className="block text-withe">Username:</label>
+              <label htmlFor="username" className="block text-white">Username:</label>
               <InputField
                 type="text"
                 id="username"
@@ -46,7 +62,7 @@ const Login = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-withe">Password:</label>
+              <label htmlFor="password" className="block text-white">Password:</label>
               <InputField
                 type="password"
                 id="password"

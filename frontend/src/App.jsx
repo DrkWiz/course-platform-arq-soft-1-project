@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ButtonGradient from './assets/svg/ButtonGradient';
 import Benefits from './components/Benefits';
 import Footer from './components/Footer';
@@ -8,11 +9,28 @@ import Pricing from './components/Pricing';
 import Login from './components/Login';
 import Register from './components/Register';
 import MyCourses from "./components/MyCourses";
+import MainMenu from './components/MainMenu';
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+
   return (
     <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
-      <Header />
+      <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
         <Route path="/" element={
           <>
@@ -21,9 +39,10 @@ const App = () => {
             <Pricing />
           </>
         } />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/mycourses" element={<MyCourses />} />
+        <Route path="/mainmenu" element={<MainMenu />} />
       </Routes>
       <Footer />
       <ButtonGradient />

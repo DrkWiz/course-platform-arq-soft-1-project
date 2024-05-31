@@ -5,12 +5,15 @@ import { navigation, loggedInNavigation } from "../constants";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const Header = () => {
+const Header = ({ isLoggedIn, handleLogout }) => {
   const location = useLocation();
   const [openNavigation, setOpenNavigation] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Add login state
+
+  useEffect(() => {
+    // This effect will run when isLoggedIn changes, causing a re-render
+  }, [isLoggedIn]);
 
   const toggleNavigation = () => {
     if (openNavigation) {
@@ -27,20 +30,6 @@ const Header = () => {
 
     enablePageScroll();
     setOpenNavigation(false);
-  };
-
-  const handleLogout = () => {
-    // Implement logout functionality
-      // Clear authentication tokens
-      localStorage.removeItem("authToken"); // or sessionStorage.removeItem("authToken");
-    
-      // Update login state
-      setIsLoggedIn(false);
-  
-      // Redirect to login page
-      history.push("/login");
-    setIsLoggedIn(false);
-    // Additional logout logic here
   };
 
   return (
@@ -82,20 +71,18 @@ const Header = () => {
         </nav>
 
         {isLoggedIn ? (
-          <>
-            <a
-              onClick={handleLogout}
-              className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
-            >
-              Log out
-            </a>
-          </>
+          <a
+            onClick={handleLogout}
+            className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
+          >
+            Log out
+          </a>
         ) : (
           <>
             <Link to="/register" className="hidden lg:flex">
-              <a className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
+              <span className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
                 New account
-              </a>
+              </span>
             </Link>
             <Link to="/login" className="hidden lg:flex">
               <Button>Sign in</Button>
