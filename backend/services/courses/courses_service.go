@@ -37,9 +37,9 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 	CourseMinDto.Name = course.Name
 	CourseMinDto.Description = course.Description
 	CourseMinDto.Price = course.Price
-	CourseMinDto.Picture_path = course.PicturePath
-	CourseMinDto.Start_date = course.Start_date
-	CourseMinDto.End_date = course.End_date
+	CourseMinDto.PicturePath = course.PicturePath
+	CourseMinDto.StartDate = course.Start_date
+	CourseMinDto.EndDate = course.End_date
 
 	return CourseMinDto, nil
 }
@@ -82,4 +82,23 @@ func DeleteCourse(id int) error {
 	}
 
 	return nil
+}
+
+// Get all courses in DB
+
+func GetCourses() (dto.CoursesMaxDto, e.ApiError) {
+
+	courses := courseClient.GetCourses()
+	var CoursesMaxDto dto.CoursesMaxDto
+
+	for _, course := range courses {
+		CourseMaxDto := dto.CourseMaxDto{IdCourse: course.IdCourse, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.Start_date, EndDate: course.End_date, IsActive: course.IsActive}
+		tempCourses := courseClient.GetCategoriesByCourseId(course.IdCourse)
+		for _, category := range tempCourses {
+			CourseMaxDto.Categories = append(CourseMaxDto.Categories, dto.CategoryTokenDto{IdCategory: category.IdCategory, Name: category.Name})
+		}
+		CoursesMaxDto = append(CoursesMaxDto, CourseMaxDto)
+	}
+
+	return CoursesMaxDto, nil
 }

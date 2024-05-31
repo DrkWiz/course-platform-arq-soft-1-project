@@ -172,3 +172,27 @@ func GetUserCoursesByToken(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func GetIsAdmin(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
+	response, err := usersService.GetIsAdmin(token)
+
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}

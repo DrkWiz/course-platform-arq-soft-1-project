@@ -91,3 +91,16 @@ func DeleteCourse(c *gin.Context) {
 
 	c.JSON(http.StatusOK, "Course deleted")
 }
+
+// Get all courses in db
+
+func GetCourses(c *gin.Context) {
+	response, err1 := coursesService.GetCourses()
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
