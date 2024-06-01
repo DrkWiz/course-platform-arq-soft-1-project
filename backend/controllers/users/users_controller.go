@@ -2,7 +2,7 @@ package users
 
 import (
 	"backend/dto"
-	usersService "backend/services/users"
+	s "backend/services/users"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Get Student by ID
+// Get User by ID
 
 func GetUserById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -26,7 +26,7 @@ func GetUserById(c *gin.Context) {
 
 	log.Print("GetUserById: ", id)
 
-	response, err1 := usersService.UsersService.GetUserById(id)
+	response, err1 := s.UsersService.GetUserById(id)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
@@ -45,7 +45,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	err1 := usersService.CreateUser(user)
+	err1 := s.UsersService.CreateUser(user)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
@@ -59,19 +59,20 @@ func CreateUser(c *gin.Context) {
 
 func Login(c *gin.Context) {
 	var user dto.UserLoginDto
+
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Invalid JSON body"))
 		return
 	}
 
-	token, err1 := usersService.Login(user)
+	token, err1 := s.UsersService.Login(user)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
 		return
 	}
-	c.SetCookie("token", token, 3600, "/", "localhost", false, true)
 
+	c.SetCookie("token", token, 3600, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, token)
 }
 
@@ -89,7 +90,7 @@ func GetUsersByToken(c *gin.Context) {
 		return
 	}
 
-	response, err := usersService.GetUsersByToken(token)
+	response, err := s.UsersService.GetUsersByToken(token)
 
 	if err != nil {
 		c.JSON(err.Status(), err)
@@ -111,7 +112,7 @@ func GetUserCourses(c *gin.Context) {
 
 	log.Print("GetUserCourses: ", id)
 
-	response, err1 := usersService.GetUserCourses(id)
+	response, err1 := s.UsersService.GetUserCourses(id)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
@@ -127,7 +128,7 @@ func AddUserCourse(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 
 	if strings.Split(token, " ")[0] != "Bearer" {
-		c.JSON(http.StatusForbidden, "Forbidden")
+		c.JSON(http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
@@ -139,7 +140,7 @@ func AddUserCourse(c *gin.Context) {
 		return
 	}
 
-	err1 := usersService.AddUserCourse(id, token)
+	err1 := s.UsersService.AddUserCourse(id, token)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
@@ -163,7 +164,7 @@ func GetUserCoursesByToken(c *gin.Context) {
 		return
 	}
 
-	response, err := usersService.GetUserCoursesByToken(token)
+	response, err := s.UsersService.GetUserCoursesByToken(token)
 
 	if err != nil {
 		c.JSON(err.Status(), err)
@@ -173,7 +174,7 @@ func GetUserCoursesByToken(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func GetIsAdmin(c *gin.Context) {
+func CheckAdmin(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 
 	if authHeader == "" {
@@ -187,7 +188,7 @@ func GetIsAdmin(c *gin.Context) {
 		return
 	}
 
-	response, err := usersService.GetIsAdmin(token)
+	response, err := s.UsersService.CheckAdmin(token)
 
 	if err != nil {
 		c.JSON(err.Status(), err)
@@ -203,7 +204,7 @@ func UnsubscribeUserCourse(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 
 	if strings.Split(token, " ")[0] != "Bearer" {
-		c.JSON(http.StatusForbidden, "Forbidden")
+		c.JSON(http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
@@ -215,7 +216,7 @@ func UnsubscribeUserCourse(c *gin.Context) {
 		return
 	}
 
-	err1 := usersService.UnsubscribeUserCourse(courseId, token)
+	err1 := s.UsersService.UnsubscribeUserCourse(courseId, token)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)

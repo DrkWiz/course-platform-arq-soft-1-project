@@ -30,7 +30,12 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 
 	log.Print("GetCourseById: ", id)
 
-	var course courseModel.Course = courseClient.GetCourseById(id)
+	course, err := courseClient.GetCourseById(id)
+
+	if err != nil {
+		return dto.CourseMinDto{}, err
+	}
+
 	var CourseMinDto dto.CourseMinDto
 
 	CourseMinDto.IdCourse = course.IdCourse
@@ -40,6 +45,9 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 	CourseMinDto.PicturePath = course.PicturePath
 	CourseMinDto.StartDate = course.Start_date
 	CourseMinDto.EndDate = course.End_date
+	CourseMinDto.IsActive = course.IsActive
+
+	log.Println("CourseMinDto: ", CourseMinDto)
 
 	return CourseMinDto, nil
 }
@@ -93,9 +101,14 @@ func GetCourses() (dto.CoursesMaxDto, e.ApiError) {
 
 	for _, course := range courses {
 		CourseMaxDto := dto.CourseMaxDto{IdCourse: course.IdCourse, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.Start_date, EndDate: course.End_date, IsActive: course.IsActive}
-		tempCourses := courseClient.GetCategoriesByCourseId(course.IdCourse)
+		tempCourses, err := courseClient.GetCategoriesByCourseId(course.IdCourse)
+
+		if err != nil {
+			return nil, err
+		}
+
 		for _, category := range tempCourses {
-			CourseMaxDto.Categories = append(CourseMaxDto.Categories, dto.CategoryTokenDto{IdCategory: category.IdCategory, Name: category.Name})
+			CourseMaxDto.Categories = append(CourseMaxDto.Categories, dto.CategoryMaxDto{IdCategory: category.IdCategory, Name: category.Name})
 		}
 		CoursesMaxDto = append(CoursesMaxDto, CourseMaxDto)
 	}
@@ -106,7 +119,7 @@ func GetCourses() (dto.CoursesMaxDto, e.ApiError) {
 // Check if token is the owner of the course
 
 func CheckOwner(token string, courseId int) (bool, e.ApiError) {
-	idToCheck, err := usersService.ValidateToken(token)
+	idToCheck, err := usersService.UsersService.ValidateToken(token)
 
 	if err != nil {
 		return false, err

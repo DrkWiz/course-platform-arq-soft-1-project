@@ -14,6 +14,7 @@ func MapUrls(engine *gin.Engine) {
 	engine.POST("/users", users.CreateUser)
 	engine.POST("/users/login", users.Login)
 	engine.GET("/courses/:id", courses.GetCourseById)
+	//engine.GET("/courses/max/:id", courses.GetMaxCourseById)
 	engine.GET("/courses", courses.GetCourses)
 	engine.GET("/category/:id", category.GetCategoryById)
 
@@ -21,7 +22,7 @@ func MapUrls(engine *gin.Engine) {
 	protected := engine.Group("/")
 	protected.Use(middleware.AuthMiddleware())
 
-	protected.GET("/users/isAdmin", users.GetIsAdmin)
+	protected.GET("/users/isAdmin", users.CheckAdmin)
 	protected.GET("/users/me", users.GetUsersByToken)
 	protected.GET("/users/:id", users.GetUserById)
 	protected.GET("/users/courses/:id", users.GetUserCourses)

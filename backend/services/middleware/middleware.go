@@ -19,7 +19,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		token := strings.Split(authHeader, "Bearer ")[1]
-		_, err := users.ValidateToken(token)
+		_, err := users.UsersService.ValidateToken(token)
 		if err != nil {
 			c.JSON(err.Status(), err)
 			c.Abort()

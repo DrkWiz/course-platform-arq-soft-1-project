@@ -12,13 +12,18 @@ import (
 
 var Db *gorm.DB
 
-func GetCourseById(id int) courseModel.Course {
+func GetCourseById(id int) (courseModel.Course, e.ApiError) {
 	var course courseModel.Course
 
-	Db.Where("id_course = ?", id).First(&course)
+	err := Db.Where("id_course = ?", id).First(&course).Error
+
+	if err != nil {
+		return course, e.NewNotFoundApiError("Course not found")
+	}
+
 	log.Debug("Course: ", course)
 
-	return course
+	return course, nil
 }
 
 func CreateCourse(course courseModel.Course) error {
@@ -48,10 +53,14 @@ func DeleteCourse(id int) error {
 	return nil
 }
 
-func GetCategoriesByCourseId(id int) categoryModel.Categories {
+func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) {
 	var categories []categoryModel.Category
-	Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories)
-	return categories
+	err := Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories).Error
+
+	if err != nil {
+		return nil, e.NewNotFoundApiError("Categories not found")
+	}
+	return categories, nil
 }
 
 func GetCourses() courseModel.Courses {

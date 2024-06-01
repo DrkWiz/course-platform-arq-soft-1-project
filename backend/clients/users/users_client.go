@@ -46,18 +46,28 @@ func CheckUserCourse(idUser int, idCourse int) bool {
 	return userCourse.IdUser != 0
 }
 
-func GetUserByUsername(username string) userModel.User {
+func GetUserByUsername(username string) (userModel.User, e.ApiError) {
 	var user userModel.User
-	Db.Where("username = ?", username).First(&user)
-	return user
+	err := Db.Where("username = ?", username).First(&user).Error
+
+	if err != nil {
+		return user, e.NewNotFoundApiError("User not found")
+	}
+
+	return user, nil
 }
 
 //UserCourses
 
-func GetUserCourses(id int) []userModel.UserCourses {
+func GetUserCourses(id int) ([]userModel.UserCourses, e.ApiError) {
 	var usercourses []userModel.UserCourses
-	Db.Where("id_user = ?", id).Find(&usercourses)
-	return usercourses
+	err := Db.Where("id_user = ?", id).Find(&usercourses).Error
+
+	if err != nil {
+		return nil, e.NewInternalServerApiError("Error getting user-courses", err)
+	}
+
+	return usercourses, nil
 }
 
 // Agregar un user-course
