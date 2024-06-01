@@ -2,18 +2,19 @@ import React, { useState, useCallback } from 'react';
 import Autosuggest from 'react-autosuggest';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { useNavigate } from 'react-router-dom';
 
 const SearchComponent = () => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const navigate = useNavigate(); // Initialize navigate
 
   const fetchSuggestions = async (inputValue) => {
-    
-      if (!inputValue) {
-        setSuggestions([]);
-        return;
-      }
-    
+    if (!inputValue) {
+      setSuggestions([]);
+      return;
+    }
+
     const trimmedValue = inputValue.trim().toLowerCase();
     if (trimmedValue.length === 0) {
       setSuggestions([]);
@@ -56,38 +57,49 @@ const SearchComponent = () => {
     setSuggestions([]);
   };
 
-  const getSuggestionValue = (suggestion) => suggestion.Name;
+  const getSuggestionValue = (suggestion) => suggestion.name;
+
+  const onSuggestionSelected = (event, { suggestion }) => {
+    navigate(`/courses/${suggestion.id}`); // Make sure the ID is passed correctly
+  };
 
   const renderSuggestion = (suggestion) => (
-    
     console.log('Rendering suggestion:', suggestion.name), // Debugging line
-    <div style={{ padding: '10px', color: 'black'}}>
+    <div className="px-4 py-2 text-black">
       {suggestion.name}
     </div>
   );
+
   const inputProps = {
     placeholder: 'Type a course name',
     value,
-    onChange
+    onChange,
+    className: 'w-full px-4 py-2 text-white rounded-lg border border-gray-300 bg-gray-800 placeholder-gray-400'
   };
 
   return (
-    <Autosuggest
-      suggestions={suggestions}
-      onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-      onSuggestionsClearRequested={onSuggestionsClearRequested}
-      getSuggestionValue={getSuggestionValue}
-      renderSuggestion={renderSuggestion}
-      
-      inputProps={inputProps}
-      theme={{
-        container: 'relative',
-        input: 'border p-2 w-full',
-        suggestionsContainer: 'react-autosuggest__suggestions-container',
-        suggestion: 'react-autosuggest__suggestion',
-        suggestionHighlighted: 'react-autosuggest__suggestion--highlighted',
-      }}
-    />
+    <div className="flex justify-center items-center h-screen ">
+    <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
+      <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
+      <Autosuggest
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+        onSuggestionsClearRequested={onSuggestionsClearRequested}
+        getSuggestionValue={getSuggestionValue}
+        renderSuggestion={renderSuggestion}
+        inputProps={inputProps}
+        onSuggestionSelected={onSuggestionSelected} // Add handler for suggestion selection
+        theme={{
+          container: 'relative',
+          input: 'border p-2 w-full rounded-lg',
+          suggestionsContainer: suggestions.length === 0 ? 'hidden' : 'absolute mt-1 w-full bg-white border border-gray-300 rounded-lg z-10',
+          suggestion: 'block px-4 py-2 cursor-pointer',
+          suggestionHighlighted: 'bg-gray-200',
+        }}
+      />
+    </div>
+  </div>
+  
   );
 };
 

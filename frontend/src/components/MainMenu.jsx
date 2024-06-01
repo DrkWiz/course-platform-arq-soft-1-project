@@ -50,13 +50,10 @@ const MainMenu = ({ setIsLoggedIn }) => {
 
   return (
     <Section>
-      <div className="main-menu" flex-direction= "column"
-  justify-content= "center"
-  align-items= "center" >
-       <div style={{ width: '50%', margin: '0 auto' }}>
-  <SearchComponent />
-</div>
-      
+      <div className="main-menu" style={{ flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ width: '50%', margin: '0 auto' }}>
+          <SearchComponent />
+        </div>
       </div>
     </Section>
   );

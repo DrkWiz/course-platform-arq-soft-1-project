@@ -1,70 +1,72 @@
-import React from 'react'
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Section from './Section';
-import {profile} from '../constants';
 
-const Profile = ({setIsLoggedIn}) => {
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate();
+const Profile = ({ setIsLoggedIn }) => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                navigate('/login');
-                return;
-            }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
 
-            try {
-                const response = await fetch("http://localhost:8080/users/me", {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                    },
-                });
+      try {
+        const response = await fetch('http://localhost:8080/users/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
-                    setUser(data);
-                } else {
-                    console.error("Failed to fetch user data");
-                    navigate('/login');
-                }
-            } catch (error) {
-                console.error("Error fetching user data", error);
-                navigate('/login');
-            }
-        };
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setUser(data);
+        } else {
+          console.error('Failed to fetch user data');
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching user data', error);
+        navigate('/login');
+      }
+    };
 
-        fetchUserData();
-    }, [navigate]);
+    fetchUserData();
+  }, [navigate]);
 
-     if (!user) {
-        return <div>Loading...</div>;
-    }
-  
-  
-    return (
-    
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  return (
     <Section>
-   
-   <div className="flex justify-center items-center h-screen">
-        <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
-        <h2>Profile</h2>
+      <div className="flex justify-center items-center h-screen">
+        <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
+          <h2 className="text-2xl font-bold mb-4">Profile</h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Name:</label>
+            <p className="text-lg">{user.name}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Username:</label>
+            <p className="text-lg">{user.username}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Email:</label>
+            <p className="text-lg">{user.email}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Role:</label>
+            {user.is_admin ? <p className="text-green-400">Admin</p> : <p className="text-blue-400">Normal User</p>}
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+};
 
-        <p> {user.name}</p>
-        <p>{user.username}!</p>
-        <p>{user.email}</p>
-        
-        {user.is_admin ?  <p>Admin</p> : <p>Normal User</p>}
-      
-  </div>
-    </div>
-  </Section>
-
-  )
-}
-
-export default Profile
-
+export default Profile;
