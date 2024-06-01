@@ -12,6 +12,7 @@ import MyCourses from "./components/MyCourses";
 import MainMenu from './components/MainMenu';
 import Profile from './components/Profile';
 import CourseDetails from './components/CourseDetails';
+import CourseCreation from './components/CourseCreation';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/mainmenu" element={<MainMenu />} />
         <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/courses/:id" element={<CourseDetails />} /> {/* Ensure this route is defined correctly */}
+        <Route path="/create" element={<CourseCreation />} /> {/* Ensure this route is defined correctly */}
       </Routes>
       <Footer />
       <ButtonGradient />
