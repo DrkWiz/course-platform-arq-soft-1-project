@@ -64,6 +64,10 @@ const CourseDetails = () => {
             <label className="block text-sm font-medium text-gray-400">Is it active?:</label>
             {course.is_active ? <p className="text-green-400">Published</p> : <p className="text-red-400">Not Published</p>}
           </div>
+          <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-400">Course Image:</label>
+  <img src={`http://localhost:8080/${course.picture_path}`} alt={course.name} />
+</div>
         </div>
       </div>
     </Section>
