@@ -9,7 +9,15 @@ const CourseCreation = () => {
     
     //const [category, setCategory] = useState('');
     const [price, setPrice] = useState(0.00);
-    //const [duration, setDuration] = useState('');
+    const [start_date, setStartDate] = useState(() => {
+        const date = new Date();
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
+        const year = date.getFullYear();
+      
+        return `${day}/${month}/${year}`;
+      });
+    const [end_date, setEndDate] = useState("");
     const [image, setImage] = useState(null);
     
 
@@ -49,6 +57,8 @@ const handleImageUpload = async () => {
                 description: description,
                 price: parseFloat(price),
                 picture_path: picturePath,
+                start_date: start_date,
+                end_date: end_date,
               }),
         });
 
@@ -72,19 +82,23 @@ const handleImageUpload = async () => {
                     <form className="space-y-4 font-semibold" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="name" className="block text-withe">Name:</label>
-                            <InputField type="text" id="name" name="name" className="w-full" value={name} onChange={(e) => setName(e.target.value)} />
+                            <InputField type="text" id="name" name="name" className="w-full" placeholder={"Course name"}value={name} onChange={(e) => setName(e.target.value)} />
                         </div>
                         <div>
                             <label htmlFor="description" className="block text-withe">Description:</label>
-                            <InputField type="text" id="description" name="description" className="w-full" value={description} onChange={(e) => setDescription(e.target.value)} />
+                            <InputField type="text" id="description" name="description" className="w-full" placeholder={"Description"} value={description} onChange={(e) => setDescription(e.target.value)} />
                         </div>
                         <div>
                             <label htmlFor="price" className="block text-withe">Price:</label>
-                            <InputField type="text" id="price" name="price" className="w-full" value={price} onChange={(e) => setPrice(e.target.value)} />
+                            <InputField type="text" id="price" name="price" className="w-full" placeholder={"0.00"}value={price} onChange={(e) => setPrice(e.target.value)} />
+                        </div>
+                        <div>
+                            <label htmlFor="end_date" className="block text-withe">End Date:</label>
+                            <InputField type="text" id="end_date" name="end_date" className="w-full" placeholder={"DD/MM/YYYY"} value={end_date} onChange={(e) => setEndDate(e.target.value)} />
                         </div>
                         <div className="rounded bg-gray-800">
-
                         <div>
+
             <label htmlFor="image" className="block text-withe">Image:</label>
             <input type="file" id="image" name="image" onChange={handleImageChange} />
           </div>

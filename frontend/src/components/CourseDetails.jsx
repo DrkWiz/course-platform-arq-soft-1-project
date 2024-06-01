@@ -60,6 +60,14 @@ const CourseDetails = () => {
             <p className="text-lg">{course.price}</p>
           </div>
           <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Start Date:</label>
+            <p className="text-lg">{course.start_date}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">End Date:</label>
+            <p className="text-lg">{course.end_date}</p>
+          </div>
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-400">Is it active?:</label>
             {course.is_active ? <p className="text-green-400">Published</p> : <p className="text-red-400">Not Published</p>}
           </div>
