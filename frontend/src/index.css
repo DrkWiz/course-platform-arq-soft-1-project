@@ -86,3 +86,16 @@
 .-rotate-360 {
   @apply rotate-[-360deg];
 }
+.react-autosuggest__suggestions-container {
+  @apply absolute z-10 border border-gray-400 bg-white font-sans text-base rounded-b-md max-h-80 overflow-y-auto;
+  width: 50%; /* adjust this value to suit your needs */
+  left: 25%; /* adjust this value to suit your needs */
+}
+
+.react-autosuggest__suggestion {
+  @apply cursor-pointer p-2;
+}
+
+.react-autosuggest__suggestion--highlighted {
+  @apply bg-gray-300;
+}

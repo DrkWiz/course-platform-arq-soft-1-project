@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Section from "./Section";
+import SearchComponent from "./SearchComponent";
 
-const MainMenu = ({setIsLoggedIn}) => {
+const MainMenu = ({ setIsLoggedIn }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -49,17 +50,13 @@ const MainMenu = ({setIsLoggedIn}) => {
 
   return (
     <Section>
-      <div className="main-menu">
-        <span>Welcome, {user.username}!</span>
-        <nav>
-          <ul>
-            {actions.map(action => (
-              <li key={action.id}>
-                <Link to={action.url}>{action.title}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      <div className="main-menu" flex-direction= "column"
+  justify-content= "center"
+  align-items= "center" >
+       <div style={{ width: '50%', margin: '0 auto' }}>
+  <SearchComponent />
+</div>
+      
       </div>
     </Section>
   );

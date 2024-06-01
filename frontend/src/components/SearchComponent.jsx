@@ -1,80 +1,94 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import Autosuggest from 'react-autosuggest';
 import axios from 'axios';
+import debounce from 'lodash.debounce';
 
-class SearchComponent extends Component {
-  constructor() {
-    super();
-    this.state = {
-      value: '',
-      suggestions: []
-    };
-  }
+const SearchComponent = () => {
+  const [value, setValue] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
 
-  onChange = (event, { newValue }) => {
-    this.setState({
-      value: newValue
-    });
-  };
+  const fetchSuggestions = async (inputValue) => {
+    
+      if (!inputValue) {
+        setSuggestions([]);
+        return;
+      }
+    
+    const trimmedValue = inputValue.trim().toLowerCase();
+    if (trimmedValue.length === 0) {
+      setSuggestions([]);
+      return;
+    }
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.getSuggestions(value);
-  };
+    try {
+      const response = await axios.get('http://localhost:8080/courses');
+      const courses = response.data;
+      console.log('Fetched courses:', courses); // Debugging line
 
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: []
-    });
-  };
-
-  getSuggestions = (value) => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
-
-    if (inputLength === 0) return;
-
-    axios.get('http://localhost:8080/courses')
-      .then(response => {
-        const courses = response.data;
-        this.setState({
-          suggestions: courses.filter(course =>
-            course.Name.toLowerCase().slice(0, inputLength) === inputValue
-          )
-        });
-      })
-      .catch(error => {
-        console.error("Error fetching courses", error);
+      const filteredSuggestions = courses.filter(course => {
+        const courseName = course.name;
+        if (courseName && typeof courseName === 'string') {
+          const isMatch = courseName.toLowerCase().startsWith(trimmedValue);
+          console.log(`Checking course "${courseName}": ${isMatch}`); // Debugging line
+          return isMatch;
+        }
+        return false;
       });
+
+      setSuggestions(filteredSuggestions);
+      console.log('Filtered suggestions:', filteredSuggestions); // Debugging line
+    } catch (error) {
+      console.error('Error fetching courses', error);
+    }
   };
 
-  getSuggestionValue = (suggestion) => suggestion.Name;
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 300), []);
 
-  renderSuggestion = (suggestion) => (
-    <div>
-      {suggestion.Name}
+  const onChange = (event, { newValue }) => {
+    setValue(newValue);
+  };
+
+  const onSuggestionsFetchRequested = ({ value }) => {
+    debouncedFetchSuggestions(value);
+  };
+
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+
+  const getSuggestionValue = (suggestion) => suggestion.Name;
+
+  const renderSuggestion = (suggestion) => (
+    
+    console.log('Rendering suggestion:', suggestion.name), // Debugging line
+    <div style={{ padding: '10px', color: 'black'}}>
+      {suggestion.name}
     </div>
   );
+  const inputProps = {
+    placeholder: 'Type a course name',
+    value,
+    onChange
+  };
 
-  render() {
-    const { value, suggestions } = this.state;
-
-    const inputProps = {
-      placeholder: 'Type a course name',
-      value,
-      onChange: this.onChange
-    };
-
-    return (
-      <Autosuggest
-        suggestions={suggestions}
-        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-        getSuggestionValue={this.getSuggestionValue}
-        renderSuggestion={this.renderSuggestion}
-        inputProps={inputProps}
-      />
-    );
-  }
-}
+  return (
+    <Autosuggest
+      suggestions={suggestions}
+      onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+      onSuggestionsClearRequested={onSuggestionsClearRequested}
+      getSuggestionValue={getSuggestionValue}
+      renderSuggestion={renderSuggestion}
+      
+      inputProps={inputProps}
+      theme={{
+        container: 'relative',
+        input: 'border p-2 w-full',
+        suggestionsContainer: 'react-autosuggest__suggestions-container',
+        suggestion: 'react-autosuggest__suggestion',
+        suggestionHighlighted: 'react-autosuggest__suggestion--highlighted',
+      }}
+    />
+  );
+};
 
 export default SearchComponent;
