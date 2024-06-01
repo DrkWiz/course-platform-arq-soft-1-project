@@ -143,19 +143,20 @@ func CheckOwner(c *gin.Context) {
 }
 
 func ImageUpload(c *gin.Context) {
-	file, _ := c.FormFile("image")
-	path := filepath.Join("./uploads", file.Filename)
+    file, _ := c.FormFile("image")
+    path := filepath.Join("./uploads", file.Filename)
   
-	// Upload the file to specific destination
-	if err := c.SaveUploadedFile(file, path); err != nil {
-	  c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	  return
-	}
+    // Upload the file to a specific destination
+    if err := c.SaveUploadedFile(file, path); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
   
-	c.JSON(http.StatusOK, gin.H{"picture_path": path})
-  }
+    // Return the relative path to be used in the frontend
+    c.JSON(http.StatusOK, gin.H{"picture_path": file.Filename})
+}
 
-  func GetImage(c *gin.Context) {
+func GetImage(c *gin.Context) {
     picturepath := c.Param("picturepath")
     path := filepath.Join("./uploads", picturepath)
 

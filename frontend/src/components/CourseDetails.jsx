@@ -8,7 +8,6 @@ const CourseDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Fetching course data for course ID:", id);
     const fetchCourseData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -65,9 +64,18 @@ const CourseDetails = () => {
             {course.is_active ? <p className="text-green-400">Published</p> : <p className="text-red-400">Not Published</p>}
           </div>
           <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-400">Course Image:</label>
-  <img src={`http://localhost:8080/${course.picture_path}`} alt={course.name} />
-</div>
+            <label className="block text-sm font-medium text-gray-400">Course Image:</label>
+            <img 
+  src={`http://localhost:8080/uploads/${course.picture_path}`} 
+  alt={course.name} 
+  style={{
+    width: '100%', // make the image take up the full width of its container
+    height: 'auto', // keep the original aspect ratio
+    objectFit: 'cover', // cover the entire width of the container without stretching
+    borderRadius: '4px', // round the corners
+  }}
+/>
+          </div>
         </div>
       </div>
     </Section>
