@@ -36,4 +36,5 @@ func MapUrls(engine *gin.Engine) {
 	protected.POST("/category", category.CreateCategory)
 	protected.POST("/upload", courses.ImageUpload)
 	protected.GET("/img/:picturepath", courses.GetImage)
+	engine.Static("/uploads", "./uploads")
 }
