@@ -225,3 +225,33 @@ func UnsubscribeUserCourse(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, "User removed from course")
 }
+
+func CheckEnrolled(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
+	courseId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	response, err1 := s.UsersService.CheckEnrolled(courseId, token)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}

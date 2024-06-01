@@ -30,6 +30,7 @@ type usersServiceInterface interface {
 	GetUserCoursesByToken(token string) (dto.UsersCoursesMaxDto, e.ApiError)
 	CheckAdmin(token string) (bool, e.ApiError)
 	UnsubscribeUserCourse(courseId int, token string) e.ApiError
+	CheckEnrolled(courseId int, token string) (bool, e.ApiError)
 }
 
 var (
@@ -338,4 +339,14 @@ func (s *usersService) UnsubscribeUserCourse(courseId int, token string) e.ApiEr
 	}
 
 	return nil
+}
+
+func (s *usersService) CheckEnrolled(courseId int, token string) (bool, e.ApiError) {
+	idUser, err := s.ValidateToken(token)
+
+	if err != nil {
+		return false, err
+	}
+
+	return usersClient.CheckUserCourse(idUser, courseId), nil
 }

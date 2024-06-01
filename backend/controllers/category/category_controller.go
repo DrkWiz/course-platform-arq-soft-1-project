@@ -40,5 +40,4 @@ func CreateCategory(c *gin.Context) {
 
 	categoryService.CreateCategory(category)
 	c.JSON(http.StatusOK, "Category created")
-	//lpm!
 }

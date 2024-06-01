@@ -16,6 +16,7 @@ type coursesService struct{}
 
 type coursesServiceInterface interface {
 	GetCourseById(id int) (dto.CourseMinDto, e.ApiError)
+	CreateCourse(course dto.CourseCreateDto) e.ApiError
 }
 
 var (
@@ -54,13 +55,13 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 
 //Create course
 
-func CreateCourse(course dto.CourseCreateDto) error {
+func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
 
 	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user}
 
 	err := courseClient.CreateCourse(courseToCreate)
 	if err != nil {
-		return err
+		return e.NewInternalServerApiError("Error creating course", err)
 	}
 
 	return nil

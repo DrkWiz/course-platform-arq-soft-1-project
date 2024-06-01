@@ -29,11 +29,15 @@ func MapUrls(engine *gin.Engine) {
 	protected.GET("/users/courses/", users.GetUserCoursesByToken)
 	protected.POST("/users/courses/:id", users.AddUserCourse)
 	protected.DELETE("/users/courses/:id/unsubscribe", users.UnsubscribeUserCourse)
+	protected.GET("/users/courses/:id/enrolled", users.CheckEnrolled)
+
 	protected.POST("/courses", courses.CreateCourse)
 	protected.POST("/courses/:id/owner", courses.CheckOwner)
 	protected.PUT("/courses/update/:id", courses.UpdateCourse)
 	protected.PUT("/courses/delete/:id", courses.DeleteCourse)
+
 	protected.POST("/category", category.CreateCategory)
+
 	protected.POST("/upload", courses.ImageUpload)
 	protected.GET("/img/:picturepath", courses.GetImage)
 	engine.Static("/uploads", "./uploads")

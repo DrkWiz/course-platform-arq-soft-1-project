@@ -4,9 +4,9 @@ import (
 	"backend/dto"
 	coursesService "backend/services/courses"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
-	"path/filepath"
 
 	e "backend/utils/errors"
 
@@ -45,7 +45,7 @@ func CreateCourse(c *gin.Context) {
 		return
 	}
 
-	coursesService.CreateCourse(course)
+	coursesService.CoursesService.CreateCourse(course)
 	c.JSON(http.StatusOK, "Course created")
 }
 
@@ -143,22 +143,22 @@ func CheckOwner(c *gin.Context) {
 }
 
 func ImageUpload(c *gin.Context) {
-    file, _ := c.FormFile("image")
-    path := filepath.Join("./uploads", file.Filename)
-  
-    // Upload the file to a specific destination
-    if err := c.SaveUploadedFile(file, path); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-  
-    // Return the relative path to be used in the frontend
-    c.JSON(http.StatusOK, gin.H{"picture_path": file.Filename})
+	file, _ := c.FormFile("image")
+	path := filepath.Join("./uploads", file.Filename)
+
+	// Upload the file to a specific destination
+	if err := c.SaveUploadedFile(file, path); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Return the relative path to be used in the frontend
+	c.JSON(http.StatusOK, gin.H{"picture_path": file.Filename})
 }
 
 func GetImage(c *gin.Context) {
-    picturepath := c.Param("picturepath")
-    path := filepath.Join("./uploads", picturepath)
+	picturepath := c.Param("picturepath")
+	path := filepath.Join("./uploads", picturepath)
 
-    c.File(path)
+	c.File(path)
 }
