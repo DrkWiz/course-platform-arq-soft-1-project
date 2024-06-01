@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
+import Alert from "./Alert";
 
 const Login = ({setIsLoggedIn, isLoggedIn}) => {
 
@@ -42,6 +43,7 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
     } else {
       const errorData = await response.json();
       console.error("Login failed", errorData);
+      
     }
   };
 
