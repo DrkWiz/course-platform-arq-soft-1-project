@@ -1,21 +1,26 @@
 package main
 
 import (
-    "backend/db"
-    "backend/router"
-    "github.com/gin-gonic/gin"
-    "github.com/gin-contrib/cors" // Importa el paquete cors
+	"backend/db"
+	"backend/router"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    db.StartDbEngine()
-    engine := gin.New()
+	db.StartDbEngine()
+	engine := gin.New()
 
-    // Configura CORS
-    config := cors.DefaultConfig()
-    config.AllowAllOrigins = true // Permite todas las solicitudes de origen
-    engine.Use(cors.New(config)) // Usa el middleware CORS
+	// Update CORS configuration
+	config := cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Include Authorization here
+		AllowCredentials: true,
+	}
 
-    router.MapUrls(engine)
-    engine.Run(":8080")
+	engine.Use(cors.New(config))
+	router.MapUrls(engine)
+	engine.Run(":8080")
 }
