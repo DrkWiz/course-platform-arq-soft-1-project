@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Section from './Section';
+import Button from './Button';
 
 const Profile = ({ setIsLoggedIn }) => {
   const [user, setUser] = useState(null);
@@ -63,6 +64,8 @@ const Profile = ({ setIsLoggedIn }) => {
             <label className="block text-sm font-medium text-gray-400">Role:</label>
             {user.is_admin ? <p className="text-green-400">Admin</p> : <p className="text-blue-400">Normal User</p>}
           </div>
+
+          {user.is_admin ? <Button className="w-half bg-gray-800 text-white hover:bg-gray-800 rounded text-2xl font-semibold" onClick={() => navigate('/create')}>Create Course</Button> : null}
         </div>
       </div>
     </Section>
