@@ -21,6 +21,7 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
   }
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginFailed, setLoginFailed] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -43,7 +44,7 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
     } else {
       const errorData = await response.json();
       console.error("Login failed", errorData);
-      
+      setLoginFailed(true);
     }
   };
 
@@ -81,6 +82,9 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
               >
                 Login
               </Button>
+            </div>
+            <div>
+              {loginFailed && <Alert message="Login failed" type="error" onClose={() => setLoginFailed(false)}/>}{ }
             </div>
           </form>
         </div>

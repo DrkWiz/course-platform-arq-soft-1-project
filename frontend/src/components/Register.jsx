@@ -2,12 +2,17 @@ import { useState } from "react";
 import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
+import Alert from "./Alert";
+
 
 const Register = () => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('')
+  const [registerFailed, setRegisterFailed] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [responseData, setResponseData] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -23,10 +28,15 @@ const Register = () => {
     if (response.ok){
       const data = await response.json();
       console.log("Registered succesfully", data);
+      setRegisterFailed(false);
+      setRegisterSuccess(true);
       // Handle succesful register.
     } else {
       const errorData = await response.json();
       console.error("Register failed", errorData);
+      setRegisterSuccess(false);
+      setRegisterFailed(true);
+      setResponseData(errorData.message);
       // Handle register failure
     }
   }
@@ -58,6 +68,10 @@ const Register = () => {
               <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-800 rounded text-2xl font-semibold">Register</Button>
             </div>
           </form>
+          <div>
+              {registerFailed && <Alert message={`Register failed: ${responseData}`} type="error" onClose={() => setRegisterFailed(false)}/>}
+              {registerSuccess && <Alert message="Registered successfully!" type="success" onClose={() => setRegisterSuccess(false)}/>}
+            </div>
         </div>
       </div>
     </Section>
