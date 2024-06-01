@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"path/filepath"
 
 	e "backend/utils/errors"
 
@@ -139,4 +140,24 @@ func CheckOwner(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func ImageUpload(c *gin.Context) {
+	file, _ := c.FormFile("image")
+	path := filepath.Join("./uploads", file.Filename)
+  
+	// Upload the file to specific destination
+	if err := c.SaveUploadedFile(file, path); err != nil {
+	  c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	  return
+	}
+  
+	c.JSON(http.StatusOK, gin.H{"picture_path": path})
+  }
+
+  func GetImage(c *gin.Context) {
+    picturepath := c.Param("picturepath")
+    path := filepath.Join("./uploads", picturepath)
+
+    c.File(path)
 }
