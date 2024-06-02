@@ -78,25 +78,27 @@ const SearchComponent = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-[50vh] ">
-    <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
-      <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
-      <Autosuggest
-        suggestions={suggestions}
-        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-        onSuggestionsClearRequested={onSuggestionsClearRequested}
-        getSuggestionValue={getSuggestionValue}
-        renderSuggestion={renderSuggestion}
-        inputProps={inputProps}
-        onSuggestionSelected={onSuggestionSelected} // Add handler for suggestion selection
-        theme={{
-          container: 'relative',
-          input: 'border p-2 w-full rounded-lg',
-          suggestionsContainer: suggestions.length === 0 ? 'hidden' : 'absolute mt-1 w-full bg-white border border-gray-300 rounded-lg z-10',
-          suggestion: 'block px-4 py-2 cursor-pointer',
-          suggestionHighlighted: 'bg-gray-200',
-        }}
-      />
+    <div className="flex justify-center items-center h-[50vh]">
+    <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
+      <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
+        <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
+        <Autosuggest
+          suggestions={suggestions}
+          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={onSuggestionsClearRequested}
+          getSuggestionValue={getSuggestionValue}
+          renderSuggestion={renderSuggestion}
+          inputProps={inputProps}
+          onSuggestionSelected={onSuggestionSelected} // Add handler for suggestion selection
+          theme={{
+            container: 'relative',
+            input: 'border p-2 w-full rounded-lg',
+            suggestionsContainer: suggestions.length === 0 ? 'hidden' : 'absolute mt-1 w-full bg-white border border-gray-300 rounded-lg z-10',
+            suggestion: 'block px-4 py-2 cursor-pointer',
+            suggestionHighlighted: 'bg-gray-200',
+          }}
+        />
+      </div>
     </div>
   </div>
   );

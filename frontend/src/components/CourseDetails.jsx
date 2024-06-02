@@ -161,6 +161,7 @@ const CourseDetails = () => {
   return (
     <Section>
       <div className="flex justify-center items-center h-screen">
+      <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
           <h2 className="text-2xl font-bold mb-4">Course Details</h2>
           <div className="mb-4">
@@ -224,6 +225,7 @@ const CourseDetails = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </Section>
   );

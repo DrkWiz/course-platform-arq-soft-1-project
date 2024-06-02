@@ -129,47 +129,49 @@ const CourseCreation = () => {
     return (
         <Section className="-mt-[5.25rem]" customPaddings>
             <div className="flex justify-center items-center h-screen ">
-                <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
-                    <form className="space-y-4 font-semibold" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="name" className="block text-white">Name:</label>
-                            <InputField type="text" id="name" name="name" className="w-full" placeholder="Course name" value={name} onChange={(e) => setName(e.target.value)} />
-                        </div>
-                        <div>
-                            <label htmlFor="description" className="block text-white">Description:</label>
-                            <InputField type="text" id="description" name="description" className="w-full" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                        </div>
-                        <div>
-                            <label htmlFor="price" className="block text-white">Price:</label>
-                            <InputField type="number" id="price" name="price" className="w-full" placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)} />
-                        </div>
-                        <div>
-                            <label htmlFor="start_date" className="block text-white">Start Date:</label>
-                            <InputField type="date" id="start_date" name="start_date" className="w-full" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                        </div>
-                        <div>
-                            <label htmlFor="end_date" className="block text-white">End Date:</label>
-                            <InputField type="date" id="end_date" name="end_date" className="w-full" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                        </div>
-                        <div>
-                            <label htmlFor="categories" className="block text-white">Categories:</label>
-                            <Select
-                                id="categories"
-                                name="categories"
-                                isMulti
-                                options={categories}
-                                className="basic-multi-select"
-                                classNamePrefix="select"
-                                styles={customStyles}
-                                onChange={setSelectedCategories}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="image" className="block text-white">Image:</label>
-                            <input type="file" id="image" name="image" onChange={handleImageChange} />
-                        </div>
-                        <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-800 rounded text-2xl font-semibold">Create Course</Button>
-                    </form>
+                <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
+                    <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
+                        <form className="space-y-4 font-semibold" onSubmit={handleSubmit}>
+                            <div>
+                                <label htmlFor="name" className="block text-white">Name:</label>
+                                <InputField type="text" id="name" name="name" className="w-full" placeholder="Course name" value={name} onChange={(e) => setName(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="description" className="block text-white">Description:</label>
+                                <InputField type="text" id="description" name="description" className="w-full" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="price" className="block text-white">Price:</label>
+                                <InputField type="number" id="price" name="price" className="w-full" placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="start_date" className="block text-white">Start Date:</label>
+                                <InputField type="date" id="start_date" name="start_date" className="w-full" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="end_date" className="block text-white">End Date:</label>
+                                <InputField type="date" id="end_date" name="end_date" className="w-full" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="categories" className="block text-white">Categories:</label>
+                                <Select
+                                    id="categories"
+                                    name="categories"
+                                    isMulti
+                                    options={categories}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                    styles={customStyles}
+                                    onChange={setSelectedCategories}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="image" className="block text-white">Image:</label>
+                                <input type="file" id="image" name="image" onChange={handleImageChange} />
+                            </div>
+                            <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-800 rounded text-2xl font-semibold">Create Course</Button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </Section>
