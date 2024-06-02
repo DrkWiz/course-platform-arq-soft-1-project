@@ -61,11 +61,19 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 
 func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
 	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner}
-
+	
 	err := courseClient.CreateCourse(courseToCreate)
 	if err != nil {
 		return err
 	}
+	for _, categoryId := range course.CategoriesId {
+		err = courseClient.CreateCourseCategory(courseToCreate.IdCourse, categoryId)
+		if err != nil {
+			return err
+		}
+	}
+	
+
 	return nil
 
 }
