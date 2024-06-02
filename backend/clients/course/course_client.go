@@ -53,6 +53,15 @@ func DeleteCourse(id int) e.ApiError {
 	return nil
 }
 
+func CreateCourseCategory(courseId int, categoryId int) e.ApiError {
+	courseCategory := courseModel.CourseCategory{IdCourse: courseId, IdCategory: categoryId}
+	err := Db.Create(&courseCategory).Error
+	if err != nil {
+		return e.NewInternalServerApiError("Error creating course category", err)
+	}
+	return nil
+}
+
 func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) {
 	var categories []categoryModel.Category
 	err := Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories).Error

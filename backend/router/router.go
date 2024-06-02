@@ -14,9 +14,9 @@ func MapUrls(engine *gin.Engine) {
 	engine.POST("/users", users.CreateUser)
 	engine.POST("/users/login", users.Login)
 	engine.GET("/courses/:id", courses.GetCourseById)
-	//engine.GET("/courses/max/:id", courses.GetMaxCourseById)
 	engine.GET("/courses", courses.GetCourses)
 	engine.GET("/category/:id", category.GetCategoryById)
+	engine.GET("/category/all", category.GetCategories)
 
 	// Protected routes
 	protected := engine.Group("/")

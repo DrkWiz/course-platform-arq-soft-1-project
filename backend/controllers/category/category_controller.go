@@ -41,3 +41,16 @@ func CreateCategory(c *gin.Context) {
 	categoryService.CreateCategory(category)
 	c.JSON(http.StatusOK, "Category created")
 }
+
+func GetCategories(c *gin.Context) {
+	log.Print("GetCategories")
+
+	response, err := categoryService.CategoryService.GetCategories()
+
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
