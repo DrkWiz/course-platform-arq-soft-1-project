@@ -85,13 +85,26 @@ func UpdateCourse(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, "Course updated")
+	c.JSON(http.StatusNoContent, "Course updated")
 
 }
 
 //Soft delete course
 
 func DeleteCourse(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -99,10 +112,10 @@ func DeleteCourse(c *gin.Context) {
 		return
 	}
 
-	err1 := coursesService.DeleteCourse(id)
+	err1 := s.CoursesService.DeleteCourse(id)
 
 	if err1 != nil {
-		c.JSON(http.StatusTeapot, err1)
+		c.JSON(err1.Status(), err1)
 		return
 	}
 
@@ -112,7 +125,7 @@ func DeleteCourse(c *gin.Context) {
 // Get all courses in db
 
 func GetCourses(c *gin.Context) {
-	response, err1 := coursesService.GetCourses()
+	response, err1 := s.CoursesService.GetCourses()
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)

@@ -44,11 +44,11 @@ func UpdateCourse(course courseModel.Course) e.ApiError {
 	return nil
 }
 
-func DeleteCourse(id int) error {
+func DeleteCourse(id int) e.ApiError {
 	// Ensure the correct usage of the Update method
 	err := Db.Model(&courseModel.Course{}).Where("id_course = ?", id).Update("is_active", "0").Error
 	if err != nil {
-		return err
+		return e.NewInternalServerApiError("Error deleting course", err)
 	}
 	return nil
 }
@@ -63,10 +63,15 @@ func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) {
 	return categories, nil
 }
 
-func GetCourses() courseModel.Courses {
+func GetCourses() (courseModel.Courses, e.ApiError) {
 	var courses []courseModel.Course
-	Db.Find(&courses)
-	return courses
+	err := Db.Find(&courses).Error
+
+	if err != nil {
+		return nil, e.NewNotFoundApiError("Courses not found")
+	}
+
+	return courses, nil
 }
 
 func GetOwner(courseId int) (int, e.ApiError) {

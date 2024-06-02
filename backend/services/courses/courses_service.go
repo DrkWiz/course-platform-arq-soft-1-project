@@ -18,6 +18,8 @@ type coursesServiceInterface interface {
 	GetCourseById(id int) (dto.CourseMinDto, e.ApiError)
 	CreateCourse(course dto.CourseCreateDto) e.ApiError
 	UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError
+	DeleteCourse(id int) e.ApiError
+	GetCourses() (dto.CoursesMaxDto, e.ApiError)
 }
 
 var (
@@ -57,7 +59,6 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 //Create course
 
 func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
-
 	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner}
 
 	err := courseClient.CreateCourse(courseToCreate)
@@ -70,11 +71,28 @@ func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
 
 // Update a course.
 
-func (s *coursesService) UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError {
+func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, token string) e.ApiError {
 
-	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner, IsActive: course.IsActive}
+	ok, err := usersService.UsersService.CheckAdmin(token)
 
-	err := courseClient.UpdateCourse(courseToUpdate)
+	if err != nil {
+		return err
+	}
+
+	if !ok {
+		isOwner, err := CheckOwner(token, courseId)
+		if err != nil {
+			return err
+		}
+		if !isOwner {
+			return e.NewForbiddenApiError("You don't have permission to update this course")
+		}
+	}
+
+	courseToUpdate := courseModel.Course{IdCourse: courseId, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner, IsActive: course.IsActive}
+
+	err = courseClient.UpdateCourse(courseToUpdate)
+
 	if err != nil {
 		return err
 	}
@@ -84,8 +102,7 @@ func (s *coursesService) UpdateCourse(id int, course dto.CourseUpdateDto, token 
 
 //Soft delete course
 
-func DeleteCourse(id int) error {
-
+func (s *coursesService) DeleteCourse(id int) e.ApiError {
 	err := courseClient.DeleteCourse(id)
 	if err != nil {
 		return err
@@ -96,13 +113,18 @@ func DeleteCourse(id int) error {
 
 // Get all courses in DB
 
-func GetCourses() (dto.CoursesMaxDto, e.ApiError) {
+func (s *coursesService) GetCourses() (dto.CoursesMaxDto, e.ApiError) {
 
-	courses := courseClient.GetCourses()
+	courses, err := courseClient.GetCourses()
+
+	if err != nil {
+		return nil, err
+	}
+
 	var CoursesMaxDto dto.CoursesMaxDto
 
 	for _, course := range courses {
-		CourseMaxDto := dto.CourseMaxDto{IdCourse: course.IdCourse, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.Start_date, EndDate: course.End_date, IsActive: course.IsActive}
+		CourseMaxDto := dto.CourseMaxDto{IdCourse: course.IdCourse, Owner: course.IdOwner, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IsActive: course.IsActive}
 		tempCourses, err := courseClient.GetCategoriesByCourseId(course.IdCourse)
 
 		if err != nil {
