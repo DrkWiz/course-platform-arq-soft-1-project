@@ -14,6 +14,7 @@ import Profile from './components/Profile';
 import CourseDetails from './components/CourseDetails';
 import CourseCreation from './components/CourseCreation';
 import EditCourse from './components/EditCourse';
+import ParentComponent from "./components/ParentComponent";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,7 +47,7 @@ const App = () => {
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/mycourses" element={<MyCourses setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/mainmenu" element={<MainMenu />} />
+        <Route path="/mainmenu" element={<ParentComponent />} />
         <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/courses/:id" element={<CourseDetails />} /> {/* Ensure this route is defined correctly */}
         <Route path="/create" element={<CourseCreation />} /> {/* Ensure this route is defined correctly */}

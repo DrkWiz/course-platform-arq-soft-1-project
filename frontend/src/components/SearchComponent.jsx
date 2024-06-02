@@ -78,7 +78,7 @@ const SearchComponent = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen ">
+    <div className="flex justify-center items-center h-[50vh] ">
     <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
       <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
       <Autosuggest
@@ -99,7 +99,6 @@ const SearchComponent = () => {
       />
     </div>
   </div>
-  
   );
 };
 
