@@ -26,7 +26,7 @@ func GetCourseById(id int) (courseModel.Course, e.ApiError) {
 	return course, nil
 }
 
-func CreateCourse(course courseModel.Course) e.ApiError {
+func CreateCourse(course *courseModel.Course) e.ApiError {
 	err := Db.Create(&course).Error
 	if err != nil {
 		return e.NewInternalServerApiError("Error creating course", err)
@@ -49,6 +49,15 @@ func DeleteCourse(id int) e.ApiError {
 	err := Db.Model(&courseModel.Course{}).Where("id_course = ?", id).Update("is_active", "0").Error
 	if err != nil {
 		return e.NewInternalServerApiError("Error deleting course", err)
+	}
+	return nil
+}
+
+func CreateCourseCategory(courseId int, categoryId int) e.ApiError {
+	courseCategory := courseModel.CourseCategory{IdCourse: courseId, IdCategory: categoryId}
+	err := Db.Create(&courseCategory).Error
+	if err != nil {
+		return e.NewInternalServerApiError("Error creating course category", err)
 	}
 	return nil
 }

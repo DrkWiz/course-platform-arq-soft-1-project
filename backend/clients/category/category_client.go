@@ -3,6 +3,8 @@ package category
 import (
 	categoryModel "backend/model/category"
 
+	e "backend/utils/errors"
+
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,4 +31,18 @@ func CreateCategory(category categoryModel.Category) error {
 	}
 	return nil
 
+}
+
+func GetCategories() (categoryModel.Categories, e.ApiError) {
+
+	var categories []categoryModel.Category
+
+	err := Db.Find(&categories).Error
+
+	if err != nil {
+		return nil, e.NewInternalServerApiError("Error getting categories", err)
+	}
+	log.Debug("Categories: ", categories)
+
+	return categories, nil
 }

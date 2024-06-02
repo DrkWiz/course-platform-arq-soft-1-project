@@ -2,6 +2,7 @@ package courses
 
 import (
 	courseClient "backend/clients/course"
+	usersClient "backend/clients/users"
 	"backend/dto"
 	usersService "backend/services/users"
 
@@ -15,8 +16,8 @@ import (
 type coursesService struct{}
 
 type coursesServiceInterface interface {
-	GetCourseById(id int) (dto.CourseMinDto, e.ApiError)
-	CreateCourse(course dto.CourseCreateDto) e.ApiError
+	GetCourseById(id int) (dto.CourseMaxDto, e.ApiError)
+	CreateCourse(course dto.CourseCreateDto, token string) e.ApiError
 	UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError
 	DeleteCourse(id int) e.ApiError
 	GetCourses() (dto.CoursesMaxDto, e.ApiError)
@@ -31,41 +32,78 @@ func init() {
 	CoursesService = &coursesService{}
 }
 
-func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
-
+func (s *coursesService) GetCourseById(id int) (dto.CourseMaxDto, e.ApiError) {
 	log.Print("GetCourseById: ", id)
 
 	course, err := courseClient.GetCourseById(id)
-
 	if err != nil {
-		return dto.CourseMinDto{}, err
+		return dto.CourseMaxDto{}, err
 	}
 
-	var CourseMinDto dto.CourseMinDto
+	// Create the CourseMaxDto
+	courseMaxDto := dto.CourseMaxDto{
+		IdCourse:    course.IdCourse,
+		Owner:       course.IdOwner,
+		Name:        course.Name,
+		Description: course.Description,
+		Price:       course.Price,
+		PicturePath: course.PicturePath,
+		StartDate:   course.StartDate,
+		EndDate:     course.EndDate,
+		IsActive:    course.IsActive,
+		Categories:  []dto.CategoryMaxDto{},
+	}
 
-	CourseMinDto.IdCourse = course.IdCourse
-	CourseMinDto.Name = course.Name
-	CourseMinDto.Description = course.Description
-	CourseMinDto.Price = course.Price
-	CourseMinDto.PicturePath = course.PicturePath
-	CourseMinDto.StartDate = course.StartDate
-	CourseMinDto.EndDate = course.EndDate
-	CourseMinDto.IsActive = course.IsActive
+	// Fetch categories for the course
+	tempCourses, err := courseClient.GetCategoriesByCourseId(course.IdCourse)
+	if err != nil {
+		return dto.CourseMaxDto{}, err
+	}
 
-	log.Println("CourseMinDto: ", CourseMinDto)
+	// Append categories to the CourseMaxDto
+	for _, category := range tempCourses {
+		courseMaxDto.Categories = append(courseMaxDto.Categories, dto.CategoryMaxDto{
+			IdCategory: category.IdCategory,
+			Name:       category.Name,
+		})
+	}
 
-	return CourseMinDto, nil
+	log.Println("CourseMaxDto: ", courseMaxDto)
+
+	return courseMaxDto, nil
 }
 
 //Create course
 
-func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
-	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner}
+func (s *coursesService) CreateCourse(course dto.CourseCreateDto, token string) e.ApiError {
 
-	err := courseClient.CreateCourse(courseToCreate)
+	ownerId, err := usersService.UsersService.ValidateToken(token)
+
 	if err != nil {
 		return err
 	}
+
+	if !usersClient.GetUserById(ownerId).IsAdmin {
+		return e.NewForbiddenApiError("You don't have permission to create a course")
+	}
+
+	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: ownerId}
+
+	err = courseClient.CreateCourse(&courseToCreate)
+
+	if err != nil {
+		return err
+	}
+
+	log.Println("Course created: ", courseToCreate)
+
+	for _, categoryId := range course.CategoriesId {
+		err = courseClient.CreateCourseCategory(courseToCreate.IdCourse, categoryId)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 
 }
@@ -73,6 +111,12 @@ func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
 // Update a course.
 
 func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, token string) e.ApiError {
+
+	ownerId, err := courseClient.GetOwner(courseId)
+
+	if err != nil {
+		return err
+	}
 
 	ok, err := usersService.UsersService.CheckAdmin(token)
 
@@ -90,9 +134,11 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 		}
 	}
 
-	courseToUpdate := courseModel.Course{IdCourse: courseId, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner, IsActive: course.IsActive}
+	courseToUpdate := courseModel.Course{IdCourse: courseId, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: ownerId, IsActive: course.IsActive}
 
 	err = courseClient.UpdateCourse(courseToUpdate)
+
+	log.Println("Course updated: ", courseToUpdate)
 
 	if err != nil {
 		return err
