@@ -202,7 +202,8 @@ const CourseDetails = () => {
               }}
             />
           </div>
-          <div className="mt-4">
+          <div className="mt-4 flex justify-center items-center">
+          <div className="mt-4 mr-2">
             {isEnrolled ? (
               <Button onClick={handleUnenroll}>Unenroll</Button>
             ) : (
@@ -211,11 +212,12 @@ const CourseDetails = () => {
           </div>
           {console.log(isAdmin, isOwner)}
           {(isAdmin && isOwner) && (
-            <div className="mt-4">
+            <div className="mt-4 flex">
               <Button onClick={handleModify} className="mr-2">Modify</Button>
-              <Button onClick={handleDelete} className="bg-red-500 hover:bg-red-700">Delete</Button>
+              <Button onClick={handleDelete} className="text-red-400 hover:text-red-600">Delete</Button>
             </div>
           )}
+          </div>
         </div>
       </div>
     </Section>

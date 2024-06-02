@@ -44,20 +44,29 @@ const MyCourses = ({ setIsLoggedIn }) => {
   return (
     <Section>
       <div className="flex justify-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
           {courses.map((course) => (
-            <div key={course.id_course} className="bg-gray-800 rounded-lg shadow-lg w-80">
-              <img 
-                src={`http://localhost:8080/uploads/${course.picture_path}`} 
-                alt={course.name} 
+            <div key={course.id_course} className="bg-gray-800 rounded-lg shadow-lg w-80 ">
+              <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg w-82">
+              <div className="bg-gray-800 rounded-lg shadow-lg w-79 ">
+              <img
+                /*src={`http://localhost:8080/uploads/${course.picture_path}`}*/
+                src={`${course.picture_path}`}
+                alt={course.name}
                 className="w-full h-64 object-cover rounded-t-lg"
               />
-              <div className="p-4">
+              <div className="p-4 text-center">
                 <h3 className="text-xl font-semibold mb-2">{course.name}</h3>
                 <p className="text-sm text-gray-400 mb-4">{course.description}</p>
-                <Button onClick={() => navigate(`/courses/${course.id_course}`)}>View Details</Button>
+                <Button className="mx-auto"
+                  onClick={() => navigate(`/courses/${course.id_course}`)}
+                >
+                  View Details
+                </Button>
               </div>
             </div>
+          </div>
+          </div>
           ))}
         </div>
       </div>

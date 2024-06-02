@@ -39,7 +39,7 @@ const Header = ({ isLoggedIn, handleLogout }) => {
       }`}
     >
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
-        <a className="block w-[12rem] xl:mr-8" href="/">
+        <a className="hover:scale-105 transition-transform block w-[12rem] xl:mr-8" href="/">
           <img src={brainwave} width={190} height={40} alt="Brainwave" />
         </a>
 
@@ -54,7 +54,7 @@ const Header = ({ isLoggedIn, handleLogout }) => {
                 key={item.id}
                 href={item.url}
                 onClick={handleClick}
-                className={`block relative font-code text-2xl uppercase text-n-1 transition-colors hover:text-color-1 ${
+                className={` hover:scale-110 transition-transform block relative font-code text-2xl uppercase text-n-1 transition-colors hover:text-color-1 ${
                   item.onlyMobile ? "lg:hidden" : ""
                 } px-6 py-6 md:py-8 lg:-mr-0.25 lg:text-xs lg:font-semibold ${
                   item.url === location.hash
@@ -73,14 +73,14 @@ const Header = ({ isLoggedIn, handleLogout }) => {
         {isLoggedIn ? (
           <a
             onClick={handleLogout}
-            className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
+            className="hover:scale-105 transition-transform button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
           >
             Log out
           </a>
         ) : (
           <>
             <Link to="/register" className="hidden lg:flex">
-              <span className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
+              <span className="hover:scale-105 transition-transform button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
                 New account
               </span>
             </Link>
