@@ -36,8 +36,9 @@ const CourseDetails = () => {
           });
 
           if (enrollmentResponse.ok) {
+            console.log("enrollmentResponse", enrollmentResponse)
             const enrollmentData = await enrollmentResponse.json();
-            setIsEnrolled(enrollmentData.isEnrolled);
+            setIsEnrolled(enrollmentData);
           } else {
             console.error("Failed to fetch enrollment status");
           }
