@@ -8,4 +8,5 @@ type CourseCreateDto struct {
 	StartDate   string  `json:"start_date"`
 	EndDate     string  `json:"end_date"`
 	IdOwner     int     `json:"id_owner"`
+	CategoriesId []int  `json:"categories_id"`
 }
