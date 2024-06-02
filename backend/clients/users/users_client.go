@@ -84,10 +84,11 @@ func AddUserCourse(userCourse userModel.UserCourses) e.ApiError {
 
 func RemoveUserCourse(idUser int, idCourse int) e.ApiError {
 	var userCourse userModel.UserCourses
+
 	Db.Where("id_user = ? AND id_course = ?", idUser, idCourse).First(&userCourse)
 	if userCourse.IdUser == 0 {
 		return e.NewBadRequestApiError("User is not subscribed to course")
 	}
-	Db.Delete(&userCourse)
+	Db.Exec("DELETE FROM user_courses WHERE id_user = ? AND id_course = ?", idUser, idCourse)
 	return nil
 }

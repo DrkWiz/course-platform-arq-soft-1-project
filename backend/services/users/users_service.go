@@ -332,6 +332,9 @@ func (s *usersService) UnsubscribeUserCourse(courseId int, token string) e.ApiEr
 		return err
 	}
 
+
+	log.Println("UnsubscribeUserCourse: ", idUser, courseId)
+
 	err1 := usersClient.RemoveUserCourse(idUser, courseId)
 
 	if err1 != nil {
