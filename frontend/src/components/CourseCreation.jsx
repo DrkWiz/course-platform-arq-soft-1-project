@@ -122,6 +122,7 @@ const CourseCreation = () => {
                         </div>
                         <div>
                             <label htmlFor="categories" className="block text-white">Categories:</label>
+<<<<<<< HEAD
                             <Select
                                 id="categories"
                                 name="categories"
@@ -131,6 +132,13 @@ const CourseCreation = () => {
                                 classNamePrefix="select"
                                 onChange={setSelectedCategories}
                             />
+=======
+                            <select id="categories" name="categories" className="w-full" multiple onChange={handleCategoryChange}>
+                                {categories.map(category => (
+                                    <option key={category.id} value={category.id}>{`Category ${category.name}`}</option>
+                                ))}
+                            </select>
+>>>>>>> 98f5f049db29d253a9c73979473a8ab052fe979a
                         </div>
                         <div>
                             <label htmlFor="image" className="block text-white">Image:</label>

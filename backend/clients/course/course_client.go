@@ -26,7 +26,7 @@ func GetCourseById(id int) (courseModel.Course, e.ApiError) {
 	return course, nil
 }
 
-func CreateCourse(course courseModel.Course) e.ApiError {
+func CreateCourse(course *courseModel.Course) e.ApiError {
 	err := Db.Create(&course).Error
 	if err != nil {
 		return e.NewInternalServerApiError("Error creating course", err)

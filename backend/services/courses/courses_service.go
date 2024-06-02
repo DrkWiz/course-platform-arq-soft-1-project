@@ -2,6 +2,7 @@ package courses
 
 import (
 	courseClient "backend/clients/course"
+	usersClient "backend/clients/users"
 	"backend/dto"
 	usersService "backend/services/users"
 
@@ -16,7 +17,7 @@ type coursesService struct{}
 
 type coursesServiceInterface interface {
 	GetCourseById(id int) (dto.CourseMinDto, e.ApiError)
-	CreateCourse(course dto.CourseCreateDto) e.ApiError
+	CreateCourse(course dto.CourseCreateDto, token string) e.ApiError
 	UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError
 	DeleteCourse(id int) e.ApiError
 	GetCourses() (dto.CoursesMaxDto, e.ApiError)
@@ -59,22 +60,34 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 
 //Create course
 
-func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
-	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner}
+func (s *coursesService) CreateCourse(course dto.CourseCreateDto, token string) e.ApiError {
 	
-	err := courseClient.CreateCourse(courseToCreate)
+	ownerId, err := usersService.UsersService.ValidateToken(token)
 
 	if err != nil {
 		return err
 	}
+
+	if !usersClient.GetUserById(ownerId).IsAdmin {
+		return e.NewForbiddenApiError("You don't have permission to create a course")
+	}
 	
+	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: ownerId}
+
+	err = courseClient.CreateCourse(&courseToCreate)
+
+	if err != nil {
+		return err
+	}
+
+	log.Println("Course created: ", courseToCreate)
+
 	for _, categoryId := range course.CategoriesId {
 		err = courseClient.CreateCourseCategory(courseToCreate.IdCourse, categoryId)
 		if err != nil {
 			return err
 		}
 	}
-	
 
 	return nil
 

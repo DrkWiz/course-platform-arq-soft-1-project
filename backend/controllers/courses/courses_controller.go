@@ -39,13 +39,26 @@ func GetCourseById(c *gin.Context) {
 //Create new course
 
 func CreateCourse(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
 	var course dto.CourseCreateDto
 	if err := c.ShouldBindJSON(&course); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	s.CoursesService.CreateCourse(course)
+	s.CoursesService.CreateCourse(course, token)
 	c.JSON(http.StatusOK, "Course created")
 }
 
