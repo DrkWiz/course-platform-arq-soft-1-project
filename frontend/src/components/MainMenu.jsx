@@ -42,11 +42,7 @@ const MainMenu = ({ setIsLoggedIn }) => {
     return <div>Loading...</div>;
   }
 
-  const actions = [
-    { id: "1", url: "/courses", title: "Courses" },
-    { id: "2", url: "/profile", title: "Profile" },
-    { id: "3", url: "/logout", title: "Logout" },
-  ];
+ 
 
   return (
     <Section>
