@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
@@ -12,11 +12,21 @@ const CourseCreation = () => {
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
         const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+        return `${year}-${month}-${day}`; // Use YYYY-MM-DD format for date input
     });
     const [endDate, setEndDate] = useState("");
     const [image, setImage] = useState(null);
     const [categories, setCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const response = await fetch("http://localhost:8080/category/all");
+            const data = await response.json();
+            setCategories(data);
+        };
+        fetchCategories();
+    }, []);
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
@@ -43,7 +53,7 @@ const CourseCreation = () => {
         e.preventDefault();
         const token = localStorage.getItem("token");
 
-        if (!name || !description || !price || !startDate || !endDate || !image) {
+        if (!name || !description || !price || !startDate || !endDate || !image || selectedCategories.length === 0) {
             alert("Please fill in all fields.");
             return;
         }
@@ -62,7 +72,7 @@ const CourseCreation = () => {
                 picture_path: picturePath,
                 start_date: startDate,
                 end_date: endDate,
-                categories_id: categories,
+                categories_id: selectedCategories,
                 id_owner: 1, // Replace with actual owner ID if necessary
             }),
         });
@@ -79,14 +89,8 @@ const CourseCreation = () => {
     };
 
     const handleCategoryChange = (e) => {
-        const { options } = e.target;
-        const selectedCategories = [];
-        for (const option of options) {
-            if (option.selected) {
-                selectedCategories.push(option.value);
-            }
-        }
-        setCategories(selectedCategories);
+        const selectedOptions = Array.from(e.target.selectedOptions).map(option => parseInt(option.value));
+        setSelectedCategories(selectedOptions);
     };
 
     return (
@@ -117,10 +121,9 @@ const CourseCreation = () => {
                         <div>
                             <label htmlFor="categories" className="block text-white">Categories:</label>
                             <select id="categories" name="categories" className="w-full" multiple onChange={handleCategoryChange}>
-                                {/* Options should be dynamically loaded from the server */}
-                                <option value="1">Category 1</option>
-                                <option value="2">Category 2</option>
-                                <option value="3">Category 3</option>
+                                {categories.map(category => (
+                                    <option key={category} value={category}>{`Category ${category}`}</option>
+                                ))}
                             </select>
                         </div>
                         <div>
