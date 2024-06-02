@@ -73,14 +73,14 @@ const Header = ({ isLoggedIn, handleLogout }) => {
         {isLoggedIn ? (
           <a
             onClick={handleLogout}
-            className="hover:scale-105 transition-transform button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
+            className="hover:scale-110 transition-transform button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block cursor-pointer"
           >
             Log out
           </a>
         ) : (
           <>
             <Link to="/register" className="hidden lg:flex">
-              <span className="hover:scale-105 transition-transform button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
+              <span className="hover:scale-110 transition-transform button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block">
                 New account
               </span>
             </Link>

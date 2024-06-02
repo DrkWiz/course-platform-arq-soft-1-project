@@ -48,8 +48,8 @@ const App = () => {
         <Route path="/mycourses" element={<MyCourses setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/mainmenu" element={<ParentMainMenu />} />
         <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/courses/:id" element={<CourseDetails />} /> {/* Ensure this route is defined correctly */}
-        <Route path="/create" element={<ParentCourseCreation />} /> {/* Ensure this route is defined correctly */}
+        <Route path="/courses/:id" element={<CourseDetails />} /> 
+        <Route path="/create" element={<ParentCourseCreation />} /> 
         <Route path="/courses/:id/edit" element={<EditCourse />} />
       </Routes>
       <Footer />

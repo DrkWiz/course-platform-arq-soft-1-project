@@ -44,8 +44,8 @@ const Profile = ({ setIsLoggedIn }) => {
   }
 
   return (
-    <Section>
-      <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen -mt-20 -mb-20">
+      <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
           <h2 className="text-2xl font-bold mb-4">Profile</h2>
           <div className="mb-4">
@@ -68,7 +68,7 @@ const Profile = ({ setIsLoggedIn }) => {
           {user.is_admin ? <Button className="w-half bg-gray-800 text-white hover:bg-gray-800 rounded text-2xl font-semibold" onClick={() => navigate('/create')}>Create Course</Button> : null}
         </div>
       </div>
-    </Section>
+    </div>
   );
 };
 
