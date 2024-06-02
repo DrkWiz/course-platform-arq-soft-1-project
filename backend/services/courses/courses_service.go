@@ -17,6 +17,7 @@ type coursesService struct{}
 type coursesServiceInterface interface {
 	GetCourseById(id int) (dto.CourseMinDto, e.ApiError)
 	CreateCourse(course dto.CourseCreateDto) e.ApiError
+	UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError
 }
 
 var (
@@ -44,8 +45,8 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 	CourseMinDto.Description = course.Description
 	CourseMinDto.Price = course.Price
 	CourseMinDto.PicturePath = course.PicturePath
-	CourseMinDto.StartDate = course.Start_date
-	CourseMinDto.EndDate = course.End_date
+	CourseMinDto.StartDate = course.StartDate
+	CourseMinDto.EndDate = course.EndDate
 	CourseMinDto.IsActive = course.IsActive
 
 	log.Println("CourseMinDto: ", CourseMinDto)
@@ -57,21 +58,21 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMinDto, e.ApiError) {
 
 func (s *coursesService) CreateCourse(course dto.CourseCreateDto) e.ApiError {
 
-	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user}
+	courseToCreate := courseModel.Course{Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner}
 
 	err := courseClient.CreateCourse(courseToCreate)
 	if err != nil {
-		return e.NewInternalServerApiError("Error creating course", err)
+		return err
 	}
-
 	return nil
 
 }
 
 // Update a course.
 
-func UpdateCourse(id int, course dto.CourseUpdateDto) e.ApiError {
-	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.Picture_path, Start_date: course.Start_date, End_date: course.End_date, Id_user: course.Id_user, IsActive: true}
+func (s *coursesService) UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError {
+
+	courseToUpdate := courseModel.Course{IdCourse: id, Name: course.Name, Description: course.Description, Price: course.Price, PicturePath: course.PicturePath, StartDate: course.StartDate, EndDate: course.EndDate, IdOwner: course.IdOwner, IsActive: course.IsActive}
 
 	err := courseClient.UpdateCourse(courseToUpdate)
 	if err != nil {

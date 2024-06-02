@@ -2,7 +2,7 @@ package courses
 
 import (
 	"backend/dto"
-	coursesService "backend/services/courses"
+	s "backend/services/courses"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -26,7 +26,7 @@ func GetCourseById(c *gin.Context) {
 
 	log.Print("GetCourseById: ", id)
 
-	response, err1 := coursesService.CoursesService.GetCourseById(id)
+	response, err1 := s.CoursesService.GetCourseById(id)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
@@ -45,16 +45,29 @@ func CreateCourse(c *gin.Context) {
 		return
 	}
 
-	coursesService.CoursesService.CreateCourse(course)
+	s.CoursesService.CreateCourse(course)
 	c.JSON(http.StatusOK, "Course created")
 }
 
 // Update course
 
 func UpdateCourse(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
+		return
+	}
+
+	token := strings.Split(authHeader, "Bearer ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
 	var course dto.CourseUpdateDto
 	if err := c.ShouldBindJSON(&course); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Invalid JSON body"))
 		return
 	}
 
@@ -65,7 +78,7 @@ func UpdateCourse(c *gin.Context) {
 		return
 	}
 
-	err1 := coursesService.UpdateCourse(id, course)
+	err1 := s.CoursesService.UpdateCourse(id, course, token)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)

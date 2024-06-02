@@ -26,10 +26,10 @@ func GetCourseById(id int) (courseModel.Course, e.ApiError) {
 	return course, nil
 }
 
-func CreateCourse(course courseModel.Course) error {
-	err := Db.Create(&course)
+func CreateCourse(course courseModel.Course) e.ApiError {
+	err := Db.Create(&course).Error
 	if err != nil {
-		return err.Error
+		return e.NewInternalServerApiError("Error creating course", err)
 	}
 	return nil
 
@@ -75,5 +75,5 @@ func GetOwner(courseId int) (int, e.ApiError) {
 	if err != nil {
 		return 0, e.NewNotFoundApiError("Course not found")
 	}
-	return course.Id_user, nil
+	return course.IdOwner, nil
 }
