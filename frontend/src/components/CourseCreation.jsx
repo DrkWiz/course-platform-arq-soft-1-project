@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+import Select from "react-select";
 import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
 
+
 const CourseCreation = () => {
+   
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState(0.00);
@@ -23,7 +26,11 @@ const CourseCreation = () => {
         const fetchCategories = async () => {
             const response = await fetch("http://localhost:8080/category/all");
             const data = await response.json();
-            setCategories(data);
+            const formattedData = data.map(category => ({
+                value: category.id,
+                label: category.name
+            }));
+            setCategories(formattedData);
         };
         fetchCategories();
     }, []);
@@ -72,8 +79,8 @@ const CourseCreation = () => {
                 picture_path: picturePath,
                 start_date: startDate,
                 end_date: endDate,
-                categories_id: selectedCategories,
-                id_owner: 1, // Replace with actual owner ID if necessary
+                categories_id: selectedCategories.map(category => category.value),
+                
             }),
         });
 
@@ -86,11 +93,6 @@ const CourseCreation = () => {
             console.error("Course creation failed", errorData);
             // Handle register failure
         }
-    };
-
-    const handleCategoryChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions).map(option => parseInt(option.value));
-        setSelectedCategories(selectedOptions);
     };
 
     return (
@@ -120,11 +122,15 @@ const CourseCreation = () => {
                         </div>
                         <div>
                             <label htmlFor="categories" className="block text-white">Categories:</label>
-                            <select id="categories" name="categories" className="w-full" multiple onChange={handleCategoryChange}>
-                                {categories.map(category => (
-                                    <option key={category} value={category}>{`Category ${category}`}</option>
-                                ))}
-                            </select>
+                            <Select
+                                id="categories"
+                                name="categories"
+                                isMulti
+                                options={categories}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                onChange={setSelectedCategories}
+                            />
                         </div>
                         <div>
                             <label htmlFor="image" className="block text-white">Image:</label>
