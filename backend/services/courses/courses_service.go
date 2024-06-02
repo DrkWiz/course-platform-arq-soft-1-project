@@ -20,6 +20,7 @@ type coursesServiceInterface interface {
 	UpdateCourse(id int, course dto.CourseUpdateDto, token string) e.ApiError
 	DeleteCourse(id int) e.ApiError
 	GetCourses() (dto.CoursesMaxDto, e.ApiError)
+	CheckOwner(token string, courseId int) (bool, e.ApiError)
 }
 
 var (
@@ -80,7 +81,7 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 	}
 
 	if !ok {
-		isOwner, err := CheckOwner(token, courseId)
+		isOwner, err := s.CheckOwner(token, courseId)
 		if err != nil {
 			return err
 		}
@@ -142,7 +143,7 @@ func (s *coursesService) GetCourses() (dto.CoursesMaxDto, e.ApiError) {
 
 // Check if token is the owner of the course
 
-func CheckOwner(token string, courseId int) (bool, e.ApiError) {
+func (s *coursesService) CheckOwner(token string, courseId int) (bool, e.ApiError) {
 	idToCheck, err := usersService.UsersService.ValidateToken(token)
 
 	if err != nil {

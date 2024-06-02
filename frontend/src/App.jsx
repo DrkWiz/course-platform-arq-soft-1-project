@@ -44,7 +44,7 @@ const App = () => {
         } />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}/>} />
         <Route path="/register" element={<Register />} />
-        <Route path="/mycourses" element={<MyCourses />} />
+        <Route path="/mycourses" element={<MyCourses setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/mainmenu" element={<MainMenu />} />
         <Route path="/profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/courses/:id" element={<CourseDetails />} /> {/* Ensure this route is defined correctly */}

@@ -158,7 +158,7 @@ func CheckOwner(c *gin.Context) {
 		return
 	}
 
-	response, err1 := coursesService.CheckOwner(token, courseId)
+	response, err1 := s.CoursesService.CheckOwner(token, courseId)
 
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
