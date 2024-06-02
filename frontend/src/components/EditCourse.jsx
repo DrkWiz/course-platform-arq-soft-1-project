@@ -1,20 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Select from "react-select";
 import Section from './Section';
 import Button from './Button';
 
 const EditCourse = () => {
   const { id } = useParams();
   const [course, setCourse] = useState({
+    owner: '',
     name: '',
     description: '',
     price: '',
+    picture_path: '',
     start_date: '',
     end_date: '',
     is_active: false,
-    picture_path: '',
+    categories: [],
   });
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -48,7 +53,20 @@ const EditCourse = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      const response = await fetch("http://localhost:8080/category/all");
+      const data = await response.json();
+      const formattedData = data.map(category => ({
+          value: category.id,
+          label: category.name
+      }));
+      setCategories(formattedData);
+      console.log(formattedData);
+  };
+
+
     fetchCourseData();
+    fetchCategories();
   }, [id, navigate]);
 
   const handleChange = (e) => {
@@ -81,6 +99,41 @@ const EditCourse = () => {
     } catch (error) {
       console.error("Error updating course", error);
     }
+
+
+  };
+
+  const customStyles = {
+    control: (provided) => ({
+        ...provided,
+        backgroundColor: '#2d3748', // Match your dark theme
+        borderColor: '#4a5568', // Match your dark theme
+        color: 'white',
+    }),
+    menu: (provided) => ({
+        ...provided,
+        backgroundColor: '#2d3748', // Match your dark theme
+    }),
+    option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isSelected ? '#4a5568' : '#2d3748', // Match your dark theme
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#4a5568', // Match your dark theme
+        },
+    }),
+    multiValue: (provided) => ({
+        ...provided,
+        backgroundColor: '#4a5568', // Match your dark theme
+    }),
+    multiValueLabel: (provided) => ({
+        ...provided,
+        color: 'white',
+    }),
+    placeholder: (provided) => ({
+        ...provided,
+        color: '#a0aec0', // Match your dark theme
+    }),
   };
 
   if (loading) {
@@ -140,6 +193,19 @@ const EditCourse = () => {
                 value={course.end_date}
                 onChange={handleChange}
                 className="mt-1 block w-full bg-gray-700 text-white rounded-md"
+              />
+            </div>
+            <div className='mb-4'>
+              <label className="block text-sm font-medium text-gray-400">Categories</label>
+              <Select
+                                id="categories"
+                                name="categories"
+                                isMulti
+                                options={categories}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                styles={customStyles}
+                                onChange={setSelectedCategories}
               />
             </div>
             <div className="mb-4">
