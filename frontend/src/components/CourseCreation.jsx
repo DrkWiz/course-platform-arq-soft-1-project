@@ -4,9 +4,7 @@ import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
 
-
 const CourseCreation = () => {
-   
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState(0.00);
@@ -80,7 +78,7 @@ const CourseCreation = () => {
                 start_date: startDate,
                 end_date: endDate,
                 categories_id: selectedCategories.map(category => category.value),
-                
+                id_owner: 1, // Replace with actual owner ID if necessary
             }),
         });
 
@@ -122,7 +120,6 @@ const CourseCreation = () => {
                         </div>
                         <div>
                             <label htmlFor="categories" className="block text-white">Categories:</label>
-<<<<<<< HEAD
                             <Select
                                 id="categories"
                                 name="categories"
@@ -132,13 +129,6 @@ const CourseCreation = () => {
                                 classNamePrefix="select"
                                 onChange={setSelectedCategories}
                             />
-=======
-                            <select id="categories" name="categories" className="w-full" multiple onChange={handleCategoryChange}>
-                                {categories.map(category => (
-                                    <option key={category.id} value={category.id}>{`Category ${category.name}`}</option>
-                                ))}
-                            </select>
->>>>>>> 98f5f049db29d253a9c73979473a8ab052fe979a
                         </div>
                         <div>
                             <label htmlFor="image" className="block text-white">Image:</label>
