@@ -93,6 +93,39 @@ const CourseCreation = () => {
         }
     };
 
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: '#2d3748', // Match your dark theme
+            borderColor: '#4a5568', // Match your dark theme
+            color: 'white',
+        }),
+        menu: (provided) => ({
+            ...provided,
+            backgroundColor: '#2d3748', // Match your dark theme
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected ? '#4a5568' : '#2d3748', // Match your dark theme
+            color: 'white',
+            '&:hover': {
+                backgroundColor: '#4a5568', // Match your dark theme
+            },
+        }),
+        multiValue: (provided) => ({
+            ...provided,
+            backgroundColor: '#4a5568', // Match your dark theme
+        }),
+        multiValueLabel: (provided) => ({
+            ...provided,
+            color: 'white',
+        }),
+        placeholder: (provided) => ({
+            ...provided,
+            color: '#a0aec0', // Match your dark theme
+        }),
+    };
+
     return (
         <Section className="-mt-[5.25rem]" customPaddings>
             <div className="flex justify-center items-center h-screen ">
@@ -127,6 +160,7 @@ const CourseCreation = () => {
                                 options={categories}
                                 className="basic-multi-select"
                                 classNamePrefix="select"
+                                styles={customStyles}
                                 onChange={setSelectedCategories}
                             />
                         </div>

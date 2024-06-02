@@ -51,10 +51,8 @@ const CourseDetails = () => {
             });
 
             if (ownerResponse.ok) {
-              console.log("Owner response", ownerResponse);
               const ownerData = await ownerResponse.json();
-              console.log(ownerData);
-              setIsOwner(ownerResponse);
+              setIsOwner(ownerData);
 
               // Fetch enrollment status
               const enrollmentResponse = await fetch(`http://localhost:8080/users/courses/${id}/enrolled`, {
@@ -190,6 +188,14 @@ const CourseDetails = () => {
             {course.is_active ? <p className="text-green-400">Published</p> : <p className="text-red-400">Not Published</p>}
           </div>
           <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Categories:</label>
+            <ul className="list-disc list-inside text-lg">
+              {course.categories?.map(category => (
+                <li key={category.id}>{category.name}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-400">Course Image:</label>
             <img 
               src={`http://localhost:8080/uploads/${course.picture_path}`} 
@@ -203,20 +209,19 @@ const CourseDetails = () => {
             />
           </div>
           <div className="mt-4 flex justify-center items-center">
-          <div className="mt-4 mr-2">
-            {isEnrolled ? (
-              <Button onClick={handleUnenroll}>Unenroll</Button>
-            ) : (
-              <Button onClick={handleEnroll}>Enroll</Button>
-            )}
-          </div>
-          {console.log(isAdmin, isOwner)}
-          {(isAdmin && isOwner) && (
-            <div className="mt-4 flex">
-              <Button onClick={handleModify} className="mr-2">Modify</Button>
-              <Button onClick={handleDelete} className="text-red-400 hover:text-red-600">Delete</Button>
+            <div className="mt-4 mr-2">
+              {isEnrolled ? (
+                <Button onClick={handleUnenroll}>Unenroll</Button>
+              ) : (
+                <Button onClick={handleEnroll}>Enroll</Button>
+              )}
             </div>
-          )}
+            {(isAdmin && isOwner) && (
+              <div className="mt-4 flex">
+                <Button onClick={handleModify} className="mr-2">Modify</Button>
+                <Button onClick={handleDelete} className="text-red-400 hover:text-red-600">Delete</Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
