@@ -3,11 +3,15 @@ import Autosuggest from 'react-autosuggest';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useNavigate } from 'react-router-dom';
+import Alert from './Alert';
 
 const SearchComponent = () => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const navigate = useNavigate(); // Initialize navigate
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [alertType, setAlertType] = useState(null);
 
   const fetchSuggestions = async (inputValue) => {
     if (!inputValue) {
@@ -39,6 +43,9 @@ const SearchComponent = () => {
       setSuggestions(filteredSuggestions);
       console.log('Filtered suggestions:', filteredSuggestions); // Debugging line
     } catch (error) {
+      setErrorMessage('Failed to fetch courses');
+      setAlertType('error');
+      setShowAlert(true);
       console.error('Error fetching courses', error);
     }
   };
@@ -79,28 +86,29 @@ const SearchComponent = () => {
 
   return (
     <div className="flex justify-center items-center h-[50vh]">
-    <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
-      <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
-        <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
-        <Autosuggest
-          suggestions={suggestions}
-          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={onSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
-          renderSuggestion={renderSuggestion}
-          inputProps={inputProps}
-          onSuggestionSelected={onSuggestionSelected} // Add handler for suggestion selection
-          theme={{
-            container: 'relative',
-            input: 'border p-2 w-full rounded-lg',
-            suggestionsContainer: suggestions.length === 0 ? 'hidden' : 'absolute mt-1 w-full bg-white border border-gray-300 rounded-lg z-10',
-            suggestion: 'block px-4 py-2 cursor-pointer',
-            suggestionHighlighted: 'bg-gray-200',
-          }}
-        />
+      {showAlert && <Alert message={errorMessage} type={alertType} onClose={() => setShowAlert(false)} />}
+      <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
+        <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
+          <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
+          <Autosuggest
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={onSuggestionsClearRequested}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+            onSuggestionSelected={onSuggestionSelected} // Add handler for suggestion selection
+            theme={{
+              container: 'relative',
+              input: 'border p-2 w-full rounded-lg',
+              suggestionsContainer: suggestions.length === 0 ? 'hidden' : 'absolute mt-1 w-full bg-white border border-gray-300 rounded-lg z-10',
+              suggestion: 'block px-4 py-2 cursor-pointer',
+              suggestionHighlighted: 'bg-gray-200',
+            }}
+          />
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 

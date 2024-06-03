@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Section from './Section';
 import Button from './Button'; // Assuming you have a Button component
+import Alert from './Alert';
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -10,12 +11,20 @@ const CourseDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const navigate = useNavigate();
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [alertType, setAlertType] = useState(null); 
 
   useEffect(() => {
     const fetchCourseData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
+        setErrorMessage("Error with token"); 
+        setAlertType('error'); 
+        setShowAlert(true); 
+        setTimeout(() => {
         navigate('/login');
+        } , 1500);
         return;
       }
 
@@ -66,21 +75,45 @@ const CourseDetails = () => {
                 setIsEnrolled(enrollmentData);
               } else {
                 console.error("Failed to fetch enrollment status");
+                setErrorMessage("Failed to fetch enrollment status");
+                setAlertType('error'); 
+                setShowAlert(true);
               }
             } else {
               console.error("Failed to check course ownership");
+              setErrorMessage("Failed to check course ownership"); 
+              setAlertType('error'); 
+              setShowAlert(true); 
+  
             }
           } else {
             console.error("Failed to fetch user data");
-            navigate('/login');
+            setErrorMessage("Failed to fetch user data");
+            setAlertType('error'); 
+            setShowAlert(true);
+            //agrego una pausa de 3 segundos para que se muestre el mensaje de error
+            setTimeout(() => {
+              navigate('/login');
+            }, 1500);
           }
         } else {
           console.error("Failed to fetch course data");
-          navigate('/login');
-        }
+          setErrorMessage("Failed to fetch course data"); 
+          setAlertType('error'); 
+          setShowAlert(true);
+          //agrego una pausa de 3 segundos para que se muestre el mensaje de error
+          setTimeout(() => {
+            navigate('/login');
+          }, 1500);        }
       } catch (error) {
         console.error("Error fetching course data", error);
-        navigate('/login');
+        setErrorMessage("Error fetching course data");
+        setAlertType('error'); 
+        setShowAlert(true);
+        //agrego una pausa de 3 segundos para que se muestre el mensaje de error
+        setTimeout(() => {
+          navigate('/login');
+        }, 1500); 
       }
     };
 
@@ -99,12 +132,21 @@ const CourseDetails = () => {
       });
 
       if (response.ok) {
+        setErrorMessage("Enrolled in course successfully");
+        setAlertType('success');
+        setShowAlert(true);
         setIsEnrolled(true);
       } else {
         console.error("Failed to enroll in course");
+        setErrorMessage("Failed to enroll in course"); 
+            setAlertType('error'); 
+            setShowAlert(true)
       }
     } catch (error) {
       console.error("Error enrolling in course", error);
+      setErrorMessage("Error enrolling in course");
+      setAlertType('error');
+      setShowAlert(true);
     }
   };
 
@@ -120,12 +162,21 @@ const CourseDetails = () => {
       });
 
       if (response.ok) {
+        setErrorMessage("Unenrolled from course successfully");
+        setAlertType('success');
+        setShowAlert(true);
         setIsEnrolled(false);
       } else {
         console.error("Failed to unenroll from course");
+        setErrorMessage("Failed to unenroll from course");
+        setAlertType('error'); 
+        setShowAlert(true); 
       }
     } catch (error) {
       console.error("Error unenrolling from course", error);
+      setErrorMessage("Error unenrolling from course"); // Assume that errorData has a message property
+      setAlertType('error'); // Set the alert type to 'error'
+      setShowAlert(true);
     }
   };
 
@@ -141,12 +192,23 @@ const CourseDetails = () => {
       });
 
       if (response.ok) {
-        navigate('/courses'); // Redirect to courses list after deletion
+        setErrorMessage("Course deleted successfully"); 
+            setAlertType('success'); 
+            setShowAlert(true);
+            setTimeout(() => {
+        navigate('/mainmenu'); // Redirect to courses list after deletion
+      } , 1500);
       } else {
         console.error("Failed to delete course");
+        setErrorMessage("Failed to delete course"); 
+        setAlertType('error'); 
+        setShowAlert(true); 
       }
     } catch (error) {
       console.error("Error deleting course", error);
+      setErrorMessage("Error deleting course");
+      setAlertType('error');
+      setShowAlert(true);
     }
   };
 
@@ -159,7 +221,8 @@ const CourseDetails = () => {
   }
 
   return (
-    <Section>
+    <Section className="mt-[13rem] mb-[13rem]" customPaddings>
+    {showAlert && <Alert message={errorMessage} type={alertType} onClose={() => setShowAlert(false)} />}
       <div className="flex justify-center items-center h-screen">
       <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
@@ -202,10 +265,10 @@ const CourseDetails = () => {
               src={`http://localhost:8080/uploads/${course.picture_path}`} 
               alt={course.name} 
               style={{
-                width: '100%', // make the image take up the full width of its container
-                height: 'auto', // keep the original aspect ratio
-                objectFit: 'cover', // cover the entire width of the container without stretching
-                borderRadius: '4px', // round the corners
+                width: '100%',
+                height: 'auto',
+                objectFit: 'cover',
+                borderRadius: '4px', 
               }}
             />
           </div>

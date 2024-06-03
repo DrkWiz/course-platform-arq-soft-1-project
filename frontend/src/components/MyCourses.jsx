@@ -2,16 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Section from './Section';
 import Button from './Button'; // Assuming you have a Button component
+import Alert from './Alert';
 
 const MyCourses = ({ setIsLoggedIn }) => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [alertType, setAlertType] = useState(null); 
 
   useEffect(() => {
     const fetchCourses = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
+        setErrorMessage("Error with token");
+        setAlertType("error");
+        setShowAlert(true);
+        setTimeout(() => {
         navigate('/login');
+        } , 1500);
         return;
       }
 
@@ -27,9 +36,15 @@ const MyCourses = ({ setIsLoggedIn }) => {
           const data = await response.json();
           setCourses(data);
         } else {
+          setErrorMessage("Failed to fetch courses");
+          setAlertType("error");
+          setShowAlert(true);
           console.error("Failed to fetch courses");
         }
       } catch (error) {
+        setErrorMessage("Error fetching courses");
+        setAlertType("error");
+        setShowAlert(true);
         console.error("Error fetching courses", error);
       }
     };
@@ -43,6 +58,7 @@ const MyCourses = ({ setIsLoggedIn }) => {
 
   return (
     <Section>
+    {showAlert && <Alert message={errorMessage} type={alertType} onClose={() => setShowAlert(false)} />}
       <div className="flex justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
           {courses.map((course) => (
@@ -51,7 +67,7 @@ const MyCourses = ({ setIsLoggedIn }) => {
               <div className="bg-gray-800 rounded-lg shadow-lg w-79 ">
               <img
                 src={`http://localhost:8080/uploads/${course.picture_path}`}
-               
+                
                 alt={course.name}
                 className="w-full h-64 object-cover rounded-t-lg"
               />

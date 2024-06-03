@@ -3,6 +3,8 @@ import Select from "react-select";
 import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
+import Alert from './Alert'; // Asegúrate de que la ruta de importación sea correcta
+
 
 const CourseCreation = () => {
     const [name, setName] = useState('');
@@ -19,6 +21,10 @@ const CourseCreation = () => {
     const [image, setImage] = useState(null);
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [showAlert, setShowAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [alertType, setAlertType] = useState(null); // Add this line
+
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -59,7 +65,10 @@ const CourseCreation = () => {
         const token = localStorage.getItem("token");
 
         if (!name || !description || !price || !startDate || !endDate || !image || selectedCategories.length === 0) {
-            alert("Please fill in all fields.");
+            // alert("Please fill in all fields.");
+            setErrorMessage("Please fill in all fields.");
+            setAlertType('error');
+            setShowAlert(true);
             return;
         }
 
@@ -85,11 +94,15 @@ const CourseCreation = () => {
         if (response.ok) {
             const data = await response.json();
             console.log("Course created successfully", data);
-            // Handle successful register.
+            setErrorMessage("Course created successfully");
+            setAlertType('success'); 
+            setShowAlert(true);            
         } else {
             const errorData = await response.json();
             console.error("Course creation failed", errorData);
-            // Handle register failure
+            setErrorMessage(errorData.message);
+            setAlertType('error');
+            setShowAlert(true);
         }
     };
 
@@ -127,6 +140,8 @@ const CourseCreation = () => {
     };
 
     return (
+        <div>
+            {showAlert && <Alert message={errorMessage} type={alertType} onClose={() => setShowAlert(false)} />}
         <Section className="-mt-[5.25rem]" customPaddings>
             <div className="flex justify-center items-center h-screen ">
                 <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
@@ -172,9 +187,11 @@ const CourseCreation = () => {
                             <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-800 rounded text-2xl font-semibold">Create Course</Button>
                         </form>
                     </div>
+                    
                 </div>
             </div>
         </Section>
+        </div>
     );
 };
 
