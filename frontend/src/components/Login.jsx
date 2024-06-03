@@ -51,6 +51,7 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
   return (
     <Section className="-mt-[5.25rem]" customPaddings>
       <div className="flex justify-center items-center h-screen">
+      <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
           <form className="space-y-4 font-semibold" onSubmit={handleSubmit}>
             <div>
@@ -89,6 +90,7 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
           </form>
         </div>
       </div>
+    </div>
     </Section>
   );
 };

@@ -3,6 +3,7 @@ import Button from "./Button";
 import InputField from "./Input";
 import Section from "./Section";
 import Alert from "./Alert";
+import { useNavigate } from 'react-router-dom';
 
 
 const Register = () => {
@@ -13,6 +14,8 @@ const Register = () => {
   const [registerFailed, setRegisterFailed] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [responseData, setResponseData] = useState({});
+  const navigate = useNavigate();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -30,6 +33,9 @@ const Register = () => {
       console.log("Registered succesfully", data);
       setRegisterFailed(false);
       setRegisterSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
       // Handle succesful register.
     } else {
       const errorData = await response.json();
@@ -43,9 +49,10 @@ const Register = () => {
 
   return (
     <Section
-      className="-mt-[5.25rem]"
+      className="-mt-[3rem]"
       customPaddings>
       <div className="flex justify-center items-center h-screen ">
+      <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
           <form className="space-y-4 font-semibold" onSubmit={handleSubmit}>
             <div>
@@ -72,6 +79,7 @@ const Register = () => {
               {registerFailed && <Alert message={`Register failed: ${responseData}`} type="error" onClose={() => setRegisterFailed(false)}/>}
               {registerSuccess && <Alert message="Registered successfully!" type="success" onClose={() => setRegisterSuccess(false)}/>}
             </div>
+        </div>
         </div>
       </div>
     </Section>
