@@ -3,6 +3,7 @@ package course
 import (
 	categoryModel "backend/model/category"
 	courseModel "backend/model/courses"
+	"os"
 
 	e "backend/utils/errors"
 
@@ -90,4 +91,12 @@ func GetOwner(courseId int) (int, e.ApiError) {
 		return 0, e.NewNotFoundApiError("Course not found")
 	}
 	return course.IdOwner, nil
+}
+
+func SaveFile(file []byte, path string) e.ApiError {
+	err := os.WriteFile(path, file, 0644)
+	if err != nil {
+		return e.NewInternalServerApiError("Error saving file", err)
+	}
+	return nil
 }

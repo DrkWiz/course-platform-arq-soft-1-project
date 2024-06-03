@@ -3,6 +3,7 @@ package courses
 import (
 	"backend/dto"
 	s "backend/services/courses"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -182,14 +183,30 @@ func CheckOwner(c *gin.Context) {
 }
 
 func ImageUpload(c *gin.Context) {
-	file, _ := c.FormFile("image")
-	path := filepath.Join("./uploads", file.Filename)
+	file, err := c.FormFile("image")
 
-	// Upload the file to a specific destination
-	if err := c.SaveUploadedFile(file, path); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Error getting file"))
 		return
 	}
+
+	path := filepath.Join("./uploads", file.Filename)
+
+	openFile, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, e.NewInternalServerApiError("Error opening file", err))
+		return
+	}
+	defer openFile.Close()
+
+	fileBytes, err := io.ReadAll(openFile)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, e.NewInternalServerApiError("Error reading file", err))
+		return
+	}
+
+	err = s.CoursesService.SaveFile(fileBytes, path)
 
 	// Return the relative path to be used in the frontend
 	c.JSON(http.StatusOK, gin.H{"picture_path": file.Filename})
