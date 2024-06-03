@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect }  from 'react';
 import './Alert.css'; // Asegúrate de que la ruta de importación sea correcta
+import Ding from "../assets/Ding.mp3"
 
 const Alert = ({ message, type, onClose }) => {
   const alertType = type === 'error' ? 'bg-red-500' : 'bg-green-500';
+
+  useEffect(() => {
+    const audio = new Audio(Ding);
+    audio.play();
+  }, []);
 
   return (
     <div className={`alert text-white px-6 py-4 border-0 rounded ${alertType}`}>
