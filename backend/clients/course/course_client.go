@@ -100,3 +100,11 @@ func SaveFile(file []byte, path string) e.ApiError {
 	}
 	return nil
 }
+
+func GetFile(path string) ([]byte, e.ApiError) {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil, e.NewInternalServerApiError("Error getting file", err)
+	}
+	return file, nil
+}

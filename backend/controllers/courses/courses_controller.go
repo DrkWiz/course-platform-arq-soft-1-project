@@ -216,5 +216,12 @@ func GetImage(c *gin.Context) {
 	picturepath := c.Param("picturepath")
 	path := filepath.Join("./uploads", picturepath)
 
-	c.File(path)
+	file, err := s.CoursesService.GetFile(path)
+
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+
+	c.Data(http.StatusOK, "image/jpeg", file)
 }

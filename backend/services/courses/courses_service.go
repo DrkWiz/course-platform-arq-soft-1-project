@@ -23,6 +23,7 @@ type coursesServiceInterface interface {
 	GetCourses() (dto.CoursesMaxDto, e.ApiError)
 	CheckOwner(token string, courseId int) (bool, e.ApiError)
 	SaveFile(file []byte, path string) e.ApiError
+	GetFile(path string) ([]byte, e.ApiError)
 }
 
 var (
@@ -212,4 +213,12 @@ func (s *coursesService) SaveFile(file []byte, path string) e.ApiError {
 		return err
 	}
 	return nil
+}
+
+func (s *coursesService) GetFile(path string) ([]byte, e.ApiError) {
+	file, err := courseClient.GetFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
 }
