@@ -31,13 +31,10 @@ const SearchComponent = () => {
       console.log('Fetched courses:', courses); // Debugging line
 
       const filteredSuggestions = courses.filter(course => {
-        const courseName = course.name;
-        if (courseName && typeof courseName === 'string') {
-          const isMatch = courseName.toLowerCase().startsWith(trimmedValue);
-          console.log(`Checking course "${courseName}": ${isMatch}`); // Debugging line
-          return isMatch;
-        }
-        return false;
+        const courseName = course.name.toLowerCase();
+        const isMatch = courseName.startsWith(trimmedValue);
+        console.log(`Checking course "${courseName}": ${isMatch}`); // Debugging line
+        return isMatch;
       });
 
       setSuggestions(filteredSuggestions);
@@ -70,6 +67,14 @@ const SearchComponent = () => {
     navigate(`/courses/${suggestion.id}`); // Make sure the ID is passed correctly
   };
 
+  const onKeyDown = (event) => {
+    if (event.key === 'Enter' && suggestions.length === 0) {
+      setErrorMessage('No matches found');
+      setAlertType('warning');
+      setShowAlert(true);
+    }
+  };
+
   const renderSuggestion = (suggestion) => (
     console.log('Rendering suggestion:', suggestion.name), // Debugging line
     <div className="px-4 py-2 text-black">
@@ -81,12 +86,13 @@ const SearchComponent = () => {
     placeholder: 'Type a course name',
     value,
     onChange,
+    onKeyDown,
     className: 'w-full px-4 py-2 text-white rounded-lg border border-gray-300 bg-gray-800 placeholder-gray-400'
   };
 
   return (
     <div className="flex justify-center items-center h-[50vh]">
-      {showAlert && <Alert message={errorMessage} type={alertType} onClose={() => setShowAlert(false)} />}
+      {showAlert && <Alert message={errorMessage} type={"error"} onClose={() => setShowAlert(false)} />}
       <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full">
         <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800">
           <h2 className="text-2xl font-bold text-white mb-4">Search Courses</h2>
