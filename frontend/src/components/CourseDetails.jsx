@@ -262,7 +262,7 @@ const CourseDetails = () => {
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-400">Course Image:</label>
             <img 
-              src={`http://localhost:8080/${course.picture_path}`} 
+              src={`http://localhost:8080/uploads/${course.picture_path}`} 
               alt={course.name} 
               style={{
                 width: '100%',
