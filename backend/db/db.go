@@ -28,7 +28,7 @@ func init() {
 	DBPass := "Nano01234" //password del root en la instalacion
 	DBHost := "127.0.0.1" //host de la base de datos. hbitualmente 127.0.0.1
 
-	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3306)/"+DBName+"?charset=utf8&parseTime=True")
+	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3307)/"+DBName+"?charset=utf8&parseTime=True")
 
 	if err != nil {
 		log.Info("Connection Failed to Open")
