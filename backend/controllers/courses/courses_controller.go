@@ -226,3 +226,21 @@ func GetImage(c *gin.Context) {
 
 	c.Data(http.StatusOK, "image/jpeg", file) //aca se devuelve la imagen en formato jpeg
 }
+
+func GetAvgRating (c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere buscar, y se lo convierte  de str a int
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	response, err1 := s.CoursesService.GetAvgRating(id) // aca se llama a la funcion GetAvgRating de la interfaz CoursesService
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, response) //aca se devuelve el promedio de calificacion del curso
+}

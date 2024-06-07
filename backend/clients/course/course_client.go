@@ -3,6 +3,7 @@ package course
 import (
 	categoryModel "backend/model/category"
 	courseModel "backend/model/courses"
+	userCourseModel "backend/model/users"
 	"os"
 
 	e "backend/utils/errors"
@@ -108,3 +109,13 @@ func GetFile(path string) ([]byte, e.ApiError) {
 	}
 	return file, nil // se retorna el archivo leido en bytes
 }
+
+func GetAvgRating(courseId int) ( float64, e.ApiError) { // se busca un promedio de calificacion de un curso
+	var userCourse userCourseModel.UserCourses // se crea una variable userCourse de tipo UserCourse
+	err := Db.Raw("SELECT AVG(rating) as rating FROM user_courses WHERE id_course = ?", courseId).Scan(&userCourse).Error // se hace una consulta a la base de datos para obtener el promedio de calificacion de un curso
+	if err != nil {
+		return 0, e.NewNotFoundApiError("Rating not found")
+	}
+	return userCourse.Rating, nil
+}
+

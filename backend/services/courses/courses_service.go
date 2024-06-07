@@ -24,6 +24,7 @@ type coursesServiceInterface interface { // aca se define la interfaz de la clas
 	CheckOwner(token string, courseId int) (bool, e.ApiError)
 	SaveFile(file []byte, path string) e.ApiError
 	GetFile(path string) ([]byte, e.ApiError)
+	GetAvgRating(courseId int) (float64, e.ApiError)
 }
 
 var ( // aca se crea una variable CoursesService de tipo coursesServiceInterface
@@ -246,4 +247,14 @@ func (s *coursesService) GetFile(path string) ([]byte, e.ApiError) { // aca se i
 		return nil, err
 	}
 	return file, nil
+}
+
+// avg rating
+
+func (s *coursesService) GetAvgRating(courseId int) (float64, e.ApiError) { // aca se implementa el metodo GetAvgRating de la interfaz CoursesServiceInterface
+	rating, err := courseClient.GetAvgRating(courseId) // aca se llama al metodo GetAvgRating del cliente CourseClient para obtener el rating promedio
+	if err != nil {
+		return 0, err
+	}
+	return rating, nil
 }
