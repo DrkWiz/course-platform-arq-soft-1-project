@@ -17,6 +17,7 @@ type categoryService struct{}
 type categoryServiceInterface interface {
 	GetCategoryById(id int) (dto.CategoryMinDto, e.ApiError)
 	GetCategories() ([]dto.CategoryMinDto, e.ApiError)
+	CreateCategory(category dto.CategoryCreateDto) error
 }
 
 var (
@@ -40,7 +41,7 @@ func (s *categoryService) GetCategoryById(id int) (dto.CategoryMinDto, e.ApiErro
 	return CategoryMinDto, nil
 }
 
-func CreateCategory(category dto.CategoryCreateDto) error {
+func (s *categoryService) CreateCategory(category dto.CategoryCreateDto) error {
 
 	categoryToCreate := categoryModel.Category{Name: category.Name}
 

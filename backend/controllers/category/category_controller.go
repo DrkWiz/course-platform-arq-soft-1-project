@@ -2,7 +2,7 @@ package category
 
 import (
 	"backend/dto"
-	categoryService "backend/services/category"
+	s "backend/services/category"
 	"net/http"
 	"strconv"
 
@@ -20,7 +20,7 @@ func GetCategoryById(c *gin.Context) {
 
 	log.Print("GetCategoryByUd: ", id)
 
-	response, errUno := categoryService.CategoryService.GetCategoryById(id)
+	response, errUno := s.CategoryService.GetCategoryById(id)
 
 	if errUno != nil {
 		c.JSON(errUno.Status(), errUno)
@@ -38,14 +38,14 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
-	categoryService.CreateCategory(category)
+	s.CategoryService.CreateCategory(category)
 	c.JSON(http.StatusOK, "Category created")
 }
 
 func GetCategories(c *gin.Context) {
 	log.Print("GetCategories")
 
-	response, err := categoryService.CategoryService.GetCategories()
+	response, err := s.CategoryService.GetCategories()
 
 	if err != nil {
 		c.JSON(err.Status(), err)
