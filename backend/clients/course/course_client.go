@@ -11,12 +11,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var Db *gorm.DB
+var Db *gorm.DB // aca se guarda la conexion a la base de datos
 
-func GetCourseById(id int) (courseModel.Course, e.ApiError) {
-	var course courseModel.Course
+func GetCourseById(id int) (courseModel.Course, e.ApiError) { // aca se obtiene un curso por id
+	var course courseModel.Course // se crea una variable course de tipo Course
 
-	err := Db.Where("id_course = ?", id).First(&course).Error
+	err := Db.Where("id_course = ?", id).First(&course).Error // se busca el curso por id
 
 	if err != nil {
 		return course, e.NewNotFoundApiError("Course not found")
@@ -27,17 +27,17 @@ func GetCourseById(id int) (courseModel.Course, e.ApiError) {
 	return course, nil
 }
 
-func CreateCourse(course *courseModel.Course) e.ApiError {
-	err := Db.Create(&course).Error
+func CreateCourse(course *courseModel.Course) e.ApiError { // aca se crea un curso
+	err := Db.Create(&course).Error // se crea el curso
 	if err != nil {
-		return e.NewInternalServerApiError("Error creating course", err)
+		return e.NewInternalServerApiError("Error creating course", err) // si hay un error se retorna un error
 	}
 	return nil
 
 }
 
-func UpdateCourse(course courseModel.Course) e.ApiError {
-	err := Db.Save(&course).Error
+func UpdateCourse(course courseModel.Course) e.ApiError { // aca se actualiza un curso
+	err := Db.Save(&course).Error // save es un metodo de gorm que actualiza un registro
 
 	if err != nil {
 		return e.NewInternalServerApiError("Error updating course", err)
@@ -45,27 +45,26 @@ func UpdateCourse(course courseModel.Course) e.ApiError {
 	return nil
 }
 
-func DeleteCourse(id int) e.ApiError {
-	// Ensure the correct usage of the Update method
-	err := Db.Model(&courseModel.Course{}).Where("id_course = ?", id).Update("is_active", "0").Error
+func DeleteCourse(id int) e.ApiError { // aca se elimina un curso por id
+	err := Db.Model(&courseModel.Course{}).Where("id_course = ?", id).Update("is_active", "0").Error // se actualiza el campo is_active a 0
 	if err != nil {
 		return e.NewInternalServerApiError("Error deleting course", err)
 	}
 	return nil
 }
 
-func CreateCourseCategory(courseId int, categoryId int) e.ApiError {
-	courseCategory := courseModel.CourseCategory{IdCourse: courseId, IdCategory: categoryId}
-	err := Db.Create(&courseCategory).Error
+func CreateCourseCategory(courseId int, categoryId int) e.ApiError { // aca se crea una categoria de un curso
+	courseCategory := courseModel.CourseCategory{IdCourse: courseId, IdCategory: categoryId} // se crea una variable courseCategory de tipo CourseCategory
+	err := Db.Create(&courseCategory).Error                                                  // se crea la categoria del curso en la base de datos
 	if err != nil {
 		return e.NewInternalServerApiError("Error creating course category", err)
 	}
 	return nil
 }
 
-func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) {
-	var categories []categoryModel.Category
-	err := Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories).Error
+func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) { // aca se obtienen las categorias de un curso por id
+	var categories []categoryModel.Category                                                                                                                    // se crea una variable categories de tipo Category
+	err := Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories).Error // se hace una consulta a la base de datos para obtener las categorias de un curso
 
 	if err != nil {
 		return nil, e.NewNotFoundApiError("Categories not found")
@@ -73,9 +72,9 @@ func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) {
 	return categories, nil
 }
 
-func GetCourses() (courseModel.Courses, e.ApiError) {
-	var courses []courseModel.Course
-	err := Db.Find(&courses).Error
+func GetCourses() (courseModel.Courses, e.ApiError) { // aca se obtienen todos los cursos
+	var courses []courseModel.Course // se crea una variable courses de tipo Course que es un arreglo de cursos
+	err := Db.Find(&courses).Error   // se buscan todos los cursos en la base de datos
 
 	if err != nil {
 		return nil, e.NewNotFoundApiError("Courses not found")
@@ -84,17 +83,18 @@ func GetCourses() (courseModel.Courses, e.ApiError) {
 	return courses, nil
 }
 
-func GetOwner(courseId int) (int, e.ApiError) {
-	var course courseModel.Course
-	err := Db.Where("id_course = ?", courseId).First(&course).Error
+func GetOwner(courseId int) (int, e.ApiError) { // aca se obtiene el dueño de un curso por id
+	var course courseModel.Course                                   // se crea una variable course de tipo Course
+	err := Db.Where("id_course = ?", courseId).First(&course).Error // se busca el curso por id
 	if err != nil {
 		return 0, e.NewNotFoundApiError("Course not found")
 	}
 	return course.IdOwner, nil
 }
 
-func SaveFile(file []byte, path string) e.ApiError {
-	err := os.WriteFile(path, file, 0644)
+func SaveFile(file []byte, path string) e.ApiError { // aca se guarda un archivo
+	err := os.WriteFile(path, file, 0644) // se guarda el archivo en la ruta especificada con los permisos 0644 (lectura y escritura)
+	// 0644 es un permiso de lectura y escritura para el propietario y solo lectura para los demás usuarios del sistema operativo
 	if err != nil {
 		return e.NewInternalServerApiError("Error saving file", err)
 	}
@@ -102,9 +102,9 @@ func SaveFile(file []byte, path string) e.ApiError {
 }
 
 func GetFile(path string) ([]byte, e.ApiError) {
-	file, err := os.ReadFile(path)
+	file, err := os.ReadFile(path) // se lee el archivo de la ruta especificada
 	if err != nil {
 		return nil, e.NewInternalServerApiError("Error getting file", err)
 	}
-	return file, nil
+	return file, nil // se retorna el archivo leido en bytes
 }
