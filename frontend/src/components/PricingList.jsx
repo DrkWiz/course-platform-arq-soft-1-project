@@ -29,7 +29,7 @@ const PricingList = () => {
 
           <Button
             className="w-full mb-6"
-            href={item.price ? "/pricing" : "mailto:2326535@ucc.edu.ar"}
+            href={item.price ? "/register" : "mailto:2326535@ucc.edu.ar"}
             white={!!item.price}
           >
             {item.price ? "Get started" : "Contact us"}

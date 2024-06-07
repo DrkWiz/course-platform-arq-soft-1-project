@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
+import { FREMIco } from "../assets";
 import { brainwave } from "../assets";
 import { navigation, loggedInNavigation } from "../constants";
 import Button from "./Button";
@@ -40,7 +41,7 @@ const Header = ({ isLoggedIn, handleLogout }) => {
     >
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
         <a className="hover:scale-105 transition-transform block w-[12rem] xl:mr-8" href="/">
-          <img src={brainwave} width={190} height={40} alt="Brainwave" />
+          <img src={FREMIco} width={190} height={40} alt="Brainwave" />
         </a>
 
         <nav

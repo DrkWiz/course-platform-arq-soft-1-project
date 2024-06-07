@@ -34,6 +34,11 @@ import {
     telegram,
     twitter,
     yourlogo,
+    mercadolibre,
+    go,
+    reactsvg,
+    duolingo,
+    tailwind,
   } from "../assets";
   
   export const navigation = [
@@ -93,7 +98,7 @@ import {
   
   export const notificationImages = [notification4, notification3, notification2];
   
-  export const companyLogos = [yourlogo, yourlogo, yourlogo, yourlogo, yourlogo];
+  export const companyLogos = [mercadolibre, go, reactsvg, duolingo, tailwind];
   
   export const brainwaveServices = [
     "Photo generating",

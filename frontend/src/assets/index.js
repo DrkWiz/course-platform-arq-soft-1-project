@@ -74,7 +74,12 @@ import facebook from "./socials/facebook.svg";
 import instagram from "./socials/instagram.svg";
 import telegram from "./socials/telegram.svg";
 import twitter from "./socials/twitter.svg";
-
+import FREMIco from "./FREMIco.svg";
+import mercadolibre from "./mercadolibre.svg";
+import go from "./go.svg";
+import reactsvg from "./react.svg";
+import duolingo from "./duolingo.svg";
+import tailwind from "./tailwind.svg";
 export {
   brainwave,
   check,
@@ -144,4 +149,10 @@ export {
   instagram,
   telegram,
   twitter,
+  FREMIco,
+  mercadolibre,
+  go,
+  reactsvg,
+  duolingo,
+  tailwind,
 };
