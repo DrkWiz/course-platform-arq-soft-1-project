@@ -2,6 +2,7 @@ package files
 
 import (
 	e "backend/utils/errors"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
@@ -103,8 +104,9 @@ func GetFiles() ([]fileModel.File, e.ApiError) {
 	return files, nil
 }
 
-func SaveFile(file *fileModel.File) e.ApiError {
-	err := Db.Save(&file).Error
+func SaveFile(file []byte, path string) e.ApiError {
+	err := os.WriteFile(path, file, 0644) // se guarda el archivo en la ruta especificada con los permisos 0644 (lectura y escritura)
+	// 0644 es un permiso de lectura y escritura para el propietario y solo lectura para los demás usuarios del sistema operativo
 	if err != nil {
 		return e.NewInternalServerApiError("Error saving file", err)
 	}

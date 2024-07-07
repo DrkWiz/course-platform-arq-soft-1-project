@@ -4,6 +4,7 @@ import (
 	"backend/controllers/category"
 	"backend/controllers/courses"
 	"backend/controllers/users"
+	"backend/controllers/files"
 	"backend/services/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -43,5 +44,11 @@ func MapUrls(engine *gin.Engine) {
 
 	protected.POST("/upload", courses.ImageUpload)
 	protected.GET("/img/:picturepath", courses.GetImage)
+
+	// Files
+	protected.GET("/files/:id", files.GetFileById)
+	protected.POST("/courses/:id/files", files.UploadFile)
+
 	engine.Static("/uploads", "./uploads")
+
 }
