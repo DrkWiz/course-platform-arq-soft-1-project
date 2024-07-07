@@ -110,12 +110,28 @@ func GetFile(path string) ([]byte, e.ApiError) {
 	return file, nil // se retorna el archivo leido en bytes
 }
 
-func GetAvgRating(courseId int) ( float64, e.ApiError) { // se busca un promedio de calificacion de un curso
-	var userCourse userCourseModel.UserCourses // se crea una variable userCourse de tipo UserCourse
-	err := Db.Raw("SELECT AVG(rating) as rating FROM user_courses WHERE id_course = ?", courseId).Scan(&userCourse).Error // se hace una consulta a la base de datos para obtener el promedio de calificacion de un curso
+func GetAvgRating(courseId int) (float64, e.ApiError) { // se busca un promedio de calificacion de un curso
+	var userCourse userCourseModel.UserCourses                                                                                            // se crea una variable userCourse de tipo UserCourse
+	err := Db.Raw("SELECT AVG(rating) as rating FROM user_courses WHERE id_course = ? AND rating <> 0", courseId).Scan(&userCourse).Error // se hace una consulta a la base de datos para obtener el promedio de calificacion de un curso
 	if err != nil {
 		return 0, e.NewNotFoundApiError("Rating not found")
 	}
 	return userCourse.Rating, nil
 }
 
+func GetComments(courseId int) ([]userCourseModel.UserCourses, e.ApiError) { // se obtienen los comentarios de un curso
+	var userCourse []userCourseModel.UserCourses                                                                        // se crea una variable userCourses de tipo UserCourses
+	err := Db.Raw("SELECT * FROM user_courses WHERE id_course = ? AND comment <> ''", courseId).Scan(&userCourse).Error // se hace una consulta a la base de datos para obtener los comentarios de un curso
+	if err != nil {
+		return nil, e.NewNotFoundApiError("Comments not found")
+	}
+	return userCourse, nil
+}
+
+func SetComment(courseId int, userId int, comment string) e.ApiError { // se crea un comentario actualizando el campo comment de la tabla user_courses
+	err := Db.Model(&userCourseModel.UserCourses{}).Where("id_course = ? AND id_user = ?", courseId, userId).Update("comment", comment).Error // se actualiza el campo comment de la tabla user_courses
+	if err != nil {
+		return e.NewInternalServerApiError("Error setting comment", err)
+	}
+	return nil
+}

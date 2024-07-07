@@ -25,6 +25,8 @@ type coursesServiceInterface interface { // aca se define la interfaz de la clas
 	SaveFile(file []byte, path string) e.ApiError
 	GetFile(path string) ([]byte, e.ApiError)
 	GetAvgRating(courseId int) (float64, e.ApiError)
+	GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiError)
+	SetComment(courseId int, userId int, comment string) e.ApiError
 }
 
 var ( // aca se crea una variable CoursesService de tipo coursesServiceInterface
@@ -257,4 +259,34 @@ func (s *coursesService) GetAvgRating(courseId int) (float64, e.ApiError) { // a
 		return 0, err
 	}
 	return rating, nil
+}
+
+// comments
+
+func (s *coursesService) GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiError) { // aca se implementa el metodo GetComments de la interfaz CoursesServiceInterface
+	comments, err := courseClient.GetComments(courseId) // aca se llama al metodo GetComments del cliente CourseClient para obtener los comentarios
+	if err != nil {
+		return nil, err
+	}
+	var CommentsMaxDto []dto.CommentMaxDto // aca se crea una variable de tipo CommentMaxDto que es una lista de comentarios
+	for _, comment := range comments {     // aca se recorre la lista de comentarios y se los agrega a la variable CommentsMaxDto
+		CommentMaxDto := dto.CommentMaxDto{ // aca se crea una variable de tipo CommentMaxDto
+			Username: usersClient.GetUserById(comment.IdUser).Username, // aca se llama al metodo GetUserById del cliente UsersClient para obtener el nombre de usuario del comentario
+			Comment:  comment.Comment,
+			Rating:   comment.Rating}
+
+		CommentsMaxDto = append(CommentsMaxDto, CommentMaxDto) // aca se agrega el comentario a la variable CommentsMaxDto creada, append agrega un elemento al final de la lista
+
+	}
+	return CommentsMaxDto, nil
+}
+
+// set comment
+
+func (s *coursesService) SetComment(courseId int, userId int, comment string) e.ApiError { // aca se implementa el metodo SetComment de la interfaz CoursesServiceInterface
+	err := courseClient.SetComment(courseId, userId, comment) // aca se llama al metodo SetComment del cliente CourseClient para crear un comentario
+	if err != nil {
+		return err
+	}
+	return nil
 }

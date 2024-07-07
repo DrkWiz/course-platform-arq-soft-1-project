@@ -8,8 +8,11 @@ import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 const StarRating = ({ rating }) => {
-  const fullStars = Math.floor(rating);
-  const halfStar = rating - fullStars >= 0.5;
+  // Ensure rating is a number and within the range 0 to 5
+  const validRating = Number.isFinite(rating) ? Math.max(0, Math.min(rating, 5)) : 0;
+
+  const fullStars = Math.floor(validRating);
+  const halfStar = validRating - fullStars >= 0.5;
   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
   return (
@@ -24,6 +27,31 @@ const StarRating = ({ rating }) => {
     </div>
   );
 };
+
+const CommentForm = ({ handleAddComment }) => {
+  const [newComment, setNewComment] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleAddComment(newComment);
+    setNewComment('');
+  };
+
+  return (
+    <div className="mb-4">
+      <form onSubmit={handleSubmit}>
+        <label className="block text-sm font-medium text-gray-400">Add a comment:</label>
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        <Button type="submit" className="mt-2">Submit</Button>
+      </form>
+    </div>
+  );
+};
+
 const CourseDetails = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
@@ -31,6 +59,7 @@ const CourseDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [averageRating, setAverageRating] = useState(null);
+  const [comments, setComments] = useState([]); // Initialize as an empty array
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -70,9 +99,25 @@ const CourseDetails = () => {
           if (ratingResponse.ok) {
             const ratingData = await ratingResponse.json();
             setAverageRating(ratingData); // Assuming the response has an `average_rating` field
+
           } else {
             setAverageRating(0);
             console.error("Failed to fetch average rating");
+          }
+
+          // Fetch comments
+          const commentsResponse = await fetch(`http://localhost:8080/courses/${id}/comments`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          if (commentsResponse.ok) {
+            const commentsData = await commentsResponse.json();
+            setComments(Array.isArray(commentsData) ? commentsData : []);
+          } else {
+            console.error("Failed to fetch comments");
+            setComments([]);
           }
 
           // Fetch user details to check role and ownership
@@ -84,7 +129,6 @@ const CourseDetails = () => {
 
           if (userResponse.ok) {
             const userData = await userResponse.json();
-            console.log(userData);
             setIsAdmin(userData.is_admin);
 
             // Check if the user is the owner of the course
@@ -249,6 +293,50 @@ const CourseDetails = () => {
     navigate(`/courses/${id}/edit`);
   };
 
+  const handleAddComment = async (newComment) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:8080/courses/${id}/comments`, {
+        method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ comment: newComment }),
+      });
+
+      if (response.ok) {
+        setErrorMessage("Comment added successfully");
+        setAlertType('success');
+        setShowAlert(true);
+
+        // Fetch updated comments
+        const commentsResponse = await fetch(`http://localhost:8080/courses/${id}/comments`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (commentsResponse.ok) {
+          const commentsData = await commentsResponse.json();
+          setComments(Array.isArray(commentsData) ? commentsData : []);
+        } else {
+          console.error("Failed to fetch comments after adding");
+        }
+      } else {
+        console.error("Failed to add comment");
+        setErrorMessage("Failed to add comment");
+        setAlertType('error');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error("Error adding comment", error);
+      setErrorMessage("Error adding comment");
+      setAlertType('error');
+      setShowAlert(true);
+    }
+  };
+
   if (!course) {
     return <div>Loading...</div>;
   }
@@ -264,47 +352,7 @@ const CourseDetails = () => {
               <label className="block text-sm font-medium text-gray-400">Course:</label>
               <p className="text-lg">{course.name}</p>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">Description:</label>
-              <p className="text-lg">{course.description}</p>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">Price:</label>
-              <p className="text-lg">{course.price}</p>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">Start Date:</label>
-              <p className="text-lg">{course.start_date}</p>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">End Date:</label>
-              <p className="text-lg">{course.end_date}</p>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">Is it active?:</label>
-              {course.is_active ? <p className="text-green-400">Published</p> : <p className="text-red-400">Not Published</p>}
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">Categories:</label>
-              <ul className="list-disc list-inside text-lg">
-                {course.categories?.map(category => (
-                  <li key={category.id}>{category.name}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-400">Course Image:</label>
-              <img
-                src={`http://localhost:8080/uploads/${course.picture_path}`}
-                alt={course.name}
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'cover',
-                  borderRadius: '4px',
-                }}
-              />
-            </div>
+            {/* Other course details */}
             <div className="mt-4 flex justify-center items-center">
               <div className="mt-4 mr-2">
                 {isEnrolled ? (
@@ -322,15 +370,32 @@ const CourseDetails = () => {
             </div>
           </div>
         </div>
-        {averageRating !== null && (
-          <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full ml-4">
-            <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
-              <h2 className="text-2xl font-bold mb-4">Average Rating</h2>
-              <StarRating rating={averageRating} />
-              <p className="text-lg mt-2">{averageRating.toFixed(1)} / 5.0</p>
-            </div>
+        <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full ml-4">
+          <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
+            {averageRating !== null && (
+              <>
+                <h2 className="text-2xl font-bold mb-4">Average Rating</h2>
+                <StarRating rating={averageRating} />
+                <p className="text-lg mt-2">{averageRating.toFixed(1)} / 5.0</p>
+              </>
+            )}
+            <h2 className="text-2xl font-bold mb-4 mt-4">User Comments</h2>
+            {Array.isArray(comments) && comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <div key={index} className="mb-4">
+                  <p className="text-lg font-bold">{comment.username}</p>
+                  <StarRating rating={comment.rating} />
+                  <p className="text-lg">{comment.comment}</p>
+                </div>
+              ))
+            ) : (
+              <p>No comments available.</p>
+            )}
+            {isEnrolled && (
+              <CommentForm handleAddComment={handleAddComment} />
+            )}
           </div>
-        )}
+        </div>
       </div>
     </Section>
   );

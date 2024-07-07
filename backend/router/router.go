@@ -31,11 +31,13 @@ func MapUrls(engine *gin.Engine) {
 	protected.DELETE("/users/courses/:id/unsubscribe", users.UnsubscribeUserCourse)
 	protected.GET("/users/courses/:id/enrolled", users.CheckEnrolled)
 	protected.GET("courses/:id/rating", courses.GetAvgRating)
+	protected.GET("/courses/:id/comments", courses.GetComments)
 
 	protected.POST("/courses", courses.CreateCourse)
 	protected.POST("/courses/:id/owner", courses.CheckOwner)
 	protected.PUT("/courses/update/:id", courses.UpdateCourse)
 	protected.PUT("/courses/delete/:id", courses.DeleteCourse)
+	protected.POST("/courses/:id/comments", courses.SetComment)
 
 	protected.POST("/category", category.CreateCategory)
 

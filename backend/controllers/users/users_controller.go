@@ -100,7 +100,8 @@ func GetUsersByToken(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// UserCourses
+//
+//TOKEN AUTHENTICATION
 
 func GetUserCourses(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))

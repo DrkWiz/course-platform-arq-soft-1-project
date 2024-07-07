@@ -227,7 +227,7 @@ func GetImage(c *gin.Context) {
 	c.Data(http.StatusOK, "image/jpeg", file) //aca se devuelve la imagen en formato jpeg
 }
 
-func GetAvgRating (c *gin.Context) {
+func GetAvgRating(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere buscar, y se lo convierte  de str a int
 
 	if err != nil {
@@ -243,4 +243,63 @@ func GetAvgRating (c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response) //aca se devuelve el promedio de calificacion del curso
+}
+
+func GetComments(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere buscar, y se lo convierte  de str a int
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	response, err1 := s.CoursesService.GetComments(id) // aca se llama a la funcion GetComments de la interfaz CoursesService
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+	log.Print("GetComments: ", response)
+	c.JSON(http.StatusOK, response) //aca se devuelven los comentarios del curso
+}
+
+func SetComment(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	if strings.Split(token, " ")[0] != "Bearer" {
+		c.JSON(http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	token = strings.Split(token, " ")[1]
+	id_user, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	var comment dto.CommentCreateDto //aca se crea una variable de tipo CommentDto
+	if err := c.ShouldBindJSON(&comment); err != nil {
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Invalid JSON body"))
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere actualizar, y se lo convierte  de str a int
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Bad ID")
+		return
+	}
+
+	err1 := s.CoursesService.SetComment(id, id_user, comment.Comment) //aca se llama a la funcion SetComment de la interfaz CoursesService
+	//y se le pasa el id del curso, el comentario y el token
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, "Comment added") //aca se devuelve un mensaje de que el comentario fue agregado exitosamente
+
 }

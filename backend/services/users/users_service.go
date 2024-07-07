@@ -72,6 +72,11 @@ func (s *usersService) HashPassword(password string) (string, e.ApiError) {
 
 func (s *usersService) CreateUser(user dto.UserCreateDto) e.ApiError {
 
+	if user.Name == "" || user.Username == "" || user.Email == "" || user.Password == "" {
+		err := e.NewBadRequestApiError("All fields are required")
+		return err
+	}
+
 	// Check if username or email already exists
 	if usersClient.CheckUsername(user.Username) {
 		err := e.NewBadRequestApiError("Username already exists")
@@ -331,7 +336,6 @@ func (s *usersService) UnsubscribeUserCourse(courseId int, token string) e.ApiEr
 	if err != nil {
 		return err
 	}
-
 
 	log.Println("UnsubscribeUserCourse: ", idUser, courseId)
 
