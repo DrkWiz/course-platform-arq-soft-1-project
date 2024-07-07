@@ -13,6 +13,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+
+	usersService "backend/services/users"
 )
 
 // Get Course by ID
@@ -264,42 +266,43 @@ func GetComments(c *gin.Context) {
 }
 
 func SetComment(c *gin.Context) {
-	token := c.GetHeader("Authorization")
+	tokenStr := c.GetHeader("Authorization")
 
-	if strings.Split(token, " ")[0] != "Bearer" {
+	if !strings.HasPrefix(tokenStr, "Bearer ") {
 		c.JSON(http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
-	token = strings.Split(token, " ")[1]
-	id_user, err := strconv.Atoi(c.Param("id"))
+	tokenStr = strings.TrimPrefix(tokenStr, "Bearer ")
 
+	courseId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
+		log.Printf("Invalid course ID: %v", err)
 		c.JSON(http.StatusBadRequest, "Invalid ID")
 		return
 	}
 
-	var comment dto.CommentCreateDto //aca se crea una variable de tipo CommentDto
+	userId, err := usersService.UsersService.ValidateToken(tokenStr)
+	if err != nil {
+		log.Printf("Invalid token: %v", err)
+		c.JSON(http.StatusUnauthorized, "Invalid token")
+		return
+	}
+
+	var comment dto.CommentCreateDto
 	if err := c.ShouldBindJSON(&comment); err != nil {
+		log.Printf("Invalid JSON body: %v", err)
 		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Invalid JSON body"))
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere actualizar, y se lo convierte  de str a int
-
+	log.Printf("Adding comment: courseId=%d, userId=%d, comment=%s", courseId, userId, comment.Comment)
+	err = s.CoursesService.SetComment(courseId, userId, comment.Comment)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "Bad ID")
+		log.Printf("Error adding comment: %v", err)
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Comment not added"))
 		return
 	}
 
-	err1 := s.CoursesService.SetComment(id, id_user, comment.Comment) //aca se llama a la funcion SetComment de la interfaz CoursesService
-	//y se le pasa el id del curso, el comentario y el token
-
-	if err1 != nil {
-		c.JSON(err1.Status(), err1)
-		return
-	}
-
-	c.JSON(http.StatusNoContent, "Comment added") //aca se devuelve un mensaje de que el comentario fue agregado exitosamente
-
+	c.JSON(http.StatusNoContent, "Comment added")
 }

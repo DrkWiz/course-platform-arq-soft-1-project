@@ -293,49 +293,38 @@ const CourseDetails = () => {
     navigate(`/courses/${id}/edit`);
   };
 
-  const handleAddComment = async (newComment) => {
+  const handleAddComment = async (comment) => {
     const token = localStorage.getItem("token");
+
     try {
-      const response = await fetch(`http://localhost:8080/courses/${id}/comments`, {
-        method: 'POST',
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ comment: newComment }),
-      });
-
-      if (response.ok) {
-        setErrorMessage("Comment added successfully");
-        setAlertType('success');
-        setShowAlert(true);
-
-        // Fetch updated comments
-        const commentsResponse = await fetch(`http://localhost:8080/courses/${id}/comments`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
+        const response = await fetch(`http://localhost:8080/courses/${id}/comments`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ comment }),
         });
 
-        if (commentsResponse.ok) {
-          const commentsData = await commentsResponse.json();
-          setComments(Array.isArray(commentsData) ? commentsData : []);
+        if (response.ok) {
+            setErrorMessage("Comment added successfully");
+            setAlertType('success');
+            setShowAlert(true);
         } else {
-          console.error("Failed to fetch comments after adding");
+            const errorData = await response.json();
+            console.error("Failed to add comment", errorData);
+            setErrorMessage("Failed to add comment");
+            setAlertType('error');
+            setShowAlert(true);
         }
-      } else {
-        console.error("Failed to add comment");
-        setErrorMessage("Failed to add comment");
+    } catch (error) {
+        console.error("Error adding comment", error);
+        setErrorMessage("Error adding comment");
         setAlertType('error');
         setShowAlert(true);
-      }
-    } catch (error) {
-      console.error("Error adding comment", error);
-      setErrorMessage("Error adding comment");
-      setAlertType('error');
-      setShowAlert(true);
     }
-  };
+};
+
 
   if (!course) {
     return <div>Loading...</div>;
