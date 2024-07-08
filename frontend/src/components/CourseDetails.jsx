@@ -413,8 +413,49 @@ const CourseDetails = () => {
               <label className="block text-sm font-medium text-gray-400">Course:</label>
               <p className="text-lg">{course.name}</p>
             </div>
-            {/* Other course details */}
+            <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Description:</label>
+            <p className="text-lg">{course.description}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Price:</label>
+            <p className="text-lg">{course.price}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Start Date:</label>
+            <p className="text-lg">{course.start_date}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">End Date:</label>
+            <p className="text-lg">{course.end_date}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Is it active?:</label>
+            {course.is_active ? <p className="text-green-400">Published</p> : <p className="text-red-400">Not Published</p>}
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Categories:</label>
+            <ul className="list-disc list-inside text-lg">
+              {course.categories?.map(category => (
+                <li key={category.id}>{category.name}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-400">Course Image:</label>
+            <img 
+              src={`http://localhost:8080/uploads/${course.picture_path}`} 
+              alt={course.name} 
+              style={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'cover',
+                borderRadius: '4px', 
+              }}
+            />
+          </div>
             <div className="mt-4 flex justify-center items-center">
+              
               <div className="mt-4 mr-2">
                 {isEnrolled ? (
                   <Button onClick={handleUnenroll}>Unenroll</Button>

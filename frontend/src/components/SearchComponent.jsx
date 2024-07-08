@@ -8,7 +8,7 @@ import Alert from './Alert';
 const SearchComponent = () => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [alertType, setAlertType] = useState(null);
@@ -18,27 +18,32 @@ const SearchComponent = () => {
       setSuggestions([]);
       return;
     }
-
+  
     const trimmedValue = inputValue.trim().toLowerCase();
     if (trimmedValue.length === 0) {
       setSuggestions([]);
       return;
     }
-
+  
     try {
       const response = await axios.get('http://localhost:8080/courses');
       const courses = response.data;
-      console.log('Fetched courses:', courses); // Debugging line
-
-      const filteredSuggestions = courses.filter(course => {
+      console.log('Fetched courses:', courses);
+  
+      const filteredSuggestions = courses.map(course => {
         const courseName = course.name.toLowerCase();
-        const isMatch = courseName.startsWith(trimmedValue);
-        console.log(`Checking course "${courseName}": ${isMatch}`); // Debugging line
-        return isMatch;
-      });
-
+        const courseDescription = course.description.toLowerCase();
+        const isNameMatch = courseName.startsWith(trimmedValue);
+        const isDescriptionMatch = courseDescription.includes(trimmedValue);
+  
+        // Add source field to differentiate
+        return {
+          ...course,
+          source: isNameMatch ? 'name' : isDescriptionMatch ? 'description' : ''
+        };
+      }).filter(suggestion => suggestion.source); // Filter out suggestions without a source
+  
       setSuggestions(filteredSuggestions);
-      console.log('Filtered suggestions:', filteredSuggestions); // Debugging line
     } catch (error) {
       setErrorMessage('Failed to fetch courses');
       setAlertType('error');
@@ -64,7 +69,7 @@ const SearchComponent = () => {
   const getSuggestionValue = (suggestion) => suggestion.name;
 
   const onSuggestionSelected = (event, { suggestion }) => {
-    navigate(`/courses/${suggestion.id}`); // Make sure the ID is passed correctly
+    navigate(`/courses/${suggestion.id}`);
   };
 
   const onKeyDown = (event) => {
@@ -76,9 +81,10 @@ const SearchComponent = () => {
   };
 
   const renderSuggestion = (suggestion) => (
-    console.log('Rendering suggestion:', suggestion.name), // Debugging line
     <div className="px-4 py-2 text-black">
-      {suggestion.name}
+      <div>{suggestion.name}</div>
+  
+      <small className="text-gray-500">Source: {suggestion.source}</small> {/* Add source indication */}
     </div>
   );
 
@@ -103,7 +109,7 @@ const SearchComponent = () => {
             getSuggestionValue={getSuggestionValue}
             renderSuggestion={renderSuggestion}
             inputProps={inputProps}
-            onSuggestionSelected={onSuggestionSelected} // Add handler for suggestion selection
+            onSuggestionSelected={onSuggestionSelected}
             theme={{
               container: 'relative',
               input: 'border p-2 w-full rounded-lg',
