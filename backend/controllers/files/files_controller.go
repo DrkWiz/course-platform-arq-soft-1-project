@@ -92,3 +92,21 @@ func UploadFile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"file_path": path})
 }
+
+func GetFilesByCourse(c *gin.Context) {
+	idCourse, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Info("Error parsing course ID")
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Error parsing course ID"))
+		return
+	}
+
+	files, err1 := s.FileService.GetFilesByCourse(idCourse)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.JSON(http.StatusOK, files)
+}

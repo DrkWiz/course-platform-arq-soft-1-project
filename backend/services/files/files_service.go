@@ -16,6 +16,7 @@ type fileService struct{}
 type fileServiceInterface interface {
 	GetFileById(idFile int) (dto.FileMinDto, e.ApiError)
 	SaveFile(file []byte, path string, idCourse int, token string) e.ApiError
+	GetFilesByCourse(idCourse int) ([]dto.FileMinDto, e.ApiError)
 }
 
 var (
@@ -76,4 +77,23 @@ func (s *fileService) SaveFile(file []byte, path string, idCourse int, token str
 	}
 
 	return nil
+}
+
+func (s *fileService) GetFilesByCourse(idCourse int) ([]dto.FileMinDto, e.ApiError) {
+	files, err := fileClient.GetFilesByCourse(idCourse)
+	if err != nil {
+		return nil, err
+	}
+
+	var filesMin []dto.FileMinDto
+	for _, file := range files {
+		fileMin := dto.FileMinDto{
+			IdFile: file.IdFile,
+			Name:   file.Name,
+			Path:   file.Path,
+		}
+		filesMin = append(filesMin, fileMin)
+	}
+
+	return filesMin, nil
 }
