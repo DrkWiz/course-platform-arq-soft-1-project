@@ -3,8 +3,8 @@ package router
 import (
 	"backend/controllers/category"
 	"backend/controllers/courses"
-	"backend/controllers/users"
 	"backend/controllers/files"
+	"backend/controllers/users"
 	"backend/services/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +18,8 @@ func MapUrls(engine *gin.Engine) {
 	engine.GET("/courses", courses.GetCourses)
 	engine.GET("/category/:id", category.GetCategoryById)
 	engine.GET("/category/all", category.GetCategories)
+
+	engine.GET("/courses/:id/files", files.GetFilesByCourse)
 
 	// Protected routes
 	protected := engine.Group("/")
@@ -48,7 +50,6 @@ func MapUrls(engine *gin.Engine) {
 	// Files
 	protected.GET("/files/:id", files.GetFileById)
 	protected.POST("/courses/:id/files", files.UploadFile)
-	protected.GET("/courses/:id/files", files.GetFilesByCourse)
 
 	engine.Static("/uploads", "./uploads")
 

@@ -90,10 +90,10 @@ func UploadFile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"file_path": path})
+	c.JSON(http.StatusCreated, gin.H{"file_path": path})
 }
 
-func GetFilesByCourse(c *gin.Context) {
+func GetFilesByCourse(c *gin.Context) { // Con el id del curso devuelve un array de files min dto con los paths.
 	idCourse, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Info("Error parsing course ID")
