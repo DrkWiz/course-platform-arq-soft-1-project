@@ -4,8 +4,7 @@ import (
 	fileClient "backend/clients/files"
 	"backend/dto"
 	fileModel "backend/model/files"
-	"log"
-	"strings"
+	"path/filepath"
 
 	userService "backend/services/users"
 
@@ -44,33 +43,34 @@ func (s *fileService) GetFileById(idFile int) (dto.FileMinDto, e.ApiError) {
 }
 
 func (s *fileService) SaveFile(file []byte, path string, idCourse int, token string) e.ApiError {
-
+	// Retrieve user information from token
 	user, err := userService.UsersService.GetUsersByToken(token)
 	if err != nil {
 		return err
 	}
 	idUser := user.IdUser
 
-	log.Println("User: ", user)
+	// Extract filename from path
+	fileName := filepath.Base(path)
 
-	log.Println("Name: ", strings.Split(path, "uploads\\files\\"))
-
+	// Create file model
 	fileToCreate := fileModel.File{
-		Name:     strings.Split(path, "uploads\\files\\")[1],
+		Name:     fileName,
 		Path:     path,
 		IdCourse: idCourse,
 		IdUser:   idUser,
 	}
 
+	// Attempt to create file entry in database
 	err = fileClient.CreateFile(&fileToCreate)
 	if err != nil {
 		return err
 	}
 
-	log.Println("File created: ", fileToCreate)
-
+	// Attempt to save file content
 	err = fileClient.SaveFile(file, path)
 	if err != nil {
+		// Rollback: Delete created file entry if saving content fails
 		fileClient.DeleteFile(fileToCreate.IdFile)
 		return err
 	}

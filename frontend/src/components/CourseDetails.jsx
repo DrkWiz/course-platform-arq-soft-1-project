@@ -52,6 +52,78 @@ const CommentForm = ({ handleAddComment }) => {
   );
 };
 
+const FileUploadForm = ({ courseId, onUploadSuccess }) => {
+  const [file, setFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [alertType, setAlertType] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      setErrorMessage("Error with token");
+      setAlertType('error');
+      setShowAlert(true);
+      return;
+    }
+
+    if (!file) {
+      setErrorMessage("Please select a file");
+      setAlertType('error');
+      setShowAlert(true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`http://localhost:8080/courses/${courseId}/files`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        setFile(null);
+        setErrorMessage("File uploaded successfully");
+        setAlertType('success');
+        setShowAlert(true);
+        if (onUploadSuccess) {
+          onUploadSuccess();
+        }
+      } else {
+        setErrorMessage("Failed to upload file");
+        setAlertType('error');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      setErrorMessage("Error uploading file");
+      setAlertType('error');
+      setShowAlert(true);
+    }
+  };
+
+  return (
+    <div className="mb-4">
+      {showAlert && <Alert message={errorMessage} type={alertType} onClose={() => setShowAlert(false)} />}
+      <form onSubmit={handleSubmit}>
+        <label className="block text-sm font-medium text-gray-400">Upload a file:</label>
+        <input type="file" onChange={handleFileChange} className="w-full p-2 border rounded" />
+        <Button type="submit" className="mt-2">Upload</Button>
+      </form>
+    </div>
+  );
+};
+
 const CourseDetails = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
@@ -382,6 +454,9 @@ const CourseDetails = () => {
             )}
             {isEnrolled && (
               <CommentForm handleAddComment={handleAddComment} />
+            )}
+            {(isAdmin || isOwner) && (
+              <FileUploadForm courseId={id} />
             )}
           </div>
         </div>

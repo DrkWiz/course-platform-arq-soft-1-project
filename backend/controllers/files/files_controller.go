@@ -33,35 +33,29 @@ func GetFileById(c *gin.Context) { // Con el id del archivo en la BD devuelve la
 	c.JSON(http.StatusOK, fileMinDto)
 }
 
-func UploadFile(c *gin.Context) { // Crea un archivo en la BD
-
-	// Checkeamos Token.
-
+func UploadFile(c *gin.Context) {
+	// Check Authorization header for token
 	authHeader := c.GetHeader("Authorization")
-
 	if authHeader == "" {
 		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
 		return
 	}
-
-	token := strings.Split(authHeader, "Bearer ")[1] //aca se obtiene el token del header y se lo separa para obtener solo el token en si mismo (sin el Bearer)
-	if token == "" {
-		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+	tokenParts := strings.Split(authHeader, "Bearer ")
+	if len(tokenParts) < 2 || tokenParts[1] == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Invalid token format"))
 		return
 	}
+	token := tokenParts[1]
 
-	// Checkeamos ID.
-
+	// Parse course ID
 	idCourse, err := strconv.Atoi(c.Param("id"))
-
 	if err != nil {
-		log.Info("Error parsing id")
-		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Error parsing id"))
+		log.Info("Error parsing course ID")
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Error parsing course ID"))
 		return
 	}
 
-	// Checkeamos el archivo.
-
+	// Check file existence in form data
 	file, err := c.FormFile("file")
 	if err != nil {
 		log.Info("Error getting file")
@@ -69,8 +63,7 @@ func UploadFile(c *gin.Context) { // Crea un archivo en la BD
 		return
 	}
 
-	path := filepath.Join("./uploads/files/", file.Filename)
-
+	// Open the uploaded file
 	openFile, err := file.Open()
 	if err != nil {
 		log.Info("Error opening file")
@@ -79,19 +72,21 @@ func UploadFile(c *gin.Context) { // Crea un archivo en la BD
 	}
 	defer openFile.Close()
 
-	filebytes, err := io.ReadAll(openFile)
+	// Read file content
+	fileBytes, err := io.ReadAll(openFile)
 	if err != nil {
 		log.Info("Error reading file")
 		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Error reading file"))
 		return
 	}
 
-	// Llamamos al servicio para subir y crear el archivo.
+	// Define the file path to save
+	path := filepath.Join("./uploads/files/", file.Filename)
 
-	err1 := s.FileService.SaveFile(filebytes, path, idCourse, token)
-
-	if err1 != nil {
-		c.JSON(err1.Status(), err1)
+	// Call service to save the file
+	err = s.FileService.SaveFile(fileBytes, path, idCourse, token)
+	if err != nil {
+		c.JSON(e.NewInternalServerApiError("Could not save file", err).Status(), err)
 		return
 	}
 
