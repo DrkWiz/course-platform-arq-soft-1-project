@@ -27,7 +27,13 @@ const StarRating = ({ rating }) => {
     </div>
   );
 };
-
+const FileItem = ({ file }) => (
+  <div key={file.id} className="flex items-center justify-between p-2 border rounded mb-2">
+    <div>
+      <p className="font-semibold">{file.name}</p>
+    </div>
+  </div>
+);
 const CommentForm = ({ handleAddComment }) => {
   const [newComment, setNewComment] = useState('');
 
@@ -133,6 +139,7 @@ const CourseDetails = () => {
   const [averageRating, setAverageRating] = useState(null);
   const [comments, setComments] = useState([]); // Initialize as an empty array
   const navigate = useNavigate();
+  const [files, setFiles] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [alertType, setAlertType] = useState(null);
@@ -210,7 +217,20 @@ const CourseDetails = () => {
                 "Authorization": `Bearer ${token}`,
               },
             });
+              // Fetch files
+          const filesResponse = await fetch(`http://localhost:8080/courses/${id}/files`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          });
 
+          if (filesResponse.ok) {
+            const filesData = await filesResponse.json();
+            setFiles(Array.isArray(filesData) ? filesData : []);
+          } else {
+            console.error("Failed to fetch files");
+            setFiles([]);
+          }
             if (ownerResponse.ok) {
               const ownerData = await ownerResponse.json();
               setIsOwner(ownerData);
@@ -498,6 +518,15 @@ const CourseDetails = () => {
             )}
             {(isAdmin || isOwner) && (
               <FileUploadForm courseId={id} />
+            )}
+
+<h2 className="text-2xl font-bold mb-4 mt-4">Course Files</h2>
+            {Array.isArray(files) && files.length > 0 ? (
+              files.map((file, index) => (
+                <FileItem key={index} file={file} />
+              ))
+            ) : (
+              <p>No files available.</p>
             )}
           </div>
         </div>
