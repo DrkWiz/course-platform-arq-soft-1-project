@@ -7,22 +7,42 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
-const StarRating = ({ rating }) => {
-  // Ensure rating is a number and within the range 0 to 5
+const StarRating = ({ rating, onRate }) => {
   const validRating = Number.isFinite(rating) ? Math.max(0, Math.min(rating, 5)) : 0;
-
   const fullStars = Math.floor(validRating);
   const halfStar = validRating - fullStars >= 0.5;
   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
+  const handleClick = (index) => {
+    if (onRate) {
+      onRate(index + 1);
+    }
+  };
+
   return (
     <div className="flex">
       {Array(fullStars).fill().map((_, i) => (
-        <FontAwesomeIcon key={`full-${i}`} icon={faStar} className="text-yellow-500" />
+        <FontAwesomeIcon 
+          key={`full-${i}`} 
+          icon={faStar} 
+          className="text-yellow-500 cursor-pointer" 
+          onClick={() => handleClick(i)} 
+        />
       ))}
-      {halfStar && <FontAwesomeIcon icon={faStarHalfAlt} className="text-yellow-500" />}
+      {halfStar && (
+        <FontAwesomeIcon 
+          icon={faStarHalfAlt} 
+          className="text-yellow-500 cursor-pointer" 
+          onClick={() => handleClick(fullStars)} 
+        />
+      )}
       {Array(emptyStars).fill().map((_, i) => (
-        <FontAwesomeIcon key={`empty-${i}`} icon={faStarRegular} className="text-yellow-500" />
+        <FontAwesomeIcon 
+          key={`empty-${i}`} 
+          icon={faStarRegular} 
+          className="text-yellow-500 cursor-pointer" 
+          onClick={() => handleClick(fullStars + (halfStar ? 1 : 0) + i)} 
+        />
       ))}
     </div>
   );
@@ -384,7 +404,49 @@ const CourseDetails = () => {
   const handleModify = () => {
     navigate(`/courses/${id}/edit`);
   };
-
+  const handleRateCourse = async (rating) => {
+    const token = localStorage.getItem("token");
+  
+    try {
+      const response = await fetch(`http://localhost:8080/courses/${id}/rating`, {
+        method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rating }),
+      });
+  
+      if (response.ok) {
+        setErrorMessage("Rating submitted successfully");
+        setAlertType('success');
+        setShowAlert(true);
+  
+        // Only attempt to parse JSON if there's a response body
+        const text = await response.text();
+        if (text) {
+          const ratingData = JSON.parse(text);
+          setAverageRating(ratingData.average_rating);
+        } else {
+          // Handle the case where there is no response body
+          setAverageRating(rating); // Or handle it as needed
+        }
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to submit rating", errorData);
+        setErrorMessage("Failed to submit rating");
+        setAlertType('error');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error("Error submitting rating", error);
+      setErrorMessage("Error submitting rating");
+      setAlertType('error');
+      setShowAlert(true);
+    }
+  };
+  
+  
   const handleAddComment = async (comment) => {
     const token = localStorage.getItem("token");
 
@@ -494,6 +556,12 @@ const CourseDetails = () => {
         </div>
         <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg max-w-md w-full ml-4">
           <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
+          <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-400">Rating:</label>
+  <StarRating rating={averageRating} onRate={isEnrolled ? handleRateCourse : null} />
+  <p className="text-lg mt-2">{averageRating !== null ? `${averageRating.toFixed(1)} out of 5` : 'No ratings yet'}</p>
+</div>
+
             {averageRating !== null && (
               <>
                 <h2 className="text-2xl font-bold mb-4">Average Rating</h2>

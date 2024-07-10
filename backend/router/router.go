@@ -41,7 +41,7 @@ func MapUrls(engine *gin.Engine) {
 	protected.PUT("/courses/update/:id", courses.UpdateCourse)
 	protected.PUT("/courses/delete/:id", courses.DeleteCourse)
 	protected.POST("/courses/:id/comments", courses.SetComment)
-	protected.PUT("/courses/:id/rating", courses.SetRating)
+	protected.POST("/courses/:id/rating", courses.SetRating)
 
 	protected.POST("/category", category.CreateCategory)
 

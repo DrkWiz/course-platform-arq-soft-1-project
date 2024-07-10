@@ -136,7 +136,7 @@ func SetComment(courseId int, userId int, comment string) e.ApiError { // se cre
 	return nil
 }
 
-func SetRating(courseId int, userId int, rating float32) e.ApiError { // Actualizamos la calificacion en la tabla user courses
+func SetRating(courseId int, userId int, rating float64) e.ApiError { // Actualizamos la calificacion en la tabla user courses
 	err := Db.Model(&userCourseModel.UserCourses{}).Where("id_course = ? AND id_user = ?", courseId, userId).Update("rating", rating).Error // se actualiza el campo rating de la tabla user_courses
 	if err != nil {
 		return e.NewInternalServerApiError("Error setting rating", err)

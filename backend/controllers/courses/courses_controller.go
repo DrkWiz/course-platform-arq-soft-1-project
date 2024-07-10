@@ -337,15 +337,17 @@ func SetRating(c *gin.Context) {
 		return
 	}
 
-	rating64, err := strconv.ParseFloat(c.Request.FormValue("rating"), 32)
-	if err != nil {
-		log.Printf("Invalid rating: %v", err)
-		c.JSON(http.StatusBadRequest, "Invalid rating")
+	var requestBody struct {
+		Rating float64 `json:"rating"`
+	}
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		log.Printf("Invalid JSON input: %v", err)
+		c.JSON(http.StatusBadRequest, "Invalid input")
 		return
 	}
 
-	// set rating to float32
-	rating := float32(rating64)
+	rating := requestBody.Rating
 
 	log.Printf("Adding rating: courseId=%d, userId=%d, rating=%f", courseId, userId, rating)
 	errApi = s.CoursesService.SetRating(courseId, userId, rating)
