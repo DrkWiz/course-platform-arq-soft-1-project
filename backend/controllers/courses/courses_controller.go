@@ -306,3 +306,54 @@ func SetComment(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, "Comment added")
 }
+
+func SetRating(c *gin.Context) {
+	tokenStr := c.GetHeader("Authorization")
+
+	if !strings.HasPrefix(tokenStr, "Bearer ") {
+		c.JSON(http.StatusUnauthorized, "Token is required")
+		return
+	}
+
+	tokenStr = strings.TrimPrefix(tokenStr, "Bearer ")
+
+	if tokenStr == "" {
+		c.JSON(http.StatusUnauthorized, "Token is required")
+		return
+	}
+
+	courseId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Printf("Invalid course ID: %v", err)
+		c.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	userId, errApi := usersService.UsersService.ValidateToken(tokenStr)
+
+	if errApi != nil {
+		log.Printf("Invalid token: %v", errApi.Error())
+		c.JSON(errApi.Status(), errApi)
+		return
+	}
+
+	rating64, err := strconv.ParseFloat(c.Request.FormValue("rating"), 32)
+	if err != nil {
+		log.Printf("Invalid rating: %v", err)
+		c.JSON(http.StatusBadRequest, "Invalid rating")
+		return
+	}
+
+	// set rating to float32
+	rating := float32(rating64)
+
+	log.Printf("Adding rating: courseId=%d, userId=%d, rating=%f", courseId, userId, rating)
+	errApi = s.CoursesService.SetRating(courseId, userId, rating)
+	if errApi != nil {
+		log.Printf("Error adding rating: %v", errApi.Error())
+		c.JSON(errApi.Status(), errApi)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, "Rating changed")
+}

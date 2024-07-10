@@ -27,6 +27,7 @@ type coursesServiceInterface interface { // aca se define la interfaz de la clas
 	GetAvgRating(courseId int) (float64, e.ApiError)
 	GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiError)
 	SetComment(courseId int, userId int, comment string) e.ApiError
+	SetRating(courseId int, userId int, rating float32) e.ApiError
 }
 
 var ( // aca se crea una variable CoursesService de tipo coursesServiceInterface
@@ -285,6 +286,16 @@ func (s *coursesService) GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiEr
 
 func (s *coursesService) SetComment(courseId int, userId int, comment string) e.ApiError { // aca se implementa el metodo SetComment de la interfaz CoursesServiceInterface
 	err := courseClient.SetComment(courseId, userId, comment) // aca se llama al metodo SetComment del cliente CourseClient para crear un comentario
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// set rating
+
+func (s *coursesService) SetRating(courseId int, userId int, rating float32) e.ApiError { // aca se implementa el metodo SetRating de la interfaz CoursesServiceInterface
+	err := courseClient.SetRating(courseId, userId, rating) // aca se llama al metodo SetRating del cliente CourseClient para crear un rating
 	if err != nil {
 		return err
 	}
