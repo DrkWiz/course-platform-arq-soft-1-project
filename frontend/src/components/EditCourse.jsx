@@ -32,7 +32,7 @@ const EditCourse = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/courses/${id}`, {
+        const response = await fetch(`/backend/courses/${id}`, {
           headers: {
             "Authorization": `Bearer ${token}`,
           },
@@ -54,7 +54,7 @@ const EditCourse = () => {
     };
 
     const fetchCategories = async () => {
-      const response = await fetch("http://localhost:8080/category/all");
+      const response = await fetch("/backend/category/all");
       const data = await response.json();
       const formattedData = data.map(category => ({
         value: category.id,
@@ -82,7 +82,7 @@ const EditCourse = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(`http://localhost:8080/courses/update/${id}`, {
+      const response = await fetch(`/backend/courses/update/${id}`, {
         method: 'PUT',
         headers: {
           "Authorization": `Bearer ${token}`,

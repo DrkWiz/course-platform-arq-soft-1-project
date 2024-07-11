@@ -26,7 +26,7 @@ const SearchComponent = () => {
     }
   
     try {
-      const response = await axios.get('http://localhost:8080/courses');
+      const response = await axios.get('/backend/courses');
       const courses = response.data;
       console.log('Fetched courses:', courses);
   

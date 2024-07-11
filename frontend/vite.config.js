@@ -11,6 +11,14 @@ export default defineConfig({
     // add the next lines if you're using windows and hot reload doesn't work
      watch: {
        usePolling: true
-     }
+     },
+     proxy: {
+       '/backend': {
+         target: 'http://backend:8080',
+         changeOrigin: true,
+         secure: false,
+         rewrite: (path) => path.replace(/^\/backend/, '')
+       }
+      }
   }
  })

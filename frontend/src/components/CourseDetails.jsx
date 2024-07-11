@@ -110,7 +110,7 @@ const FileUploadForm = ({ courseId, onUploadSuccess }) => {
     formData.append('file', file);
 
     try {
-      const response = await fetch(`http://localhost:8080/courses/${courseId}/files`, {
+      const response = await fetch(`/backend/courses/${courseId}/files`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -178,7 +178,7 @@ const CourseDetails = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/courses/${id}`, {
+        const response = await fetch(`/backend/courses/${id}`, {
           headers: {
             "Authorization": `Bearer ${token}`,
           },
@@ -189,7 +189,7 @@ const CourseDetails = () => {
           setCourse(data);
 
           // Fetch average rating
-          const ratingResponse = await fetch(`http://localhost:8080/courses/${id}/rating`, {
+          const ratingResponse = await fetch(`/backend/courses/${id}/rating`, {
             headers: {
               "Authorization": `Bearer ${token}`,
             },
@@ -205,7 +205,7 @@ const CourseDetails = () => {
           }
 
           // Fetch comments
-          const commentsResponse = await fetch(`http://localhost:8080/courses/${id}/comments`, {
+          const commentsResponse = await fetch(`/backend/courses/${id}/comments`, {
             headers: {
               "Authorization": `Bearer ${token}`,
             },
@@ -220,7 +220,7 @@ const CourseDetails = () => {
           }
 
           // Fetch user details to check role and ownership
-          const userResponse = await fetch(`http://localhost:8080/users/me`, {
+          const userResponse = await fetch(`/backend/users/me`, {
             headers: {
               "Authorization": `Bearer ${token}`,
             },
@@ -231,14 +231,14 @@ const CourseDetails = () => {
             setIsAdmin(userData.is_admin);
 
             // Check if the user is the owner of the course
-            const ownerResponse = await fetch(`http://localhost:8080/courses/${id}/owner`, {
+            const ownerResponse = await fetch(`/backend/courses/${id}/owner`, {
               method: 'POST',
               headers: {
                 "Authorization": `Bearer ${token}`,
               },
             });
               // Fetch files
-          const filesResponse = await fetch(`http://localhost:8080/courses/${id}/files`, {
+          const filesResponse = await fetch(`/backend/courses/${id}/files`, {
             headers: {
               "Authorization": `Bearer ${token}`,
             },
@@ -256,7 +256,7 @@ const CourseDetails = () => {
               setIsOwner(ownerData);
 
               // Fetch enrollment status
-              const enrollmentResponse = await fetch(`http://localhost:8080/users/courses/${id}/enrolled`, {
+              const enrollmentResponse = await fetch(`/backend/users/courses/${id}/enrolled`, {
                 headers: {
                   "Authorization": `Bearer ${token}`,
                 },
@@ -312,7 +312,7 @@ const CourseDetails = () => {
   const handleEnroll = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/users/courses/${id}`, {
+      const response = await fetch(`/backend/users/courses/${id}`, {
         method: 'POST',
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -342,7 +342,7 @@ const CourseDetails = () => {
   const handleUnenroll = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/users/courses/${id}/unsubscribe`, {
+      const response = await fetch(`/backend/users/courses/${id}/unsubscribe`, {
         method: 'DELETE',
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -372,7 +372,7 @@ const CourseDetails = () => {
   const handleDelete = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/courses/delete/${id}`, {
+      const response = await fetch(`/backend/courses/delete/${id}`, {
         method: 'PUT',
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -408,7 +408,7 @@ const CourseDetails = () => {
     const token = localStorage.getItem("token");
   
     try {
-      const response = await fetch(`http://localhost:8080/courses/${id}/rating`, {
+      const response = await fetch(`/backend/courses/${id}/rating`, {
         method: 'POST',
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -451,7 +451,7 @@ const CourseDetails = () => {
     const token = localStorage.getItem("token");
 
     try {
-        const response = await fetch(`http://localhost:8080/courses/${id}/comments`, {
+        const response = await fetch(`/backend/courses/${id}/comments`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -526,7 +526,7 @@ const CourseDetails = () => {
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-400">Course Image:</label>
             <img 
-              src={`http://localhost:8080/uploads/${course.picture_path}`} 
+              src={`/backend/uploads/${course.picture_path}`} 
               alt={course.name} 
               style={{
                 width: '100%',

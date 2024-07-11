@@ -28,7 +28,7 @@ const CourseCreation = () => {
 
     useEffect(() => {
         const fetchCategories = async () => {
-            const response = await fetch("http://localhost:8080/category/all");
+            const response = await fetch("/backend/category/all");
             const data = await response.json();
             const formattedData = data.map(category => ({
                 value: category.id,
@@ -48,7 +48,7 @@ const CourseCreation = () => {
         const formData = new FormData();
         formData.append('image', image);
 
-        const response = await fetch('http://localhost:8080/upload', {
+        const response = await fetch('/backend/upload', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -73,7 +73,7 @@ const CourseCreation = () => {
         }
 
         const picturePath = await handleImageUpload();
-        const response = await fetch("http://localhost:8080/courses", {
+        const response = await fetch("/backend/courses", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

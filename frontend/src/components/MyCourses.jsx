@@ -25,7 +25,7 @@ const MyCourses = ({ setIsLoggedIn }) => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/users/courses/all', {
+        const response = await fetch('/backend/users/courses/all', {
           method: 'GET',
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -66,7 +66,7 @@ const MyCourses = ({ setIsLoggedIn }) => {
               <div className="p-1 bg-gradient-to-r from-cyan-400 via-yellow-500 to-pink-500 rounded-lg shadow-lg w-82">
               <div className="bg-gray-800 rounded-lg shadow-lg w-79 ">
               <img
-                src={`http://localhost:8080/uploads/${course.picture_path}`}
+                src={`/backend/uploads/${course.picture_path}`}
                 
                 alt={course.name}
                 className="w-full h-64 object-cover rounded-t-lg"

@@ -27,7 +27,7 @@ const Login = ({setIsLoggedIn, isLoggedIn}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8080/users/login", {
+    const response = await fetch("/backend/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

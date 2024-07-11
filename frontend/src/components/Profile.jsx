@@ -25,7 +25,7 @@ const Profile = ({ setIsLoggedIn }) => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/users/me', {
+        const response = await fetch('/backend/users/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

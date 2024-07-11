@@ -17,7 +17,7 @@ const UploadFile = ({ courseId }) => {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`http://localhost:8080/courses/${courseId}/files`, {
+      const response = await fetch(`/backend/courses/${courseId}/files`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`

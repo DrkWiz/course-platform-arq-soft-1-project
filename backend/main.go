@@ -15,7 +15,7 @@ func main() {
 	// Update CORS configuration
 	config := cors.Config{
 		AllowAllOrigins:  true,
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Include Authorization here
 		AllowCredentials: true,
 	}
