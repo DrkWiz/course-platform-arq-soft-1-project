@@ -63,6 +63,14 @@ func CreateCourseCategory(courseId int, categoryId int) e.ApiError { // aca se c
 	return nil
 }
 
+func DeleteCourseCategory(courseId int, categoryId int) e.ApiError { // aca se elimina una categoria de un curso
+	err := Db.Where("id_course = ? AND id_category = ?", courseId, categoryId).Delete(&courseModel.CourseCategory{}).Error // se elimina la categoria del curso
+	if err != nil {
+		return e.NewInternalServerApiError("Error deleting course category", err)
+	}
+	return nil
+}
+
 func GetCategoriesByCourseId(id int) (categoryModel.Categories, e.ApiError) { // aca se obtienen las categorias de un curso por id
 	var categories []categoryModel.Category                                                                                                                    // se crea una variable categories de tipo Category
 	err := Db.Raw("SELECT * FROM categories WHERE id_category IN (SELECT id_category FROM course_categories WHERE id_course = ?)", id).Scan(&categories).Error // se hace una consulta a la base de datos para obtener las categorias de un curso
