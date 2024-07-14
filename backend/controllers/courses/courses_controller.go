@@ -69,38 +69,42 @@ func CreateCourse(c *gin.Context) {
 // Update course
 
 func UpdateCourse(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
+	authHeader := c.GetHeader("Authorization") //aca se obtiene el token del header de la peticion
 
 	if authHeader == "" {
 		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Authorization header is required"))
 		return
 	}
 
-	token := strings.Split(authHeader, "Bearer ")[1]
+	token := strings.Split(authHeader, "Bearer ")[1] //aca se obtiene el token del header y se lo separa para obtener solo el token en si mismo (sin el Bearer)
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
 		return
 	}
 
-	var course dto.CourseUpdateDto
+	var course dto.CourseUpdateDto //aca se crea una variable de tipo CourseUpdateDto
 	if err := c.ShouldBindJSON(&course); err != nil {
 		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Invalid JSON body"))
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere actualizar, y se lo convierte  de str a int
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "Bad ID")
 		return
 	}
 
-	err1 := s.CoursesService.UpdateCourse(id, course, token)
+	err1 := s.CoursesService.UpdateCourse(id, course, token) //aca se llama a la funcion UpdateCourse de la interfaz CoursesService
+	//y se le pasa el id del curso, el curso y el token
+
 	if err1 != nil {
 		c.JSON(err1.Status(), err1)
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Course updated")
+	c.JSON(http.StatusNoContent, "Course updated") //aca se devuelve un mensaje de que el curso fue actualizado exitosamente
+
 }
 
 //Soft delete course

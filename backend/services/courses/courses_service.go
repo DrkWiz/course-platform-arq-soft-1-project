@@ -123,33 +123,37 @@ func (s *coursesService) CreateCourse(course dto.CourseCreateDto, token string) 
 
 // Update a course.
 
-func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, token string) e.ApiError {
+func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, token string) e.ApiError { // aca se implementa el metodo UpdateCourse de la interfaz CoursesServiceInterface
+
 	ownerId, err := courseClient.GetOwner(courseId)
+
 	if err != nil {
 		return err
 	}
 
 	ok, err := usersService.UsersService.CheckAdmin(token)
+
 	if err != nil {
 		return err
 	}
 
-	if !ok {
-		isOwner, err := s.CheckOwner(token, courseId)
+	if !ok { // aca se verifica si el usuario es admin para poder actualizar el curso
+		isOwner, err := s.CheckOwner(token, courseId) // aca se llama al metodo CheckOwner del servicio CoursesService para verificar si el usuario es el dueño del curso
 		if err != nil {
 			return err
 		}
-		if !isOwner {
-			return e.NewForbiddenApiError("You don't have permission to update this course")
+		if !isOwner { // aca se verifica si el usuario es el dueño del curso
+			return e.NewForbiddenApiError("You don't have permission to update this course") // aca se devuelve un error si el usuario no es el dueño del curso
 		}
 	}
 
-	originalCourse, err := courseClient.GetCourseById(courseId)
+	originalCourse, err := courseClient.GetCourseById(courseId) // Obtenemos el curso original
+
 	if err != nil {
 		return err
 	}
 
-	courseToUpdate := courseModel.Course{
+	courseToUpdate := courseModel.Course{ // aca se crea una variable de tipo Course con los datos del curso a actualizar
 		IdCourse:    courseId,
 		Name:        course.Name,
 		Description: course.Description,
@@ -158,32 +162,40 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 		StartDate:   course.StartDate,
 		EndDate:     course.EndDate,
 		IdOwner:     ownerId,
-		IsActive:    course.IsActive,
-	}
+		IsActive:    course.IsActive}
 
-	err = courseClient.UpdateCourse(courseToUpdate)
+	err = courseClient.UpdateCourse(courseToUpdate) // aca se llama al metodo UpdateCourse del cliente CourseClient y se le pasa la variable Course a actualizar como parametro para actualizar el curso
+
+	log.Println("Course updated: ", courseToUpdate)
+
 	if err != nil {
 		log.Println("Error updating course: ", err.Status())
-		err := courseClient.UpdateCourse(originalCourse) // Rollback
+		err := courseClient.UpdateCourse(originalCourse) //  Rollback
 		if err != nil {
 			return e.NewInternalServerApiError("Error restoring course", err)
 		}
 		return err
 	}
 
-	originalCategoriesIds, err := courseClient.GetCategoriesByCourseId(courseId)
+	// Inicia la actualizacion de la tabla puente course_category
+
+	originalCategoriesIds, err := courseClient.GetCategoriesByCourseId(courseId) // aca se llama al metodo GetCategoriesByCourseId del cliente CourseClient para obtener las categorias del curso
+	log.Println("Original categories: ", originalCategoriesIds)
+
 	if err != nil {
 		return err
 	}
 
-	newCategoriesIds := []int{}
-	for _, category := range course.Categories {
-		newCategoriesIds = append(newCategoriesIds, category.IdCategory)
+	categoriesIds := []int{}
+
+	for _, category := range course.Categories { // aca se recorre la lista de categorias y se las agrega a la variable categoriesIds
+		categoriesIds = append(categoriesIds, category.IdCategory)
 	}
-	log.Println("New categories: ", newCategoriesIds)
+	log.Println("New categories: ", categoriesIds)
 
 	temp := 0
-	for _, category := range originalCategoriesIds {
+
+	for _, category := range originalCategoriesIds { // aca se recorre la lista de categorias originales y se las elimina con el metodo DeleteCourseCategory del cliente CourseClient
 		err = courseClient.DeleteCourseCategory(courseId, category.IdCategory)
 		temp = temp + 1
 		if err != nil {
@@ -203,7 +215,8 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 	log.Println("Old Categories deleted")
 
 	temp = 0
-	for _, newCategory := range newCategoriesIds {
+
+	for _, newCategory := range categoriesIds { // aca se recorre la lista de categorias nuevas y se las agrega con el metodo CreateCourseCategory del cliente CourseClient
 		err = courseClient.CreateCourseCategory(courseId, newCategory)
 		temp = temp + 1
 		if err != nil {
@@ -213,7 +226,7 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 
 	if err != nil {
 		for i := 0; i < temp; i++ {
-			err = courseClient.DeleteCourseCategory(courseId, newCategoriesIds[i])
+			err = courseClient.DeleteCourseCategory(courseId, categoriesIds[i])
 			if err != nil {
 				return e.NewInternalServerApiError("Error restoring course categories", err)
 			}
@@ -227,7 +240,8 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 		return err
 	}
 
-	log.Println("Course updated: ", courseToUpdate)
+	log.Println("Course updated: ", courseToUpdate) // aca se imprime el curso actualizado
+
 	return nil
 }
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Select from "react-select";
@@ -40,10 +41,6 @@ const EditCourse = () => {
         if (response.ok) {
           const data = await response.json();
           setCourse(data);
-          setSelectedCategories(data.categories.map(cat => ({
-            value: cat.id,
-            label: cat.name,
-          })));
         } else {
           console.error("Failed to fetch course data");
           navigate('/login');
@@ -64,7 +61,9 @@ const EditCourse = () => {
         label: category.name
       }));
       setCategories(formattedData);
+      console.log(formattedData);
     };
+
 
     fetchCourseData();
     fetchCategories();
@@ -82,15 +81,6 @@ const EditCourse = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    // Convert selectedCategories to the expected format for the backend
-    const updatedCourse = {
-      ...course,
-      categories: selectedCategories.map(cat => ({
-        id: cat.value,
-        name: cat.label,
-      })),
-    };
-
     try {
       const response = await fetch(`/backend/courses/update/${id}`, {
         method: 'PUT',
@@ -98,7 +88,7 @@ const EditCourse = () => {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedCourse),
+        body: JSON.stringify(course),
       });
 
       if (response.ok) {
@@ -109,30 +99,32 @@ const EditCourse = () => {
     } catch (error) {
       console.error("Error updating course", error);
     }
+
+
   };
 
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      backgroundColor: '#2d3748',
-      borderColor: '#4a5568',
+      backgroundColor: '#2d3748', // Match your dark theme
+      borderColor: '#4a5568', // Match your dark theme
       color: 'white',
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: '#2d3748',
+      backgroundColor: '#2d3748', // Match your dark theme
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? '#4a5568' : '#2d3748',
+      backgroundColor: state.isSelected ? '#4a5568' : '#2d3748', // Match your dark theme
       color: 'white',
       '&:hover': {
-        backgroundColor: '#4a5568',
+        backgroundColor: '#4a5568', // Match your dark theme
       },
     }),
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: '#4a5568',
+      backgroundColor: '#4a5568', // Match your dark theme
     }),
     multiValueLabel: (provided) => ({
       ...provided,
@@ -140,7 +132,7 @@ const EditCourse = () => {
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#a0aec0',
+      color: '#a0aec0', // Match your dark theme
     }),
   };
 
@@ -214,7 +206,6 @@ const EditCourse = () => {
                   className="basic-multi-select"
                   classNamePrefix="select"
                   styles={customStyles}
-                  value={selectedCategories}
                   onChange={setSelectedCategories}
                 />
               </div>
