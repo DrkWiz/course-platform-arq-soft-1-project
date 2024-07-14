@@ -93,6 +93,7 @@ func StartDbEngine() {
 	log.Info("Finishing Migration Database Tables")
 }
 
+/*
 func SeedDatabaseUsers() e.ApiError {
 
 	hashPasswordAdmin, err := userServices.UsersService.HashPassword("admin")
@@ -124,6 +125,66 @@ func SeedDatabaseUsers() e.ApiError {
 		IsAdmin:  false,
 	}
 	db.Create(&user)
+
+	log.Info("Finishing Seeding users Database")
+
+	return nil
+}
+*/
+
+func SeedDatabaseUsers() e.ApiError {
+
+	hashPasswordAdmin, err := userServices.UsersService.HashPassword("admin")
+	if err != nil {
+		log.Error("Error Hashing Password")
+		return err
+	}
+
+	admin := userModel.User{
+		Username: "admin",
+	}
+
+	// Verificar si el usuario admin ya existe
+	var existingAdmin userModel.User
+	if err := db.Where("username = ?", admin.Username).First(&existingAdmin).Error; err != nil {
+		// Si no existe, crearlo
+		admin.Name = "Super Duper Secret EasterEgg 1"
+		admin.Password = hashPasswordAdmin
+		admin.Email = "admin@admin.admin"
+		admin.IsAdmin = true
+		if err := db.Create(&admin).Error; err != nil {
+			log.Error("Error creating admin user")
+			return e.NewInternalServerApiError("Error creating admin user", err)
+		}
+	} else {
+		log.Info("Admin user already exists, skipping creation")
+	}
+
+	hashPasswordUser, err := userServices.UsersService.HashPassword("user")
+	if err != nil {
+		log.Error("Error Hashing Password")
+		return e.NewInternalServerApiError("Error hashing password", err)
+	}
+
+	user := userModel.User{
+		Username: "user",
+	}
+
+	// Verificar si el usuario user ya existe
+	var existingUser userModel.User
+	if err := db.Where("username = ?", user.Username).First(&existingUser).Error; err != nil {
+		// Si no existe, crearlo
+		user.Name = "Super Duper Secret EasterEgg 2"
+		user.Password = hashPasswordUser
+		user.Email = "user@user.user"
+		user.IsAdmin = false
+		if err := db.Create(&user).Error; err != nil {
+			log.Error("Error creating user")
+			return e.NewInternalServerApiError("Error creating user", err)
+		}
+	} else {
+		log.Info("User already exists, skipping creation")
+	}
 
 	log.Info("Finishing Seeding users Database")
 
