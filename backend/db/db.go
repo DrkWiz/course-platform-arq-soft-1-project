@@ -64,6 +64,31 @@ func StartDbEngine() {
 	db.AutoMigrate(&userModel.UserCourses{})
 	db.AutoMigrate(&fileModel.File{})
 
+	err := SeedDatabaseUsers()
+	if err != nil {
+		log.Error(err)
+	}
+
+	err1 := SeedDatabaseCourses()
+	if err1 != nil {
+		log.Error(err1)
+	}
+
+	err2 := SeedDatabaseUsersCourses()
+	if err2 != nil {
+		log.Error(err2)
+	}
+
+	err3 := SeedDatabaseCategories()
+	if err3 != nil {
+		log.Error(err3)
+	}
+
+	err4 := SeedDatabaseCoursesCategories()
+	if err4 != nil {
+		log.Error(err4)
+	}
+
 	log.Info("Finishing Migration Database Tables")
 }
 
