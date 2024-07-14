@@ -6,7 +6,6 @@ WORKDIR /backend
 # Copia los archivos go.mod y go.sum
 COPY go.mod go.sum ./
 
-# RUN echo "Acquire::http::Timeout \"100000000\";" > /etc/apt/apt.conf.d/99timeout
 # Descarga las dependencias
 RUN go mod download
 
