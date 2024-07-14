@@ -5,6 +5,7 @@ import (
 	courseClient "backend/clients/course"
 	fileClient "backend/clients/files"
 	userClient "backend/clients/users"
+
 	e "backend/utils/errors"
 	"fmt"
 	"os"
@@ -97,7 +98,7 @@ func SeedDatabaseUsers() e.ApiError {
 	hashPasswordAdmin, err := userServices.UsersService.HashPassword("admin")
 	if err != nil {
 		log.Error("Error Hashing Password")
-		return e.NewInternalServerApiError("Error hashing password", err)
+		return err
 	}
 
 	admin := userModel.User{
