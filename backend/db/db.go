@@ -191,6 +191,7 @@ func SeedDatabaseUsers() e.ApiError {
 	return nil
 }
 
+/*
 func SeedDatabaseCourses() e.ApiError {
 
 	course1 := courseModel.Course{
@@ -269,7 +270,93 @@ func SeedDatabaseCourses() e.ApiError {
 
 	return nil
 }
+*/
 
+func SeedDatabaseCourses() e.ApiError {
+
+	courses := []courseModel.Course{
+		{
+			Name:        "Semiconductores",
+			Description: "curso de teoria de semiconductores",
+			Price:       200,
+			PicturePath: "Semiconductordevices.jpg",
+			StartDate:   "2024-06-02",
+			EndDate:     "2026-06-02",
+			IdOwner:     1,
+			IsActive:    true,
+		},
+		{
+			Name:        "Electromagnetismo",
+			Description: "Teoria y practicas de electromagentismo explicado para cualquiera",
+			Price:       120,
+			PicturePath: "electromagnetismo.jpg",
+			StartDate:   "2024-06-02",
+			EndDate:     "2026-06-02",
+			IdOwner:     1,
+			IsActive:    true,
+		},
+		{
+			Name:        "programacion en C++ ",
+			Description: "programacion en C++ explicado para principiantes",
+			Price:       330,
+			PicturePath: "cpp.png",
+			StartDate:   "2024-06-02",
+			EndDate:     "2026-06-02",
+			IdOwner:     1,
+			IsActive:    true,
+		},
+		{
+			Name:        "Circuitismo",
+			Description: "teoria y metodo de diseño de circuitos para Formula 1",
+			Price:       10,
+			PicturePath: "circuitos.jpg",
+			StartDate:   "2024-06-02",
+			EndDate:     "2026-06-02",
+			IdOwner:     1,
+			IsActive:    true,
+		},
+		{
+			Name:        "Arquitectura de Software",
+			Description: "La materia mas piola del semestre sin lugar a dudas,profe por favor apruebenos con un 10 ",
+			Price:       421,
+			PicturePath: "softarch.jpg",
+			StartDate:   "2024-06-02",
+			EndDate:     "2026-06-02",
+			IdOwner:     1,
+			IsActive:    true,
+		},
+		{
+			Name:        "Bromeismo (Bromo)",
+			Description: "Curso para hacer Un elemento químico de número atómico 35 situado en el grupo de los halógenos (grupo XVII) de la tabla periódica de los elementos. Su símbolo es Br. Bromo a temperatura ambiente es un líquido rojo, volátil y denso",
+			Price:       4123,
+			PicturePath: "bromas.jpg",
+			StartDate:   "2024-06-02",
+			EndDate:     "2026-06-02",
+			IdOwner:     1,
+			IsActive:    true,
+		},
+	}
+
+	for _, course := range courses {
+		// Verificar si el curso ya existe
+		var existingCourse courseModel.Course
+		if err := db.Where("name = ?", course.Name).First(&existingCourse).Error; err != nil {
+			// Si no existe, crearlo
+			if err := db.Create(&course).Error; err != nil {
+				log.Error("Error creating course")
+				return e.NewInternalServerApiError("Error creating course", err)
+			}
+		} else {
+			log.Info("Course already exists, skipping creation")
+		}
+	}
+
+	log.Info("Finishing Seeding courses Database")
+
+	return nil
+}
+
+/*
 func SeedDatabaseUsersCourses() e.ApiError {
 
 	adminCourses1 := userModel.UserCourses{
@@ -356,7 +443,93 @@ func SeedDatabaseUsersCourses() e.ApiError {
 
 	return nil
 }
+*/
 
+func SeedDatabaseUsersCourses() e.ApiError {
+
+	userCourses := []userModel.UserCourses{
+		{
+			IdUser:   1,
+			IdCourse: 1,
+			Comment:  "nice course",
+			Rating:   4,
+		},
+		{
+			IdUser:   1,
+			IdCourse: 2,
+			Comment:  "nice course",
+			Rating:   2,
+		},
+		{
+			IdUser:   1,
+			IdCourse: 3,
+			Comment:  "nice course",
+			Rating:   3,
+		},
+		{
+			IdUser:   1,
+			IdCourse: 4,
+			Comment:  "a course",
+			Rating:   1,
+		},
+		{
+			IdUser:   1,
+			IdCourse: 5,
+			Comment:  "nice course",
+			Rating:   5,
+		},
+		{
+			IdUser:   1,
+			IdCourse: 6,
+			Comment:  "nice course",
+			Rating:   3,
+		},
+		{
+			IdUser:   2,
+			IdCourse: 1,
+			Comment:  "gran profesor",
+			Rating:   5,
+		},
+		{
+			IdUser:   2,
+			IdCourse: 6,
+			Comment:  "tremendo chiste, ¿NO?",
+			Rating:   4,
+		},
+		{
+			IdUser:   2,
+			IdCourse: 3,
+			Comment:  "pozole",
+			Rating:   5,
+		},
+		{
+			IdUser:   2,
+			IdCourse: 5,
+			Comment:  "alto curso",
+			Rating:   5,
+		},
+	}
+
+	for _, userCourse := range userCourses {
+		// Verificar si el registro de usuario y curso ya existe
+		var existingUserCourse userModel.UserCourses
+		if err := db.Where("id_user = ? AND id_course = ?", userCourse.IdUser, userCourse.IdCourse).First(&existingUserCourse).Error; err != nil {
+			// Si no existe, crearlo
+			if err := db.Create(&userCourse).Error; err != nil {
+				log.Error("Error creating user course")
+				return e.NewInternalServerApiError("Error creating user course", err)
+			}
+		} else {
+			log.Info("User course already exists, skipping creation")
+		}
+	}
+
+	log.Info("Finishing Seeding user courses Database")
+
+	return nil
+}
+
+/*
 func SeedDatabaseCategories() e.ApiError {
 
 	category1 := categoryModel.Category{
@@ -393,7 +566,51 @@ func SeedDatabaseCategories() e.ApiError {
 
 	return nil
 }
+*/
 
+func SeedDatabaseCategories() e.ApiError {
+
+	categories := []categoryModel.Category{
+		{
+			Name: "tecnologia",
+		},
+		{
+			Name: "programacion",
+		},
+		{
+			Name: "principiantes",
+		},
+		{
+			Name: "futurista",
+		},
+		{
+			Name: "avanzado",
+		},
+		{
+			Name: "bromo :)",
+		},
+	}
+
+	for _, category := range categories {
+		// Verificar si la categoría ya existe
+		var existingCategory categoryModel.Category
+		if err := db.Where("name = ?", category.Name).First(&existingCategory).Error; err != nil {
+			// Si no existe, crearla
+			if err := db.Create(&category).Error; err != nil {
+				log.Error("Error creating category")
+				return e.NewInternalServerApiError("Error creating category", err)
+			}
+		} else {
+			log.Info("Category already exists, skipping creation")
+		}
+	}
+
+	log.Info("Finishing Seeding category Database")
+
+	return nil
+}
+
+/*
 func SeedDatabaseCoursesCategories() e.ApiError {
 
 	course1Category1 := courseModel.CourseCategory{
@@ -467,6 +684,79 @@ func SeedDatabaseCoursesCategories() e.ApiError {
 		IdCategory: 3,
 	}
 	db.Create(&course4Category3)
+
+	log.Info("Finishing Seeding courses categories Database")
+
+	return nil
+}
+*/
+
+func SeedDatabaseCoursesCategories() e.ApiError {
+
+	coursesCategories := []courseModel.CourseCategory{
+		{
+			IdCourse:   1,
+			IdCategory: 1,
+		},
+		{
+			IdCourse:   2,
+			IdCategory: 1,
+		},
+		{
+			IdCourse:   3,
+			IdCategory: 1,
+		},
+		{
+			IdCourse:   4,
+			IdCategory: 1,
+		},
+		{
+			IdCourse:   5,
+			IdCategory: 1,
+		},
+		{
+			IdCourse:   6,
+			IdCategory: 1,
+		},
+		{
+			IdCourse:   6,
+			IdCategory: 6,
+		},
+		{
+			IdCourse:   2,
+			IdCategory: 4,
+		},
+		{
+			IdCourse:   2,
+			IdCategory: 2,
+		},
+		{
+			IdCourse:   3,
+			IdCategory: 2,
+		},
+		{
+			IdCourse:   3,
+			IdCategory: 5,
+		},
+		{
+			IdCourse:   4,
+			IdCategory: 3,
+		},
+	}
+
+	for _, courseCategory := range coursesCategories {
+		// Verificar si el registro de curso y categoría ya existe
+		var existingCourseCategory courseModel.CourseCategory
+		if err := db.Where("id_course = ? AND id_category = ?", courseCategory.IdCourse, courseCategory.IdCategory).First(&existingCourseCategory).Error; err != nil {
+			// Si no existe, crearlo
+			if err := db.Create(&courseCategory).Error; err != nil {
+				log.Error("Error creating course category")
+				return e.NewInternalServerApiError("Error creating course category", err)
+			}
+		} else {
+			log.Info("Course category already exists, skipping creation")
+		}
+	}
 
 	log.Info("Finishing Seeding courses categories Database")
 
