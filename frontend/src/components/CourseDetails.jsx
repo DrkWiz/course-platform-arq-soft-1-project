@@ -157,12 +157,15 @@ const CourseDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [averageRating, setAverageRating] = useState(null);
+  const [userRating, setUserRating] = useState(null);
   const [comments, setComments] = useState([]); // Initialize as an empty array
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [alertType, setAlertType] = useState(null);
+
+  
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -229,7 +232,7 @@ const CourseDetails = () => {
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setIsAdmin(userData.is_admin);
-
+            setUserRating(comments.find(comment => comment.username === userData.username)?.rating ?? 0);
             // Check if the user is the owner of the course
             const ownerResponse = await fetch(`/backend/courses/${id}/owner`, {
               method: 'POST',
@@ -306,8 +309,46 @@ const CourseDetails = () => {
       }
     };
 
+
+
+
     fetchCourseData();
   }, [id, navigate]);
+
+  const fetchAverageRating = async () => {
+    if (!token) {
+      setErrorMessage("Error with token");
+      setAlertType('error');
+      setShowAlert(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/backend/courses/${id}/rating`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAverageRating(data);
+      } else {
+        console.error("Failed to fetch average rating");
+        setErrorMessage("Failed to fetch average rating");
+        setAlertType('error');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error("Error fetching average rating", error);
+      setErrorMessage("Error fetching average rating");
+      setAlertType('error');
+      setShowAlert(true);
+    }
+  };
 
   const handleEnroll = async () => {
     const token = localStorage.getItem("token");
@@ -421,16 +462,8 @@ const CourseDetails = () => {
         setErrorMessage("Rating submitted successfully");
         setAlertType('success');
         setShowAlert(true);
-  
-        // Only attempt to parse JSON if there's a response body
-        const text = await response.text();
-        if (text) {
-          const ratingData = JSON.parse(text);
-          setAverageRating(ratingData.average_rating);
-        } else {
-          // Handle the case where there is no response body
-          setAverageRating(rating); // Or handle it as needed
-        }
+        setUserRating(rating);
+
       } else {
         const errorData = await response.json();
         console.error("Failed to submit rating", errorData);
@@ -519,7 +552,7 @@ const CourseDetails = () => {
             <label className="block text-sm font-medium text-gray-400">Categories:</label>
             <ul className="list-disc list-inside text-lg">
               {course.categories?.map(category => (
-                <li key={category.id}>{category.name}</li>
+                <li key={category.id_category}>{category.name}</li>
               ))}
             </ul>
           </div>
@@ -558,8 +591,8 @@ const CourseDetails = () => {
           <div className="p-8 rounded-lg shadow-lg max-w-md w-full bg-gray-800 text-white">
           <div className="mb-4">
   <label className="block text-sm font-medium text-gray-400">Rating:</label>
-  <StarRating rating={averageRating} onRate={isEnrolled ? handleRateCourse : null} />
-  <p className="text-lg mt-2">{averageRating !== null ? `${averageRating.toFixed(1)} out of 5` : 'No ratings yet'}</p>
+  <StarRating rating={userRating} onRate={isEnrolled ? handleRateCourse : null} />
+  <p className="text-lg mt-2">{userRating !== null ? `${userRating.toFixed(1)} out of 5` : 'No ratings yet'}</p>
 </div>
 
             {averageRating !== null && (
@@ -584,7 +617,7 @@ const CourseDetails = () => {
             {isEnrolled && (
               <CommentForm handleAddComment={handleAddComment} />
             )}
-            {(isAdmin || isOwner) && (
+            {(isAdmin || isOwner || isEnrolled) && (
               <FileUploadForm courseId={id} />
             )}
 

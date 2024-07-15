@@ -1,8 +1,8 @@
 package dto
 
 type CategoryMinDto struct {
-	IdCategory int    `json:"id"`
-	Name       string `json:"name"`
+	IdCategory int    `json:"value"`
+	Name       string `json:"label"`
 }
 
 type CategoriesMinDto []CategoryMinDto

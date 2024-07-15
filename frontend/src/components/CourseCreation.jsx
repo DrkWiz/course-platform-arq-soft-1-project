@@ -31,8 +31,8 @@ const CourseCreation = () => {
             const response = await fetch("/backend/category/all");
             const data = await response.json();
             const formattedData = data.map(category => ({
-                value: category.id,
-                label: category.name
+                value: category.value,
+                label: category.label
             }));
             setCategories(formattedData);
         };

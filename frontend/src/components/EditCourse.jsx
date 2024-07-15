@@ -57,8 +57,8 @@ const EditCourse = () => {
       const response = await fetch("/backend/category/all");
       const data = await response.json();
       const formattedData = data.map(category => ({
-        value: category.id,
-        label: category.name
+        value: category.value,
+        label: category.label
       }));
       setCategories(formattedData);
       console.log(formattedData);
@@ -81,6 +81,11 @@ const EditCourse = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
+    const updatedCourse = {
+      ...course,
+      categories: selectedCategories,
+    };
+
     try {
       const response = await fetch(`/backend/courses/update/${id}`, {
         method: 'PUT',
@@ -88,7 +93,7 @@ const EditCourse = () => {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(course),
+        body: JSON.stringify(updatedCourse),
       });
 
       if (response.ok) {
