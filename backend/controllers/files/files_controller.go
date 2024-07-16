@@ -110,3 +110,22 @@ func GetFilesByCourse(c *gin.Context) { // Con el id del curso devuelve un array
 
 	c.JSON(http.StatusOK, files)
 }
+
+func DownloadFile(c *gin.Context) { // Con el id del archivo en la BD devuelve el archivo para descargar.
+	idFile, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Info("Error parsing id")
+		c.JSON(http.StatusBadRequest, e.NewBadRequestApiError("Error parsing id"))
+		return
+	}
+
+	fileMinDto, err1 := s.FileService.GetFileById(idFile)
+
+	if err1 != nil {
+		c.JSON(err1.Status(), err1)
+		return
+	}
+
+	c.FileAttachment(fileMinDto.Path, fileMinDto.Name)
+	c.JSON(http.StatusOK, fileMinDto)
+}

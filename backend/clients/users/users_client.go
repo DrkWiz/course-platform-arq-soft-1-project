@@ -11,15 +11,19 @@ import (
 
 var Db *gorm.DB
 
-func GetUserById(id int) userModel.User {
+// Devuelve un usuario con id
+func GetUserById(id int) (userModel.User, e.ApiError) {
 	var user userModel.User
 
-	Db.Where("id_user = ?", id).First(&user)
+	err := Db.Where("id_user = ?", id).First(&user).Error
+	if err != nil {
+		return user, e.NewNotFoundApiError("User not found")
+	}
 	log.Print("User: ", user)
-
-	return user
+	return user, nil
 }
 
+// Crea un usuario
 func CreateUser(user userModel.User) e.ApiError {
 	err := Db.Create(&user).Error
 	if err != nil {
@@ -28,24 +32,28 @@ func CreateUser(user userModel.User) e.ApiError {
 	return nil
 }
 
+// Revisa si un username ya existe.
 func CheckUsername(username string) bool {
 	var user userModel.User
 	Db.Where("username = ?", username).First(&user)
 	return user.Username != ""
 }
 
+// Revisa si un email ya existe.
 func CheckEmail(email string) bool {
 	var user userModel.User
 	Db.Where("email = ?", email).First(&user)
 	return user.Username != ""
 }
 
+// Revisa una inscripcion.
 func CheckUserCourse(idUser int, idCourse int) bool {
 	var userCourse userModel.UserCourses
 	Db.Where("id_user = ? AND id_course = ?", idUser, idCourse).First(&userCourse)
 	return userCourse.IdUser != 0
 }
 
+// Devuelve un usuario con username
 func GetUserByUsername(username string) (userModel.User, e.ApiError) {
 	var user userModel.User
 	err := Db.Where("username = ?", username).First(&user).Error
@@ -57,8 +65,7 @@ func GetUserByUsername(username string) (userModel.User, e.ApiError) {
 	return user, nil
 }
 
-//UserCourses
-
+// Devuelve las inscripciones de un usuario
 func GetUserCourses(id int) ([]userModel.UserCourses, e.ApiError) {
 	var usercourses []userModel.UserCourses
 	err := Db.Where("id_user = ?", id).Find(&usercourses).Error
@@ -70,8 +77,7 @@ func GetUserCourses(id int) ([]userModel.UserCourses, e.ApiError) {
 	return usercourses, nil
 }
 
-// Agregar un user-course
-
+// Agrega una inscripcion a la db.
 func AddUserCourse(userCourse userModel.UserCourses) e.ApiError {
 	err := Db.Create(&userCourse).Error
 	if err != nil {
@@ -80,8 +86,7 @@ func AddUserCourse(userCourse userModel.UserCourses) e.ApiError {
 	return nil
 }
 
-// Eliminar un user-course
-
+// Elimina una inscripcion de la db.
 func RemoveUserCourse(idUser int, idCourse int) e.ApiError {
 	var userCourse userModel.UserCourses
 

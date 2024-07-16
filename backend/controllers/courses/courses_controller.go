@@ -18,7 +18,6 @@ import (
 )
 
 // Get Course by ID
-
 func GetCourseById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere buscar, y se lo convierte  de str a int
 
@@ -39,8 +38,7 @@ func GetCourseById(c *gin.Context) {
 	c.JSON(http.StatusOK, response) //aca se devuelve el curso encontrado
 }
 
-//Create new course
-
+// Create new course
 func CreateCourse(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization") //aca se obtiene el token del header de la peticion
 
@@ -63,11 +61,10 @@ func CreateCourse(c *gin.Context) {
 	}
 
 	s.CoursesService.CreateCourse(course, token) //aca se llama a la funcion CreateCourse de la interfaz CoursesService y se le pasa el curso y el token
-	c.JSON(http.StatusOK, "Course created")      //aca se devuelve un mensaje de que el curso fue creado exitosamente
+	c.JSON(http.StatusCreated, "Course created") //aca se devuelve un mensaje de que el curso fue creado exitosamente
 }
 
 // Update course
-
 func UpdateCourse(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization") //aca se obtiene el token del header de la peticion
 
@@ -107,8 +104,7 @@ func UpdateCourse(c *gin.Context) {
 
 }
 
-//Soft delete course
-
+// Soft delete course
 func DeleteCourse(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization") //aca se obtiene el token del header de la peticion
 
@@ -137,11 +133,10 @@ func DeleteCourse(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, "Course deleted") //aca se devuelve un mensaje de que el curso fue borrado exitosamente
+	c.JSON(http.StatusNoContent, "Course deleted") //aca se devuelve un mensaje de que el curso fue borrado exitosamente
 }
 
 // Get all courses in db
-
 func GetCourses(c *gin.Context) {
 	response, err1 := s.CoursesService.GetCourses() //aca se llama a la funcion GetCourses de la interfaz CoursesService
 
@@ -154,7 +149,6 @@ func GetCourses(c *gin.Context) {
 }
 
 // Check if the token is the owner of the course
-
 func CheckOwner(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization") //aca se obtiene el token del header de la peticion
 
@@ -186,6 +180,7 @@ func CheckOwner(c *gin.Context) {
 	c.JSON(http.StatusOK, response) //aca se devuelve si el token es el dueño del curso o no
 }
 
+// Upload image
 func ImageUpload(c *gin.Context) {
 	file, err := c.FormFile("image") //aca se obtiene el archivo de la peticion
 
@@ -212,9 +207,10 @@ func ImageUpload(c *gin.Context) {
 
 	err = s.CoursesService.SaveFile(fileBytes, path) //aca se llama a la funcion SaveFile de la interfaz CoursesService
 
-	c.JSON(http.StatusOK, gin.H{"picture_path": file.Filename}) //aca se devuelve el path relativo de la imagen guardada en el servidor	 para ser usado en el frontend
+	c.JSON(http.StatusCreated, gin.H{"picture_path": file.Filename}) //aca se devuelve el path relativo de la imagen guardada en el servidor	 para ser usado en el frontend
 }
 
+// Devuelve el path de la imagen
 func GetImage(c *gin.Context) {
 	picturepath := c.Param("picturepath")           //aca se obtiene el path de la imagen que se quiere obtener
 	path := filepath.Join("./uploads", picturepath) //aca se obtiene el path completo de la imagen
@@ -229,6 +225,7 @@ func GetImage(c *gin.Context) {
 	c.Data(http.StatusOK, "image/jpeg", file) //aca se devuelve la imagen en formato jpeg
 }
 
+// Devuelve el rating promedio de un curso.
 func GetAvgRating(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere buscar, y se lo convierte  de str a int
 
@@ -247,6 +244,7 @@ func GetAvgRating(c *gin.Context) {
 	c.JSON(http.StatusOK, response) //aca se devuelve el promedio de calificacion del curso
 }
 
+// Devuelve los comentarios de un curso.
 func GetComments(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id")) //aca se obtiene el id del curso que se quiere buscar, y se lo convierte  de str a int
 
@@ -265,6 +263,7 @@ func GetComments(c *gin.Context) {
 	c.JSON(http.StatusOK, response) //aca se devuelven los comentarios del curso
 }
 
+// Actualiza un comentario.
 func SetComment(c *gin.Context) {
 	tokenStr := c.GetHeader("Authorization")
 
@@ -307,6 +306,7 @@ func SetComment(c *gin.Context) {
 	c.JSON(http.StatusNoContent, "Comment added")
 }
 
+// Actualiza un rating
 func SetRating(c *gin.Context) {
 	tokenStr := c.GetHeader("Authorization")
 

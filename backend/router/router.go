@@ -51,7 +51,7 @@ func MapUrls(engine *gin.Engine) {
 	// Files
 	protected.GET("/files/:id", files.GetFileById)
 	protected.POST("/courses/:id/files", files.UploadFile)
-
+	protected.GET("/files/:id/download", files.DownloadFile)
 	engine.Static("/uploads", "./uploads")
 
 }

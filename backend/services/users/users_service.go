@@ -41,11 +41,17 @@ func init() {
 	UsersService = &usersService{}
 }
 
+// Get usuario con id en db
 func (s *usersService) GetUserById(id int) (dto.UserMinDto, e.ApiError) {
 
 	log.Print("GetUserById: ", id)
 
-	var user usersModel.User = usersClient.GetUserById(id)
+	user, err := usersClient.GetUserById(id)
+
+	if err != nil {
+		return dto.UserMinDto{}, err
+	}
+
 	var UserMinDto dto.UserMinDto
 
 	UserMinDto.IdUser = user.IdUser
@@ -68,8 +74,7 @@ func (s *usersService) HashPassword(password string) (string, e.ApiError) {
 	return string(bytes), nil
 }
 
-//Create user
-
+// Create user
 func (s *usersService) CreateUser(user dto.UserCreateDto) e.ApiError {
 
 	if user.Name == "" || user.Username == "" || user.Email == "" || user.Password == "" {
@@ -77,7 +82,7 @@ func (s *usersService) CreateUser(user dto.UserCreateDto) e.ApiError {
 		return err
 	}
 
-	// Check if username or email already exists
+	// Check si ya existe el usuario o email.
 	if usersClient.CheckUsername(user.Username) {
 		err := e.NewBadRequestApiError("Username already exists")
 		return err
@@ -103,7 +108,6 @@ func (s *usersService) CreateUser(user dto.UserCreateDto) e.ApiError {
 }
 
 // Login user
-
 func (s *usersService) Login(user dto.UserLoginDto) (string, e.ApiError) {
 	userToLogin, err := usersClient.GetUserByUsername(user.Username)
 
@@ -130,7 +134,7 @@ func (s *usersService) Login(user dto.UserLoginDto) (string, e.ApiError) {
 	return token, nil
 }
 
-// create token
+// Create token
 func (s *usersService) createToken(id int) (string, e.ApiError) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  id,
@@ -146,6 +150,7 @@ func (s *usersService) createToken(id int) (string, e.ApiError) {
 	return tokenString, nil
 }
 
+// Validar el token y devuelve el id del usuario
 func (s *usersService) ValidateToken(tokenString string) (int, e.ApiError) {
 	log.Print("Token: ", tokenString)
 
@@ -174,6 +179,7 @@ func (s *usersService) ValidateToken(tokenString string) (int, e.ApiError) {
 	return id, nil
 }
 
+// Devuelve la info del usuario en la db con el token.
 func (s *usersService) GetUsersByToken(token string) (dto.UserMinDto, e.ApiError) {
 	id, err := s.ValidateToken(token)
 
@@ -190,7 +196,7 @@ func (s *usersService) GetUsersByToken(token string) (dto.UserMinDto, e.ApiError
 	return user, nil
 }
 
-// usercourses
+// Devuelve los cursos a los que esta incripto un usuario en la db usando el id.
 func (s *usersService) GetUserCourses(id int) (dto.UserCoursesMinDto, e.ApiError) {
 	userCourses, err := usersClient.GetUserCourses(id)
 
@@ -227,7 +233,6 @@ func (s *usersService) GetUserCourses(id int) (dto.UserCoursesMinDto, e.ApiError
 }
 
 // Inscribir usuario a curso
-
 func (s *usersService) AddUserCourse(idCourse int, token string) e.ApiError {
 	idUser, err := s.ValidateToken(token)
 
@@ -235,7 +240,7 @@ func (s *usersService) AddUserCourse(idCourse int, token string) e.ApiError {
 		return err
 	}
 
-	// Check if user is already enrolled in the course
+	// Revisamos si el usuario ya esta inscripto en el curso
 	if usersClient.CheckUserCourse(idUser, idCourse) {
 		err := e.NewBadRequestApiError("User is already enrolled in this course")
 		return err
@@ -251,8 +256,7 @@ func (s *usersService) AddUserCourse(idCourse int, token string) e.ApiError {
 	return nil
 }
 
-// Falta manejo de errores.
-
+// Devuelve los cursos a los que esta inscripto un usuario con el token.
 func (s *usersService) GetUserCoursesByToken(token string) (dto.UsersCoursesMaxDto, e.ApiError) {
 	id, err := s.ValidateToken(token) // Valida el token y devuelve id.
 
@@ -313,6 +317,7 @@ func (s *usersService) GetUserCoursesByToken(token string) (dto.UsersCoursesMaxD
 	return userCoursesDto, nil
 }
 
+// Revisa si un usuairo es un admin con el token.
 func (s *usersService) CheckAdmin(token string) (bool, e.ApiError) {
 	id, err := s.ValidateToken(token)
 
@@ -329,7 +334,7 @@ func (s *usersService) CheckAdmin(token string) (bool, e.ApiError) {
 	return user.IsAdmin, nil
 }
 
-// Remove user from usercourse
+// Elimina una inscripcion de la db.
 func (s *usersService) UnsubscribeUserCourse(courseId int, token string) e.ApiError {
 	idUser, err := s.ValidateToken(token)
 
@@ -348,6 +353,7 @@ func (s *usersService) UnsubscribeUserCourse(courseId int, token string) e.ApiEr
 	return nil
 }
 
+// Revisa si un usuario esta incripto en ese curso con el token.
 func (s *usersService) CheckEnrolled(courseId int, token string) (bool, e.ApiError) {
 	idUser, err := s.ValidateToken(token)
 

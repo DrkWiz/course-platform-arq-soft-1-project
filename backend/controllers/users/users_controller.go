@@ -76,6 +76,8 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, token)
 }
 
+// Obtiene el usuario del token
+
 func GetUsersByToken(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 
@@ -100,8 +102,7 @@ func GetUsersByToken(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-//
-//TOKEN AUTHENTICATION
+// Obtiene los cursos a los que esta inscripto un usuario.
 
 func GetUserCourses(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -134,6 +135,11 @@ func AddUserCourse(c *gin.Context) {
 	}
 
 	token = strings.Split(token, " ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -150,6 +156,8 @@ func AddUserCourse(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, "User added to course")
 }
+
+// Obtiene los cursos a los que esta inscripto un usuario con el token
 
 func GetUserCoursesByToken(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
@@ -175,6 +183,8 @@ func GetUserCoursesByToken(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// Revisa si el token es de un admin.
+
 func CheckAdmin(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 
@@ -199,7 +209,7 @@ func CheckAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Remove user from usercourse
+// Elimina la inscripcion de un usuario a un curso.
 
 func UnsubscribeUserCourse(c *gin.Context) {
 	token := c.GetHeader("Authorization")
@@ -210,6 +220,11 @@ func UnsubscribeUserCourse(c *gin.Context) {
 	}
 
 	token = strings.Split(token, " ")[1]
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, e.NewUnauthorizedApiError("Token is required"))
+		return
+	}
+
 	courseId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -224,8 +239,10 @@ func UnsubscribeUserCourse(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, "User removed from course")
+	c.JSON(http.StatusOK, "User removed from course")
 }
+
+// Devuelve si un usuario esta inscripto a un curso.
 
 func CheckEnrolled(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")

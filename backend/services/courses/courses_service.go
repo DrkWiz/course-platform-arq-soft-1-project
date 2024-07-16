@@ -2,7 +2,6 @@ package courses
 
 import (
 	courseClient "backend/clients/course"
-	usersClient "backend/clients/users"
 	"backend/dto"
 	usersService "backend/services/users"
 
@@ -79,17 +78,23 @@ func (s *coursesService) GetCourseById(id int) (dto.CourseMaxDto, e.ApiError) { 
 	return courseMaxDto, nil // aca se devuelve la variable CourseMaxDto
 }
 
-//Create course
-
+// Create course
 func (s *coursesService) CreateCourse(course dto.CourseCreateDto, token string) e.ApiError { // aca se implementa el metodo CreateCourse de la interfaz CoursesServiceInterface
 
-	ownerId, err := usersService.UsersService.ValidateToken(token) // aca se llama al metodo ValidateToken del servicio UsersService
+	ownerId, err := usersService.UsersService.ValidateToken(token) // aca se llama al metodo ValidateToken del servicio UsersService para obtener el id del usuario
 
 	if err != nil {
 		return err
 	}
 
-	if !usersClient.GetUserById(ownerId).IsAdmin { // aca se llama al metodo GetUserById del cliente UsersClient y se verifica si el usuario es admin
+	ownerDTO, err := usersService.UsersService.GetUserById(ownerId) // aca se llama al metodo GetUserById del servicio UsersService para obtener el usuario
+
+	if err != nil {
+		return err
+	}
+
+	isAdmin := ownerDTO.IsAdmin // aca se obtiene si el usuario es admin
+	if !isAdmin {               // aca se llama al metodo GetUserById del cliente UsersClient y se verifica si el usuario es admin
 		return e.NewForbiddenApiError("You don't have permission to create a course")
 	}
 
@@ -347,8 +352,14 @@ func (s *coursesService) GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiEr
 	}
 	var CommentsMaxDto []dto.CommentMaxDto // aca se crea una variable de tipo CommentMaxDto que es una lista de comentarios
 	for _, comment := range comments {     // aca se recorre la lista de comentarios y se los agrega a la variable CommentsMaxDto
+
+		userDTO, err := usersService.UsersService.GetUserById(comment.IdUser) // aca se llama al metodo GetUserById del servicio UsersService para obtener el usuario del comentario
+		if err != nil {
+			return nil, err
+		}
+
 		CommentMaxDto := dto.CommentMaxDto{ // aca se crea una variable de tipo CommentMaxDto
-			Username: usersClient.GetUserById(comment.IdUser).Username, // aca se llama al metodo GetUserById del cliente UsersClient para obtener el nombre de usuario del comentario
+			Username: userDTO.Username, // aca se llama al metodo GetUserById del cliente UsersClient para obtener el nombre de usuario del comentario
 			Comment:  comment.Comment,
 			Rating:   comment.Rating}
 
