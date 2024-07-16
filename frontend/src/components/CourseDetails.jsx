@@ -47,10 +47,11 @@ const StarRating = ({ rating, onRate }) => {
     </div>
   );
 };
-const FileItem = ({ file }) => (
+const FileItem = ({ file, onDownload }) => (
   <div key={file.id} className="flex items-center justify-between p-2 border rounded mb-2">
     <div>
       <p className="font-semibold">{file.name}</p>
+      <button onClick={() => onDownload(file)}>Download</button>
     </div>
   </div>
 );
@@ -350,6 +351,39 @@ const CourseDetails = () => {
     }
   };
 
+  const handleDownload = async (file) => {
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await fetch(`/backend/files/${file.id_file}/download`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error("Failed to download file");
+        setErrorMessage("Failed to download file");
+        setAlertType('error');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error("Error downloading file", error);
+      setErrorMessage("Error downloading file");
+      setAlertType('error');
+      setShowAlert(true);
+    }
+  };
+
   const handleEnroll = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -624,7 +658,7 @@ const CourseDetails = () => {
 <h2 className="text-2xl font-bold mb-4 mt-4">Course Files</h2>
             {Array.isArray(files) && files.length > 0 ? (
               files.map((file, index) => (
-                <FileItem key={index} file={file} />
+                <FileItem key={index} file={file} onDownload={handleDownload} />
               ))
             ) : (
               <p>No files available.</p>

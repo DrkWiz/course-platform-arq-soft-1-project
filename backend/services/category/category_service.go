@@ -32,7 +32,11 @@ func (s *categoryService) GetCategoryById(id int) (dto.CategoryMinDto, e.ApiErro
 
 	log.Print("GetCategoryById: ", id)
 
-	var category categoryModel.Category = categoryClient.GetCategoryById(id)
+	category, err := categoryClient.GetCategoryById(id)
+
+	if err != nil {
+		return dto.CategoryMinDto{}, err
+	}
 	var CategoryMinDto dto.CategoryMinDto
 
 	CategoryMinDto.IdCategory = category.IdCategory

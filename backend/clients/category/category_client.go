@@ -11,15 +11,18 @@ import (
 
 var Db *gorm.DB
 
-func GetCategoryById(id int) categoryModel.Category {
+func GetCategoryById(id int) (categoryModel.Category, e.ApiError) {
 
 	var category categoryModel.Category
 
-	Db.Where("id_category = ?", id).First(&category)
+	err := Db.Where("id_category = ?", id).First(&category).Error
+
+	if err != nil {
+		return category, e.NewNotFoundApiError("Category not found")
+	}
 	log.Debug("Category: ", category)
 
-	return category
-
+	return category, nil
 }
 
 func CreateCategory(category categoryModel.Category) error {

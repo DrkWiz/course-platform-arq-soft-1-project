@@ -251,7 +251,6 @@ func (s *coursesService) UpdateCourse(courseId int, course dto.CourseUpdateDto, 
 }
 
 //Soft delete course
-
 func (s *coursesService) DeleteCourse(id int) e.ApiError { // aca se implementa el metodo DeleteCourse de la interfaz CoursesServiceInterface
 	err := courseClient.DeleteCourse(id) // aca se llama al metodo DeleteCourse del cliente CourseClient para eliminar el curso
 	if err != nil {
@@ -262,7 +261,6 @@ func (s *coursesService) DeleteCourse(id int) e.ApiError { // aca se implementa 
 }
 
 // Get all courses in DB
-
 func (s *coursesService) GetCourses() (dto.CoursesMaxDto, e.ApiError) { // aca se implementa el metodo GetCourses de la interfaz CoursesServiceInterface
 
 	courses, err := courseClient.GetCourses() // aca se llama al metodo GetCourses del cliente CourseClient para obtener todos los cursos
@@ -300,7 +298,6 @@ func (s *coursesService) GetCourses() (dto.CoursesMaxDto, e.ApiError) { // aca s
 }
 
 // Check if token is the owner of the course
-
 func (s *coursesService) CheckOwner(token string, courseId int) (bool, e.ApiError) {
 	idToCheck, err := usersService.UsersService.ValidateToken(token) // aca se llama al metodo ValidateToken del servicio UsersService para obtener el id del usuario
 
@@ -334,7 +331,6 @@ func (s *coursesService) GetFile(path string) ([]byte, e.ApiError) { // aca se i
 }
 
 // avg rating
-
 func (s *coursesService) GetAvgRating(courseId int) (float64, e.ApiError) { // aca se implementa el metodo GetAvgRating de la interfaz CoursesServiceInterface
 	rating, err := courseClient.GetAvgRating(courseId) // aca se llama al metodo GetAvgRating del cliente CourseClient para obtener el rating promedio
 	if err != nil {
@@ -344,7 +340,6 @@ func (s *coursesService) GetAvgRating(courseId int) (float64, e.ApiError) { // a
 }
 
 // comments
-
 func (s *coursesService) GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiError) { // aca se implementa el metodo GetComments de la interfaz CoursesServiceInterface
 	comments, err := courseClient.GetComments(courseId) // aca se llama al metodo GetComments del cliente CourseClient para obtener los comentarios
 	if err != nil {
@@ -370,7 +365,6 @@ func (s *coursesService) GetComments(courseId int) ([]dto.CommentMaxDto, e.ApiEr
 }
 
 // set comment
-
 func (s *coursesService) SetComment(courseId int, userId int, comment string) e.ApiError { // aca se implementa el metodo SetComment de la interfaz CoursesServiceInterface
 	err := courseClient.SetComment(courseId, userId, comment) // aca se llama al metodo SetComment del cliente CourseClient para crear un comentario
 	if err != nil {
@@ -380,7 +374,6 @@ func (s *coursesService) SetComment(courseId int, userId int, comment string) e.
 }
 
 // set rating
-
 func (s *coursesService) SetRating(courseId int, userId int, rating float64) e.ApiError { // aca se implementa el metodo SetRating de la interfaz CoursesServiceInterface
 	err := courseClient.SetRating(courseId, userId, rating) // aca se llama al metodo SetRating del cliente CourseClient para crear un rating
 	if err != nil {

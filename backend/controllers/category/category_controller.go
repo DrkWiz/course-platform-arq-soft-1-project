@@ -18,7 +18,7 @@ func GetCategoryById(c *gin.Context) {
 		return
 	}
 
-	log.Print("GetCategoryByUd: ", id)
+	log.Print("GetCategoryById: ", id)
 
 	response, errUno := s.CategoryService.GetCategoryById(id)
 
@@ -39,7 +39,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	s.CategoryService.CreateCategory(category)
-	c.JSON(http.StatusOK, "Category created")
+	c.JSON(http.StatusCreated, "Category created")
 }
 
 func GetCategories(c *gin.Context) {

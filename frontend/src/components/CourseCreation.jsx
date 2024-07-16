@@ -87,7 +87,7 @@ const CourseCreation = () => {
                 start_date: startDate,
                 end_date: endDate,
                 categories_id: selectedCategories.map(category => category.value),
-                id_owner: 1, // Replace with actual owner ID if necessary
+                id_owner: 0, // Obtained in backend from token
             }),
         });
 
