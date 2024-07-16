@@ -287,7 +287,7 @@ func SeedDatabaseCourses() e.ApiError {
 		},
 		{
 			Name:        "Electromagnetismo",
-			Description: "Teoria y practicas de electromagentismo explicado para cualquiera",
+			Description: "Teoria y practicas de electromagentismo explicado para cualquiera.",
 			Price:       120,
 			PicturePath: "electromagnetismo.jpg",
 			StartDate:   "2024-06-02",
@@ -297,7 +297,7 @@ func SeedDatabaseCourses() e.ApiError {
 		},
 		{
 			Name:        "programacion en C++ ",
-			Description: "programacion en C++ explicado para principiantes",
+			Description: "programacion en C++ explicado para principiantes con ejemplos practicos.",
 			Price:       330,
 			PicturePath: "cpp.png",
 			StartDate:   "2024-06-02",
@@ -307,7 +307,7 @@ func SeedDatabaseCourses() e.ApiError {
 		},
 		{
 			Name:        "Circuitismo",
-			Description: "teoria y metodo de diseño de circuitos para Formula 1",
+			Description: "teoria y metodo de diseño de circuitos para Formula 1, 2, 3 y 4.",
 			Price:       10,
 			PicturePath: "circuitos.jpg",
 			StartDate:   "2024-06-02",
@@ -317,7 +317,7 @@ func SeedDatabaseCourses() e.ApiError {
 		},
 		{
 			Name:        "Arquitectura de Software",
-			Description: "La materia mas piola del semestre sin lugar a dudas,profe por favor apruebenos con un 10 ",
+			Description: "La materia mas piola del semestre sin lugar a dudas, profe por favor apruebenos con un 10 ",
 			Price:       421,
 			PicturePath: "softarch.jpg",
 			StartDate:   "2024-06-02",
