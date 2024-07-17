@@ -11,7 +11,7 @@ const EditCourse = () => {
     owner: '',
     name: '',
     description: '',
-    price: '',
+    price: 0.0,
     picture_path: '',
     start_date: '',
     end_date: '',
@@ -41,6 +41,11 @@ const EditCourse = () => {
         if (response.ok) {
           const data = await response.json();
           setCourse(data);
+          setSelectedCategories(data.categories.map(category => ({
+            value: category.id_category,
+            label: category.name,
+          })));
+
         } else {
           console.error("Failed to fetch course data");
           navigate('/login');
@@ -74,6 +79,14 @@ const EditCourse = () => {
     setCourse((prevCourse) => ({
       ...prevCourse,
       [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handlePriceChange = (e) => {
+    const { name, value } = e.target;
+    setCourse((prevCourse) => ({
+      ...prevCourse,
+      [name]: parseFloat(value),
     }));
   };
 
@@ -177,7 +190,7 @@ const EditCourse = () => {
                   type="number"
                   name="price"
                   value={course.price}
-                  onChange={handleChange}
+                  onChange={handlePriceChange}
                   className="mt-1 block w-full bg-gray-700 text-white rounded-md"
                 />
               </div>
@@ -208,6 +221,7 @@ const EditCourse = () => {
                   name="categories"
                   isMulti
                   options={categories}
+                  value={selectedCategories}
                   className="basic-multi-select"
                   classNamePrefix="select"
                   styles={customStyles}
