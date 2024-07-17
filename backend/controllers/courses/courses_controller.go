@@ -359,3 +359,4 @@ func SetRating(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, "Rating changed")
 }
+
